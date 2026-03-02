@@ -1,0 +1,77 @@
+📋 Brief de Desarrollo: Ingeny Labs Landing Page 
+1. Navegación (Header Sticky) 
+●​ Comportamiento: Menú fijo (position: sticky). 
+●​ Interacción: Enlaces de ancla (Anchor Links) con Smooth Scroll 
+(desplazamiento suave) para navegar entre secciones de la One-Page. 
+●​ Estado Activo: El menú debe resaltar la sección actual mediante el uso de 
+Intersection Observer. 
+2. Hero: Efecto "Glass Experience" (Desktop) 
+Para lograr las reflexiones y refracciones del isologo con efecto de vidrio, no basta con 
+CSS simple; se requiere un enfoque de capas: 
+●​ Tecnología: Uso de GSAP para el movimiento y Three.js (o un shader de WebGL) 
+si buscas refracción real. Como alternativa más mantenible: Capas de PNG con 
+modos de fusión (Screen o Overlay). 
+●​ Dinámica: * Isologo (Vidrio): Debe reaccionar al mouse con un efecto de "Tilt" 
+(inclinación) sutil. 
+○​ Refracción: El texto que pase "detrás" del vidrio debe verse ligeramente 
+deformado o desenfocado. 
+○​ Reflexión: Un destello de luz blanca (specular highlight) que se 
+mueva en dirección opuesta al cursor sobre la superficie del isologo. 
+Aclaración: El movimiento debe ser muy sutil (no más de 10-20px de desplazamiento). Si 
+el texto se mueve demasiado, puede causar mareo o efectos contrarios a lo que queremos 
+lograr. 
+3. Animaciones y Scroll (UX) 
+●​ Scroll-Reveal: Animaciones de entrada (fade-in, slide-up) conforme las secciones 
+entran en el viewport. 
+●​ Librería sugerida: GSAP ScrollTrigger para un control preciso o AOS.js para 
+algo más ligero. 
+●​ Micro-interacciones: Los botones (CTAs) deben tener estados de hover con 
+colores dentro de la paleta definida, que den cuenta del cambio de instancia 
+manteniendo la legibilidad. 
+4. Adaptabilidad (Responsive) 
+●​ Efecto de Cursor: Dado que en móviles no hay cursor, el efecto del Hero debe ser 
+estático o reaccionar levemente al giroscopio del teléfono para mantener la 
+"magia". (Si es posible). 
+●​ Layout: Colapsar el menú del header en un "Hamburguer Menu" limpio que 
+mantenga la estética del sitio, fondo negro y links en blanco con el suficiente espacio 
+para pincharlos con el dedo y no se confundan entre sí desde una tablet o celular. 
+Mantener el botón del CTA para agendar consulta (WhatsApp) al lado de este ícono 
+de hamburguesa en el menu mobile responsive para que siempre esté visible en 
+cualquier dispositivo. Ver ejemplo de Apollo.io en mobile. 
+●​ Adaptación de todo el one page a distintas resoluciones para que sea accesible 
+desde cualquier dispositivo, según estándares de diseño y UX. 
+5. Adicionales:  
+●​ Blog personalizable para subir notas. (En principio necesitamos la estructura o 
+esqueleto para definir diseño nosotros). En el Footer incluimos un link que derivará a 
+este. url: ingenylabs.cl/blog. 
+●​ También al final hay un formulario de suscripción a Newsletter que nos permitirá 
+generar una base de datos. 
+6. Escalabilidad y Mantenimiento 
+●​ Stack Recomendado: Next.js + Tailwind CSS. 
+○​ Next.js permite escalabilidad total si luego quieres agregar un blog o 
+dashboard. 
+○​ Tailwind CSS facilita el mantenimiento de los colores (negro/verde) de forma 
+global. 
+●​ Arquitectura de Componentes: Cada sección (Nosotros, Servicios, Contacto) debe 
+ser un componente independiente para que puedas reordenarlas o editarlas sin 
+romper el sitio. 
+Ideal carga rápida de todo el sitio, sin sacrificar calidad visual.  
+Adicional a entregables: Panel de Admin para cambios. 
+ 
+ 
+Archivo Figma estructura (Brand Kit/System): 
+ 
+Página 1 - Colores y elementos: tiene el estilo gráfico general de la marca y colores 
+normados que se agregaron como estilos, al igual que la estructura o jerarquía para los 
+textos (H1, H2, p, p bold, etc.). 
+ 
+Página 2 - Componentes para botones, header y footer. 
+ 
+Página 3 - Diseño de la landing one page. 
+ 
+Figma: Link al archivo aquí. 
+ 
+Zeplin (Permite ver código y control de versiones): En este link.  
+ 
+ 
+Gracias! 

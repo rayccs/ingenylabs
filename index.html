@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingeny Labs - IA que transforma</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+
+    <!-- Custom JS -->
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <!-- 0. Header -->
+    <header class="header" id="main-header">
+        <div class="container header-content">
+            <a href="#hero" class="logo">
+                <!-- Replace with Logo Image if needed -->
+                ingeny labs
+            </a>
+
+            <nav class="nav-links">
+                <a href="#servicios" class="nav-link">Nosotros</a>
+                <a href="#especializacion" class="nav-link">Servicios</a>
+                <a href="#metodologia" class="nav-link">Metodología</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+            </nav>
+
+            <div class="header-actions">
+                <div class="social-icons">
+                    <a href="#" aria-label="LinkedIn"><img src="" alt="LinkedIn Icon" class="icon-placeholder"></a>
+                    <a href="#" aria-label="Instagram"><img src="" alt="Instagram Icon" class="icon-placeholder"></a>
+                </div>
+                <a href="https://wa.me/" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                    <img src="" alt="WhatsApp" class="icon-placeholder-sm"> Agendar Consultoría
+                </a>
+                <button class="hamburger-menu" aria-label="Abrir menú" aria-expanded="false">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. Hero Section -->
+        <section id="hero" class="hero section-scroll">
+            <div class="hero-bg-pattern"></div> <!-- For the wavy lines in the background -->
+            <div class="container hero-container-centered">
+                <div class="hero-content-centered">
+                    <h1>IA que transforma<br>la gestión pública<br>y privada</h1>
+                    <p>Somos un laboratorio experto en automatizar procesos complejos. Ayudamos a<br>instituciones del
+                        Estado y empresas a reducir tiempos operativos y maximizar el<br>impacto de su presupuesto con
+                        soluciones de IA a medida.</p>
+                    <a href="https://wa.me/" class="btn btn-hero" target="_blank">
+                        <!-- Replace with real WhatsApp icon -->
+                        <svg class="w-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.3-.767.966-.94 1.164-.173.199-.347.223-.647.075-.301-.15-1.265-.46-2.406-1.48-.888-.788-1.48-1.761-1.653-2.062-.173-.3-.018-.461.13-.611.134-.133.301-.35.451-.524.151-.176.201-.298.301-.5.1-.198.05-.371-.025-.521-.075-.148-.673-1.62-.922-2.206-.24-.579-.492-.501-.673-.51l-.573-.008c-.2 0-.522.074-.795.372-.273.298-1.045 1.02-1.045 2.479s1.07 2.868 1.219 3.068c.15.198 2.095 3.197 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.575-.084 1.767-.723 2.016-1.426.249-.701.249-1.302.173-1.426-.075-.124-.275-.198-.576-.348z"
+                                fill="currentColor" />
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M12 2C6.48 2 2 6.48 2 12c0 1.76.455 3.414 1.258 4.852L2 22l5.305-1.189C8.683 21.579 10.3 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18.232c-1.503 0-2.936-.38-4.184-1.065l-.3-.163-3.116.697.712-3.003-.18-.282A8.204 8.204 0 013.768 12 8.24 8.24 0 0112 3.768 8.24 8.24 0 0120.232 12 8.24 8.24 0 0112 20.232z"
+                                fill="currentColor" />
+                        </svg>
+                        Agendar Consultoría Estratégica
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Social Proof / Logos -->
+        <section id="clientes" class="social-proof section-scroll">
+            <div class="container">
+                <h6>HEMOS TRANSFORMADO PROCESOS EN</h6>
+                <div class="logo-marquee">
+                    <!-- Placeholders for Client Logos -->
+                    <img src="" alt="ChileCompra Logo">
+                    <img src="" alt="Banco Falabella Logo">
+                    <img src="" alt="VOLVO Logo">
+                    <img src="" alt="Mercedes-Benz Logo">
+                    <img src="" alt="OpenEnglish Logo">
+                    <img src="" alt="Shell Logo">
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Human-centered AI (Service Cards) -->
+        <section id="servicios" class="services section-padding section-scroll">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Human-centered AI. Humana, Ética y Eficiente</h2>
+                    <p class="subtitle">La fusión perfecta entre Robustez Técnica y foco en la Experiencia de Usuario.
+                    </p>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="card-image-wrapper">
+                            <img src="" alt="Continuidad Operativa">
+                        </div>
+                        <div class="card-content">
+                            <h3>Continuidad Operativa Inteligente</h3>
+                            <p>Implementamos IA para que el trabajo no dependa de cuellos de botella humanos,
+                                <strong>garantizamos que tu operación nunca se detenga.</strong></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-image-wrapper">
+                            <img src="" alt="Cumplimiento">
+                        </div>
+                        <div class="card-content">
+                            <h3>Cumplimiento y Transparencia</h3>
+                            <p>Automatizamos procesos críticos <strong>reduciendo errores humanos, asegurando
+                                    trazabilidad total y cumplimiento normativo en cada paso.</strong></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-image-wrapper">
+                            <img src="" alt="Rentabilidad">
+                        </div>
+                        <div class="card-content">
+                            <h3>Rentabilidad con Propósito</h3>
+                            <p>Optimizamos el uso de recursos. <strong>Libera tu potencial operativo y convierte la
+                                    eficiencia en tu mayor ventaja competitiva.</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="center-btn">
+                    <a href="#contacto" class="btn btn-primary">Consultar viabilidad de mi proyecto</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Specialization Section -->
+        <section id="especializacion" class="specialization section-padding section-scroll">
+            <div class="container">
+                <h2 class="text-center">Nuestra especialización tecnológica</h2>
+                <div class="grid-3 mt-lg">
+                    <div class="spec-card">
+                        <h3>Ecosistemas de Automatización</h3>
+                        <p>Integramos plataformas (ERPs, CRMs, bases de datos) <strong>para eliminar cuellos de botella
+                                y reducir tiempos de ejecución drásticamente.</strong></p>
+                    </div>
+                    <div class="spec-card">
+                        <h3>Agentes y Asistentes IA</h3>
+                        <p>Desarrollamos agentes inteligentes para <strong>atención al cliente, soporte técnico o
+                                gestión interna, disponibles 24/7 con el tono y alma de tu marca.</strong></p>
+                    </div>
+                    <div class="spec-card">
+                        <h3>Inteligencia de Datos Aplicada</h3>
+                        <p>Transformamos silos de información en dashboards accionables e IA predictiva.
+                            <strong>Identificamos oportunidades de ahorro y crecimiento en tiempo real.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Methodology -->
+        <section id="metodologia" class="methodology section-padding section-scroll">
+            <div class="container">
+                <h2 class="text-center">Nuestra Metodología: Del Diagnóstico a la Autonomía</h2>
+
+                <div class="steps-container mt-lg">
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h3>Diagnóstico y Roadmap</h3>
+                            <p>Analizamos tus procesos actuales y diseñamos una hoja de ruta técnica clara hacia la
+                                automatización.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h3>Desarrollo e Integración</h3>
+                            <p>Construimos e implementamos los modelos y agentes de IA, integrándolos a tu ecosistema
+                                sin fricciones.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h3>Despliegue y Optimización</h3>
+                            <p>Lanzamiento seguro, capacitación para tu equipo y mejora continua del sistema.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Vision Section -->
+        <section id="vision" class="vision section-scroll">
+            <div class="vision-bg">
+                <img src="" alt="Background Future Workspace Placeholder" class="bg-placeholder">
+                <div class="overlay"></div>
+            </div>
+            <div class="container vision-content">
+                <h2>Nuestra Visión: El futuro de la colaboración</h2>
+                <h3 class="highlight-green">Visualizamos un ecosistema donde la tecnología no reemplaza el talento, sino
+                    que lo libera.</h3>
+                <p>Diseñamos un mañana empresarial donde la fricción operativa desaparece, permitiendo que los equipos
+                    se enfoquen en la estrategia, creatividad y el impacto real. La IA es la herramienta; el propósito
+                    es humano.</p>
+            </div>
+        </section>
+
+        <!-- 7. Final CTA & Mercado Público -->
+        <section id="contacto" class="cta-section section-padding section-scroll">
+            <div class="container text-center">
+                <h2>¿Listo para integrar verdadera inteligencia en tus procesos?</h2>
+                <h3 class="highlight-green inline-block mb-md">Ya sea en el sector privado o a través de Mercado
+                    Público,</h3>
+                <p class="mb-lg">estamos preparados para ser tu partner tecnológico.</p>
+                <a href="https://wa.me/" class="btn btn-primary btn-large mb-xl" target="_blank">Agendar Consultoría
+                    Estratégica</a>
+
+                <div class="mercado-publico">
+                    <img src="" alt="ChileCompra Convenio Marco" class="cm-logo">
+                    <p>Proveedor acreditado en Mercado Público</p>
+                </div>
+
+                <!-- Newsletter Form -->
+                <div class="newsletter-wrapper mt-xl">
+                    <h4>Suscríbete a nuestro Newsletter</h4>
+                    <p>Recibe insights sobre IA y automatización</p>
+                    <form id="newsletter-form" class="newsletter-form">
+                        <input type="email" placeholder="Tu correo electrónico" required>
+                        <button type="submit" class="btn btn-primary">Suscribirme</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 8. Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">ingeny labs</div>
+
+            <div class="footer-links">
+                <a href="https://ingenylabs.cl/blog" target="_blank">Visita nuestro Blog</a>
+            </div>
+
+            <div class="footer-social">
+                <a href="#" aria-label="LinkedIn"><img src="" alt="LinkedIn" class="icon-placeholder-dark"></a>
+                <a href="#" aria-label="Instagram"><img src="" alt="Instagram" class="icon-placeholder-dark"></a>
+            </div>
+
+            <div class="footer-copyright">
+                &copy; 2026 Ingeny Labs. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
