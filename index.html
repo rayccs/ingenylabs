@@ -1,92 +1,286 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingeny Labs - Coming Soon</title>
+    <title>Ingeny Labs | IA que transforma la gestión pública y privada</title>
 
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
-
-    <!-- GSAP & ScrollTrigger -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
-
-    <!-- Custom JS -->
-    <script src="script.js" defer></script>
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* Colores extraidos del Figma Brand Kit */
+                        'ingeny-black': '#0a0a0a', /* Fondo principal oscuro */
+                        'ingeny-green': '#1DB954', /* Verde principal (ajustar al hex exacto de tu figma) */
+                        'ingeny-glass': '#1a1a1a', /* Color de las tarjetas */
+                        'ingeny-white': '#ffffff',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Ajustes de Coming Soon */
         body {
-            overflow: hidden;
-            /* Prevenir scroll adicional */
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-        }
-
-        .header-content {
-            justify-content: space-between;
-        }
-
-        h1 {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            background-color: theme('colors.ingeny-black');
+            color: theme('colors.ingeny-white');
         }
     </style>
 </head>
 
-<body>
+<body class="antialiased">
 
-    <!-- 0. Header -->
-    <header class="header" id="main-header">
-        <div class="container header-content">
-            <!-- <a href="#hero" class="logo">
-                ingeny labs
-            </a> -->
+    <header
+        class="w-full bg-ingeny-black py-4 px-6 md:px-12 flex justify-between items-center border-b border-white/10 sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <span class="font-bold text-xl tracking-tight">Xingeny</span>
+        </div>
 
-            <!-- <div class="header-actions">
-                <div class="social-icons">
-                    <a href="#" aria-label="LinkedIn"><img src="" alt="LinkedIn Icon" class="icon-placeholder"></a>
-                    <a href="#" aria-label="Instagram"><img src="" alt="Instagram Icon" class="icon-placeholder"></a>
-                </div>
-            </div> -->
+        <nav class="hidden md:flex gap-8 text-sm font-medium">
+            <a href="#nosotros" class="hover:text-ingeny-green transition-colors">Nosotros</a>
+            <a href="#servicios" class="hover:text-ingeny-green transition-colors">Servicios</a>
+            <a href="#metodologia" class="hover:text-ingeny-green transition-colors">Metodologia</a>
+            <a href="#contacto" class="hover:text-ingeny-green transition-colors">Contacto</a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+            <a href="#" class="text-white hover:text-ingeny-green">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+            </a>
+            <a href="#contacto"
+                class="hidden md:block px-4 py-2 bg-ingeny-green text-ingeny-black text-sm font-bold rounded-full hover:bg-green-500 transition-colors">
+                Agendar Consultoria
+            </a>
         </div>
     </header>
 
-    <main>
-        <!-- 1. Hero Section -->
-        <section id="hero" class="hero section-scroll">
-            <div class="hero-bg-pattern"></div>
-            <div class="container hero-container-centered">
-                <div class="hero-content-centered">
-                    <h1>Próximamente</h1>
-                    <p>Estamos trabajando en nuestra nueva experiencia web.<br>IA que transforma la gestión pública y
-                        privada.</p>
-                    <a href="https://wa.me/" class="btn btn-hero" target="_blank">
-                        <svg class="w-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.3-.767.966-.94 1.164-.173.199-.347.223-.647.075-.301-.15-1.265-.46-2.406-1.48-.888-.788-1.48-1.761-1.653-2.062-.173-.3-.018-.461.13-.611.134-.133.301-.35.451-.524.151-.176.201-.298.301-.5.1-.198.05-.371-.025-.521-.075-.148-.673-1.62-.922-2.206-.24-.579-.492-.501-.673-.51l-.573-.008c-.2 0-.522.074-.795.372-.273.298-1.045 1.02-1.045 2.479s1.07 2.868 1.219 3.068c.15.198 2.095 3.197 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.575-.084 1.767-.723 2.016-1.426.249-.701.249-1.302.173-1.426-.075-.124-.275-.198-.576-.348z"
-                                fill="currentColor" />
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M12 2C6.48 2 2 6.48 2 12c0 1.76.455 3.414 1.258 4.852L2 22l5.305-1.189C8.683 21.579 10.3 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18.232c-1.503 0-2.936-.38-4.184-1.065l-.3-.163-3.116.697.712-3.003-.18-.282A8.204 8.204 0 013.768 12 8.24 8.24 0 0112 3.768 8.24 8.24 0 0120.232 12 8.24 8.24 0 0112 20.232z"
-                                fill="currentColor" />
+    <section
+        class="bg-ingeny-green text-ingeny-black py-20 px-6 text-center flex flex-col items-center justify-center min-h-[60vh]">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 max-w-4xl leading-tight">
+            IA que transforma<br>la gestión pública<br>y privada
+        </h1>
+        <p class="text-lg md:text-xl font-medium max-w-3xl mb-10">
+            Somos un laboratorio experto en automatizar procesos complejos. Ayudamos a instituciones del Estado y
+            empresas a reducir tiempos operativos y maximizar el impacto de su presupuesto con soluciones de IA a
+            medida.
+        </p>
+        <a href="#contacto"
+            class="px-8 py-3 bg-ingeny-black text-white text-base font-bold rounded-full hover:bg-gray-900 transition-colors flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            Agendar Consultoría Estratégica
+        </a>
+    </section>
+
+    <section class="py-10 border-b border-white/10">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-xs font-bold tracking-[0.2em] text-gray-400 mb-8">HEMOS TRANSFORMADO PROCESOS EN</p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+                <span class="font-bold text-xl">ChileCompra</span>
+                <span class="font-bold text-xl">Banco Falabella</span>
+                <span class="font-bold text-xl italic">VOLVO</span>
+                <span class="font-bold text-xl">Mercedes-Benz</span>
+                <span class="font-bold text-xl lowercase">open english</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="nosotros" class="py-20">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-2">Human-centered AI.<br>Humana, Ética y Eficiente</h2>
+            <p class="text-gray-400 mb-16">La fusión perfecta entre Robustez Técnica y foco en la Experiencia de Usuario
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-ingeny-glass p-8 rounded-2xl text-left border border-white/5">
+                    <div class="w-12 h-12 bg-white/10 rounded mb-6 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
-                        Agendar Consultoría
-                    </a>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Continuidad<br>Operativa<br>Inteligente</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Implementamos agentes autónomos que gestionan procesos criticos 24/7. Desde la respuesta a
+                        consultas ciudadanas nasta flujos internos, garantizamos que tu operación nunca se detenga.
+                    </p>
+                </div>
+                <div class="bg-ingeny-glass p-8 rounded-2xl text-left border border-white/5">
+                    <div class="w-12 h-12 bg-white/10 rounded mb-6 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Cumplimiento y<br>Transparencia</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Especialistas en automatización para Instituciones del Estado. Optimizamos la gestión en el
+                        Mercado Público reduciendo errores humanos, asegurando trazabilidad total y cumplimiento
+                        normativo en cada paso.
+                    </p>
+                </div>
+                <div class="bg-ingeny-glass p-8 rounded-2xl text-left border border-white/5">
+                    <div class="w-12 h-12 bg-white/10 rounded mb-6 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Rentabilidad con<br>Propósito</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Eliminamos la carga operativa manual para que tu equipo se enfoque solo en crecer. Libera tu
+                        potencial operativo y convierte la eficiencia en tu mayor ventaja competitiva.
+                    </p>
                 </div>
             </div>
-        </section>
-    </main>
+
+            <a href="#contacto"
+                class="inline-block px-6 py-2 border border-ingeny-green text-ingeny-green text-sm font-bold rounded-full hover:bg-ingeny-green hover:text-ingeny-black transition-colors">
+                Consultar viabilidad de mi proyecto
+            </a>
+        </div>
+    </section>
+
+    <section id="servicios" class="py-20">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-4">Nuestra especialización<br>tecnológica</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-16">
+                Diseñamos soluciones a medida que potencian tu operación. Transformamos tus procesos en el motor
+                autónomo de tu organización.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                <div class="text-left">
+                    <div class="h-32 bg-gray-800 rounded-lg mb-4"></div>
+                    <h3 class="text-lg font-bold mb-2">Ecosistemas de<br>Automatización</h3>
+                    <p class="text-sm text-gray-400">Construimos flujos de trabajo inteligentes que conectan tus
+                        herramientas actuales con IA para eliminar cuellos de botella y reducir tiempos de ejecución
+                        drásticamente.</p>
+                </div>
+                <div class="text-left">
+                    <div class="h-32 bg-gray-800 rounded-lg mb-4"></div>
+                    <h3 class="text-lg font-bold mb-2">Agentes y<br>Asistentes IA</h3>
+                    <p class="text-sm text-gray-400">Implementamos soluciones de lenguaje natural (LLMs) para atención
+                        al cliente, soporte técnico o gestión interna, disponibles 24/7 con el tono y alma de tu marca.
+                    </p>
+                </div>
+                <div class="text-left">
+                    <div class="h-32 bg-gray-800 rounded-lg mb-4"></div>
+                    <h3 class="text-lg font-bold mb-2">Inteligencia de<br>Datos Aplicada</h3>
+                    <p class="text-sm text-gray-400">Transformamos datos dispersos en tableros de control predictivos.
+                        Identificamos oportunidades de ahorro y crecimiento en tiempo real para decisiones basadas en
+                        evidencia.</p>
+                </div>
+            </div>
+
+            <div
+                class="bg-ingeny-glass rounded-2xl p-8 flex flex-col md:flex-row items-center text-left gap-6 border border-white/5">
+                <div class="w-16 h-16 rounded-full bg-gray-700 shrink-0"></div>
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold mb-2">¿Tu desafío requiere una solución única?</h3>
+                    <p class="text-sm text-gray-400">Diseñamos arquitecturas de IA personalizadas para problemas que las
+                        herramientas estándar no pueden resolver. Unimos visión estratégica y ejecución técnica a tu
+                        medida.</p>
+                </div>
+                <a href="#contacto"
+                    class="shrink-0 px-6 py-2 border border-white text-white text-sm font-bold rounded-full hover:bg-white hover:text-black transition-colors">
+                    Consultar viabilidad de mi proyecto
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="metodologia" class="py-20">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-4">Nuestra Metodología: Del<br>Diagnóstico a la Autonomía</h2>
+            <p class="text-gray-400 mb-16">Nos alineamos a los objetivos de tu organización, priorizando siempre una
+                experiencia de usuario intuitiva y de alto rendimiento.</p>
+
+            <div class="space-y-6 text-left">
+                <div class="bg-ingeny-glass p-6 rounded-2xl border border-white/5 flex gap-4 items-start">
+                    <div class="mt-1"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                            </path>
+                        </svg></div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">1. Diagnóstico y Roadmap</h4>
+                        <p class="text-sm text-gray-400">No empezamos con código, sino con entendimiento: Analizamos tu
+                            arquitectura actual para identificar los puntos de mayor impacto y trazamos una hoja de ruta
+                            técnica alineada con tus objetivos de negocio.</p>
+                    </div>
+                </div>
+                <div class="bg-ingeny-glass p-6 rounded-2xl border border-white/5 flex gap-4 items-start">
+                    <div class="mt-1"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg></div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">2. Desarrollo e Integración</h4>
+                        <p class="text-sm text-gray-400">Construimos tu solución a medida utilizando los modelos más
+                            avanzados de IA. Nos aseguramos de que el sistema se integre de forma fluida y ética con tus
+                            herramientas y equipo humano.</p>
+                    </div>
+                </div>
+                <div class="bg-ingeny-glass p-6 rounded-2xl border border-white/5 flex gap-4 items-start">
+                    <div class="mt-1"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg></div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">3. Despliegue y Optimización</h4>
+                        <p class="text-sm text-gray-400">Lanzamos la solución y monitoreamos su rendimiento en tiempo
+                            real. Ajustamos y escalamos para garantizar que tu motor de IA aprenda, evolucione y
+                            entregue resultados medibles desde el primer día.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="py-20 text-center">
+        <div class="max-w-3xl mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-6">¿Listo para integrar verdadera<br>inteligencia en tus procesos?</h2>
+            <p class="text-gray-400 mb-8">
+                Diseñamos soluciones de IA a medida que resuelven desafíos reales, garantizando una adopción fluida y
+                resultados medibles. Ya sea en el sector privado o a través de Mercado Público, somos el socio
+                estratégico que tu organización necesita para liderar el cambio.
+            </p>
+            <a href="#"
+                class="inline-block px-8 py-3 bg-ingeny-green text-ingeny-black font-bold rounded-full hover:bg-green-500 transition-colors mb-16">
+                Agendar Consultoría Estratégica
+            </a>
+
+            <div class="flex flex-col items-center justify-center mb-20">
+                <span class="font-bold text-lg">ChileCompra</span>
+                <span class="text-xs text-gray-500">Proveedor acreditado en Mercado Público</span>
+            </div>
+
+            <div
+                class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <a href="#" class="hover:text-white transition-colors mb-4 md:mb-0">Visita nuestro Blog</a>
+                <p>&copy; Ingeny Labs. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </section>
 
 </body>
 
