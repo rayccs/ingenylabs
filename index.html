@@ -65,9 +65,9 @@
 
     <!-- Header Sticky -->
     <header
-        class="w-full bg-ingeny-black/95 backdrop-blur-md py-5 px-8 md:px-16 flex justify-between items-center sticky top-0 z-50 border-b border-white/5 transition-all duration-300"
+        class="w-full bg-ingeny-black/95 backdrop-blur-md h-[80px] px-8 md:px-16 flex justify-between items-center sticky top-0 z-50 border-b border-white/5 transition-all duration-300"
         id="header">
-        <a href="#" class="flex items-center">
+        <a href="#" class="flex items-center h-[80px]">
             <img src="./assets/logo.png" alt="Ingeny Labs Logo" class="h-10 object-contain">
         </a>
 
@@ -94,8 +94,8 @@
                 </svg>
             </a>
             <a href="#contacto"
-                class="flex items-center gap-2 px-6 py-3 bg-ingeny-lightgreen text-black hover:bg-white transition-colors text-base font-bold rounded-full">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                class="font-title flex items-center justify-center gap-2 px-6 h-[40px] bg-ingeny-lightgreen text-black hover:bg-white transition-colors text-[15px] font-bold rounded-full">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
                 </svg>
@@ -133,13 +133,13 @@
             <h1 class="text-6xl md:text-8xl lg:text-[7rem] font-title font-bold mb-8 tracking-tight leading-[1.05]">
                 IA que transforma<br>la gestión pública<br>y privada
             </h1>
-            <p class="text-xl md:text-2xl font-medium max-w-4xl mb-12 leading-relaxed">
-                <span class="font-bold">Somos un laboratorio experto en automatizar procesos complejos.</span> Ayudamos
-                a instituciones del Estado y empresas a reducir tiempos operativos y maximizar el impacto de su
-                presupuesto con soluciones de IA a medida.
+            <p class="text-xl md:text-2xl font-medium text-gray-300 max-w-4xl mb-12 leading-relaxed">
+                Somos un laboratorio experto en automatizar procesos complejos. Ayudamos a instituciones del Estado y
+                empresas a reducir tiempos operativos y maximizar el impacto de su presupuesto con soluciones de IA a
+                medida.
             </p>
             <a href="#contacto"
-                class="flex items-center gap-2 px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors shadow-2xl">
+                class="font-title flex items-center justify-center px-10 h-[55px] bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors shadow-2xl">
                 Agendar Consultoría
             </a>
         </div>
@@ -171,9 +171,8 @@
     <section id="nosotros" class="py-32 bg-ingeny-black section">
         <div class="max-w-7xl mx-auto px-6 text-center -mt-[60px]">
             <h2 class="text-5xl md:text-6xl font-bold mb-6">Human-Centered AI.<br>Humana, Ética y Eficiente</h2>
-            <p class="text-gray-400 mb-20 text-xl font-normal">La fusión perfecta entre <span
-                    class="text-white">Robustez Técnica</span> y <span class="text-white">foco en la Experiencia de
-                    Usuario.</span></p>
+            <p class="text-gray-300 mb-20 text-xl font-medium">La fusión perfecta entre Robustez Técnica y foco en la
+                Experiencia de Usuario.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
                 <!-- Card 1 -->
@@ -183,11 +182,9 @@
                         class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition-opacity">
                     <div class="p-10 flex-grow">
                         <h3 class="text-3xl font-bold font-title mb-6">Continuidad<br>Operativa<br>Inteligente</h3>
-                        <p class="text-base text-gray-400 leading-relaxed font-normal">
+                        <p class="text-base text-white leading-relaxed font-normal">
                             Implementamos agentes autónomos que gestionan procesos críticos 24/7. Desde la respuesta a
-                            consultas ciudadanas hasta flujos internos, <span
-                                class="text-ingeny-lightgreen font-medium">garantizamos que tu operación nunca se
-                                detenga.</span>
+                            consultas ciudadanas hasta flujos internos, garantizamos que tu operación nunca se detenga.
                         </p>
                     </div>
                 </div>
@@ -198,11 +195,10 @@
                         class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition-opacity">
                     <div class="p-10 flex-grow">
                         <h3 class="text-3xl font-bold font-title mb-6">Cumplimiento y<br>Transparencia</h3>
-                        <p class="text-base text-gray-400 leading-relaxed font-normal">
+                        <p class="text-base text-white leading-relaxed font-normal">
                             Especialistas en automatización para Instituciones del Estado. Optimizamos la gestión en el
-                            Mercado Público <span class="text-ingeny-lightgreen font-medium">reduciendo
-                                errores humanos, asegurando
-                                trazabilidad total y cumplimiento normativo</span> en cada paso.
+                            Mercado Público reduciendo errores humanos, asegurando trazabilidad total y cumplimiento
+                            normativo en cada paso.
                         </p>
                     </div>
                 </div>
@@ -213,18 +209,16 @@
                         class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition-opacity">
                     <div class="p-10 flex-grow">
                         <h3 class="text-3xl font-bold font-title mb-6">Rentabilidad con<br>Propósito</h3>
-                        <p class="text-base text-gray-400 leading-relaxed font-normal">
-                            Eliminamos la carga operativa manual para que tu equipo se enfoque solo en crecer. <span
-                                class="text-ingeny-lightgreen font-medium">Libera tu potencial
-                                operativo y convierte la
-                                eficiencia en tu mayor ventaja competitiva.</span>
+                        <p class="text-base text-white leading-relaxed font-normal">
+                            Eliminamos la carga operativa manual para que tu equipo se enfoque solo en crecer. Libera tu
+                            potencial operativo y convierte la eficiencia en tu mayor ventaja competitiva.
                         </p>
                     </div>
                 </div>
             </div>
 
             <a href="#contacto"
-                class="inline-block px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors">
+                class="font-title inline-flex items-center justify-center px-10 h-[48px] bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors">
                 Consultar viabilidad de mi proyecto
             </a>
         </div>
@@ -249,10 +243,9 @@
                     </div>
                     <div class="p-8">
                         <h3 class="text-3xl font-bold font-title mb-6">Ecosistemas de<br>Automatización</h3>
-                        <p class="text-lg text-gray-400 leading-relaxed font-normal">Construimos flujos de trabajo
-                            inteligentes que conectan tus herramientas actuales con IA <span
-                                class="text-ingeny-lightgreen">para eliminar cuellos de botella y reducir tiempos de
-                                ejecución drásticamente.</span></p>
+                        <p class="text-base text-white leading-relaxed font-normal">Construimos flujos de trabajo
+                            inteligentes que conectan tus herramientas actuales con IA para eliminar cuellos de botella
+                            y reducir tiempos de ejecución drásticamente.</p>
                     </div>
                 </div>
                 <!-- Servicio 2 -->
@@ -263,10 +256,9 @@
                     </div>
                     <div class="p-8">
                         <h3 class="text-3xl font-bold font-title mb-6">Agentes y<br>Asistentes IA</h3>
-                        <p class="text-lg text-gray-400 leading-relaxed font-normal">Implementamos soluciones de
-                            lenguaje natural (LLMs) para <span class="text-ingeny-lightgreen">atención al cliente,
-                                soporte
-                                técnico o gestión interna, disponibles 24/7 con el tono y alma de tu marca.</span></p>
+                        <p class="text-base text-white leading-relaxed font-normal">Implementamos soluciones de lenguaje
+                            natural (LLMs) para atención al cliente, soporte técnico o gestión interna, disponibles 24/7
+                            con el tono y alma de tu marca.</p>
                     </div>
                 </div>
                 <!-- Servicio 3 -->
@@ -277,10 +269,9 @@
                     </div>
                     <div class="p-8">
                         <h3 class="text-3xl font-bold font-title mb-6">Inteligencia de<br>Datos Aplicada</h3>
-                        <p class="text-lg text-gray-400 leading-relaxed font-normal">Transformamos datos dispersos en
-                            tableros de control predictivos. <span class="text-ingeny-lightgreen">Identificamos
-                                oportunidades
-                                de ahorro y crecimiento en tiempo real</span> para decisiones basadas en evidencia.</p>
+                        <p class="text-base text-white leading-relaxed font-normal">Transformamos datos dispersos en
+                            tableros de control predictivos. Identificamos oportunidades de ahorro y crecimiento en
+                            tiempo real para decisiones basadas en evidencia.</p>
                     </div>
                 </div>
             </div>
@@ -297,7 +288,7 @@
                     <p class="text-gray-400 mb-10 max-w-xl text-lg font-normal">Realizamos auditorías rápidas y
                         diagnósticos preventivos adaptados a la Compra Ágil y Requerimientos de Ejecución Inmediata.</p>
                     <a href="#contacto"
-                        class="self-start px-10 py-5 bg-transparent border-2 border-ingeny-lightgreen text-ingeny-lightgreen text-lg font-bold rounded-full hover:bg-ingeny-lightgreen hover:text-black transition-colors">
+                        class="font-title flex items-center justify-center self-start px-10 h-[48px] bg-transparent border-2 border-ingeny-lightgreen text-ingeny-lightgreen text-lg font-bold rounded-full hover:bg-ingeny-lightgreen hover:text-black transition-colors">
                         Solicitar diagnóstico preventivo
                     </a>
                 </div>
@@ -316,7 +307,7 @@
                         personalizadas para problemas que las herramientas estándar no pueden resolver. Unimos visión
                         estratégica y ejecución técnica a tu medida.</p>
                     <a href="#contacto"
-                        class="self-start px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors border border-transparent">
+                        class="font-title flex items-center justify-center self-start px-10 h-[48px] bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors border border-transparent">
                         Consultar viabilidad de mi proyecto
                     </a>
                 </div>
@@ -340,7 +331,7 @@
                     </div>
                     <div class="flex-grow">
                         <h4 class="font-bold font-title text-2xl mb-4">1. Diagnóstico y Roadmap</h4>
-                        <p class="text-gray-400 leading-relaxed text-lg font-normal">No empezamos con código, sino con
+                        <p class="text-base text-white leading-relaxed font-normal">No empezamos con código, sino con
                             entendimiento. Analizamos tu arquitectura actual para identificar los puntos de mayor
                             impacto y trazamos una hoja de ruta técnica alineada con tus objetivos de negocio.</p>
                     </div>
@@ -353,7 +344,7 @@
                     </div>
                     <div class="flex-grow">
                         <h4 class="font-bold font-title text-2xl mb-4">2. Desarrollo e Integración</h4>
-                        <p class="text-gray-400 leading-relaxed text-lg font-normal">Construimos tu solución a medida
+                        <p class="text-base text-white leading-relaxed font-normal">Construimos tu solución a medida
                             utilizando los modelos más avanzados de IA. Nos aseguramos de que el sistema se integre de
                             forma fluida y ética con tus herramientas y equipo humano.</p>
                     </div>
@@ -366,7 +357,7 @@
                     </div>
                     <div class="flex-grow">
                         <h4 class="font-bold font-title text-2xl mb-4">3. Despliegue y Optimización</h4>
-                        <p class="text-gray-400 leading-relaxed text-lg font-normal">Lanzamos la solución y monitoreamos
+                        <p class="text-base text-white leading-relaxed font-normal">Lanzamos la solución y monitoreamos
                             su rendimiento en tiempo real. Ajustamos y escalamos para garantizar que tu motor de IA
                             aprenda, evolucione y entregue resultados medibles desde el primer día.</p>
                     </div>
@@ -404,8 +395,8 @@
                     Público</span>, somos el socio estratégico que tu organización necesita para liderar el cambio.
             </p>
 
-            <a href="#"
-                class="inline-flex items-center gap-3 px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors mb-24 shadow-2xl">
+            <a href="#contacto"
+                class="font-title inline-flex items-center justify-center gap-3 px-10 h-[55px] bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors mb-24 shadow-2xl">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
@@ -422,7 +413,7 @@
                         class="bg-white text-black px-8 py-4 rounded-full sm:flex-grow max-w-sm outline-none font-medium placeholder:text-gray-500"
                         required>
                     <button type="submit"
-                        class="px-10 py-4 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-colors">
+                        class="font-title px-10 h-[55px] border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-colors flex items-center justify-center">
                         Suscribirme
                     </button>
                 </form>
