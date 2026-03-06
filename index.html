@@ -40,18 +40,23 @@
             font-family: theme('fontFamily.sans');
         }
 
+        h1,
+        h2,
+        h3,
+        h4,
         .font-title {
-            font-family: 'Cal Sans', sans-serif !important;
+            font-family: theme('fontFamily.title');
         }
 
         .active-link {
             color: theme('colors.ingeny-green');
         }
 
-        /* Better contrast utilities */
-        .text-body-contrast {
-            color: #d1d5db;
-            /* gray-300 */
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(36, 189, 88, 0.8) 0%, rgba(0, 0, 0, 1) 100%);
+            background-image: url('./assets/hero.png');
+            background-size: cover;
+            background-position: center;
         }
     </style>
 </head>
@@ -60,14 +65,14 @@
 
     <!-- Header Sticky -->
     <header
-        class="w-full bg-ingeny-black/95 backdrop-blur-md h-[80px] px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 border-b border-white/5 transition-all duration-300"
+        class="w-full bg-ingeny-black/95 backdrop-blur-md py-5 px-8 md:px-16 flex justify-between items-center sticky top-0 z-50 border-b border-white/5 transition-all duration-300"
         id="header">
-        <a href="#" class="flex items-center h-full">
-            <img src="./assets/logo.png" alt="Ingeny Labs Logo" class="h-8 md:h-9 object-contain">
+        <a href="#" class="flex items-center">
+            <img src="./assets/logo.png" alt="Ingeny Labs Logo" class="h-10 object-contain">
         </a>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden md:flex gap-8 text-[15px] font-normal">
+        <nav class="hidden md:flex gap-10 text-base font-normal">
             <a href="#nosotros" class="nav-link hover:text-ingeny-green transition-colors">Nosotros</a>
             <a href="#servicios" class="nav-link hover:text-ingeny-green transition-colors">Servicios</a>
             <a href="#metodologia" class="nav-link hover:text-ingeny-green transition-colors">Metodología</a>
@@ -75,21 +80,25 @@
         </nav>
 
         <!-- Social + CTA -->
-        <div class="hidden md:flex items-center gap-5">
+        <div class="hidden md:flex items-center gap-6">
             <a href="#" aria-label="LinkedIn" class="text-white hover:text-ingeny-green transition-colors">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
             </a>
             <a href="#" aria-label="Instagram" class="text-white hover:text-ingeny-green transition-colors">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                 </svg>
             </a>
             <a href="#contacto"
-                class="font-title flex items-center gap-2 px-5 py-2.5 bg-ingeny-lightgreen text-black hover:bg-white transition-colors text-[15px] font-bold rounded-full">
+                class="flex items-center gap-2 px-6 py-3 bg-ingeny-lightgreen text-black hover:bg-white transition-colors text-base font-bold rounded-full">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
+                </svg>
                 Agendar Consultoría
             </a>
         </div>
@@ -119,244 +128,247 @@
 
     <!-- Hero Section -->
     <section
-        class="relative w-full min-h-[calc(100vh-80px)] flex flex-col items-center justify-center py-10 px-6 overflow-hidden bg-ingeny-black">
-        <div class="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
-
-            <!-- Accessible Hidden H1 -->
-            <h1 class="sr-only font-title">IA que transforma la gestión pública y privada</h1>
-
-            <!-- Image with glass effect text/design from Figma -->
-            <img src="./assets/hero.png" alt="Hero Glass Banner: IA que transforma la gestión pública y privada"
-                class="w-full max-w-4xl h-auto object-contain mb-8 filter drop-shadow-2xl">
-
-            <p class="text-lg md:text-xl font-normal text-white max-w-3xl mb-10 text-center leading-relaxed">
-                Somos un laboratorio experto en automatizar procesos complejos. Ayudamos a instituciones del Estado y
-                empresas a reducir tiempos operativos y maximizar el impacto de su presupuesto con soluciones de IA a
-                medida.
+        class="hero-bg text-ingeny-black py-28 px-6 text-center flex flex-col items-center justify-center min-h-[75vh] relative overflow-hidden">
+        <div class="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
+            <h1 class="text-6xl md:text-8xl lg:text-[7rem] font-title font-bold mb-8 tracking-tight leading-[1.05]">
+                IA que transforma<br>la gestión pública<br>y privada
+            </h1>
+            <p class="text-xl md:text-2xl font-medium max-w-4xl mb-12 leading-relaxed">
+                <span class="font-bold">Somos un laboratorio experto en automatizar procesos complejos.</span> Ayudamos
+                a instituciones del Estado y empresas a reducir tiempos operativos y maximizar el impacto de su
+                presupuesto con soluciones de IA a medida.
             </p>
             <a href="#contacto"
-                class="font-title flex items-center justify-center px-8 py-4 bg-ingeny-lightgreen text-black text-lg md:text-xl rounded-full hover:bg-white transition-colors shadow-2xl">
+                class="flex items-center gap-2 px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors shadow-2xl">
                 Agendar Consultoría
             </a>
         </div>
     </section>
 
     <!-- Logos Section -->
-    <section class="py-12 border-b border-white/10 bg-ingeny-black">
+    <section class="py-16 border-b border-white/10 bg-ingeny-black">
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-sm md:text-base font-bold tracking-[0.2em] text-white uppercase mb-8">NUESTRO EQUIPO HA
+            <p class="text-[1.1rem] md:text-[1.4rem] font-bold tracking-[0.25em] text-white uppercase mb-12">NUESTRO
+                EQUIPO HA
                 LIDERADO PROYECTOS EN</p>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-80">
+            <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-80">
                 <img src="./assets/logos/chilecompra.png" alt="ChileCompra"
-                    class="h-8 md:h-10 object-contain hover:opacity-100 transition-opacity">
+                    class="h-10 md:h-14 object-contain hover:opacity-100 transition-opacity">
                 <img src="./assets/logos/falla.png" alt="Banco Falabella"
-                    class="h-8 md:h-10 object-contain hover:opacity-100 transition-opacity">
+                    class="h-10 md:h-12 object-contain hover:opacity-100 transition-opacity">
                 <img src="./assets/logos/volvo.png" alt="Volvo"
-                    class="h-6 md:h-8 object-contain hover:opacity-100 transition-opacity">
+                    class="h-8 md:h-10 object-contain hover:opacity-100 transition-opacity">
                 <img src="./assets/logos/open.png" alt="Open English"
-                    class="h-8 md:h-10 object-contain hover:opacity-100 transition-opacity">
-                <span class="font-bold text-xl md:text-2xl font-title tracking-tight text-white">Mercedes-Benz</span>
+                    class="h-10 md:h-14 object-contain hover:opacity-100 transition-opacity">
+                <span class="font-bold text-2xl md:text-4xl font-title tracking-tight">Mercedes-Benz</span>
                 <img src="./assets/logos/shell.png" alt="Shell"
-                    class="h-8 md:h-10 object-contain hover:opacity-100 transition-opacity">
+                    class="h-10 md:h-14 object-contain hover:opacity-100 transition-opacity">
             </div>
         </div>
     </section>
 
     <!-- Nosotros Section -->
-    <section id="nosotros" class="py-24 bg-ingeny-black section">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <h2 class="text-4xl md:text-5xl font-title mb-4">Human-Centered AI.<br>Humana, Ética y Eficiente</h2>
-            <p class="text-white text-lg font-normal mb-16">La fusión perfecta entre Robustez Técnica y foco en la
-                Experiencia de Usuario.</p>
+    <section id="nosotros" class="py-32 bg-ingeny-black section">
+        <div class="max-w-7xl mx-auto px-6 text-center -mt-[60px]">
+            <h2 class="text-5xl md:text-6xl font-bold mb-6">Human-Centered AI.<br>Humana, Ética y Eficiente</h2>
+            <p class="text-gray-400 mb-20 text-xl font-normal">La fusión perfecta entre <span
+                    class="text-white">Robustez Técnica</span> y <span class="text-white">foco en la Experiencia de
+                    Usuario.</span></p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
                 <!-- Card 1 -->
                 <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-white/20 border border-transparent transition-colors">
+                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-ingeny-green/50 transition-colors">
                     <img src="./assets/human-centered/human1.png" alt="Continuidad Operativa"
-                        class="w-full h-56 object-cover opacity-90 group-hover:opacity-100 transition-opacity">
-                    <div class="p-8 flex-grow">
-                        <h3 class="text-2xl font-title mb-4 text-white">Continuidad<br>Operativa<br>Inteligente</h3>
-                        <p class="text-[15px] text-body-contrast leading-relaxed font-normal">
+                        class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                    <div class="p-10 flex-grow">
+                        <h3 class="text-3xl font-bold font-title mb-6">Continuidad<br>Operativa<br>Inteligente</h3>
+                        <p class="text-base text-gray-400 leading-relaxed font-normal">
                             Implementamos agentes autónomos que gestionan procesos críticos 24/7. Desde la respuesta a
-                            consultas ciudadanas hasta flujos internos, garantizamos que tu operación nunca se detenga.
+                            consultas ciudadanas hasta flujos internos, <span
+                                class="text-ingeny-lightgreen font-medium">garantizamos que tu operación nunca se
+                                detenga.</span>
                         </p>
                     </div>
                 </div>
                 <!-- Card 2 -->
                 <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-white/20 border border-transparent transition-colors">
+                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-ingeny-green/50 transition-colors">
                     <img src="./assets/human-centered/human2.png" alt="Cumplimiento y Transparencia"
-                        class="w-full h-56 object-cover opacity-90 group-hover:opacity-100 transition-opacity">
-                    <div class="p-8 flex-grow">
-                        <h3 class="text-2xl font-title mb-4 text-white">Cumplimiento y<br>Transparencia</h3>
-                        <p class="text-[15px] text-body-contrast leading-relaxed font-normal">
+                        class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                    <div class="p-10 flex-grow">
+                        <h3 class="text-3xl font-bold font-title mb-6">Cumplimiento y<br>Transparencia</h3>
+                        <p class="text-base text-gray-400 leading-relaxed font-normal">
                             Especialistas en automatización para Instituciones del Estado. Optimizamos la gestión en el
-                            Mercado Público reduciendo errores humanos, asegurando trazabilidad total y cumplimiento
-                            normativo en cada paso.
+                            Mercado Público <span class="text-ingeny-lightgreen font-medium">reduciendo
+                                errores humanos, asegurando
+                                trazabilidad total y cumplimiento normativo</span> en cada paso.
                         </p>
                     </div>
                 </div>
                 <!-- Card 3 -->
                 <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-white/20 border border-transparent transition-colors">
+                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-ingeny-green/50 transition-colors">
                     <img src="./assets/human-centered/human3.png" alt="Rentabilidad con Propósito"
-                        class="w-full h-56 object-cover opacity-90 group-hover:opacity-100 transition-opacity">
-                    <div class="p-8 flex-grow">
-                        <h3 class="text-2xl font-title mb-4 text-white">Rentabilidad con<br>Propósito</h3>
-                        <p class="text-[15px] text-body-contrast leading-relaxed font-normal">
-                            Eliminamos la carga operativa manual para que tu equipo se enfoque solo en crecer. Libera tu
-                            potencial operativo y convierte la eficiencia en tu mayor ventaja competitiva.
+                        class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                    <div class="p-10 flex-grow">
+                        <h3 class="text-3xl font-bold font-title mb-6">Rentabilidad con<br>Propósito</h3>
+                        <p class="text-base text-gray-400 leading-relaxed font-normal">
+                            Eliminamos la carga operativa manual para que tu equipo se enfoque solo en crecer. <span
+                                class="text-ingeny-lightgreen font-medium">Libera tu potencial
+                                operativo y convierte la
+                                eficiencia en tu mayor ventaja competitiva.</span>
                         </p>
                     </div>
                 </div>
             </div>
 
             <a href="#contacto"
-                class="font-title inline-block px-8 py-4 bg-transparent border border-ingeny-lightgreen text-ingeny-lightgreen text-[15px] md:text-lg rounded-full hover:bg-ingeny-lightgreen hover:text-black transition-colors">
+                class="inline-block px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors">
                 Consultar viabilidad de mi proyecto
             </a>
         </div>
     </section>
 
     <!-- Servicios Section -->
-    <section id="servicios" class="py-24 bg-ingeny-black border-t border-white/5 section">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <h2 class="text-4xl md:text-5xl font-title mb-4">Nuestra especialización<br>tecnológica</h2>
-            <p class="text-body-contrast max-w-2xl mx-auto mb-16 text-lg font-normal">
+    <section id="servicios" class="py-32 bg-ingeny-black border-t border-white/5 section">
+        <div class="max-w-7xl mx-auto px-6 text-center -mt-[60px]">
+            <h2 class="text-5xl md:text-6xl font-bold mb-6 font-title">Nuestra especialización<br>tecnológica</h2>
+            <p class="text-gray-400 max-w-3xl mx-auto mb-20 text-xl font-normal">
                 Diseñamos soluciones a medida que potencian tu operación. Transformamos tus procesos en el motor
                 autónomo de tu organización.
             </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 text-left">
+            <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 text-left border border-white/10 rounded-2xl overflow-hidden p-8 md:p-12 gap-y-12">
                 <!-- Servicio 1 -->
-                <div class="flex flex-col bg-ingeny-card rounded-2xl overflow-hidden border border-white/5 h-full">
-                    <div class="w-full h-48 overflow-hidden">
+                <div class="flex flex-col bg-ingeny-card rounded-xl overflow-hidden">
+                    <div class="w-full h-56 bg-ingeny-gray overflow-hidden">
                         <img src="./assets/beneficios/beneficio1.png" alt="Ecosistemas de Automatización"
-                            class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
+                            class="w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity">
                     </div>
-                    <div class="p-8 flex-grow">
-                        <h3 class="text-2xl font-title mb-4 text-white">Ecosistemas de<br>Automatización</h3>
-                        <p class="text-[15px] text-body-contrast leading-relaxed font-normal">Construimos flujos de
-                            trabajo inteligentes que conectan tus herramientas actuales con IA para eliminar cuellos de
-                            botella y reducir tiempos de ejecución drásticamente.</p>
+                    <div class="p-8">
+                        <h3 class="text-3xl font-bold font-title mb-6">Ecosistemas de<br>Automatización</h3>
+                        <p class="text-lg text-gray-400 leading-relaxed font-normal">Construimos flujos de trabajo
+                            inteligentes que conectan tus herramientas actuales con IA <span
+                                class="text-ingeny-lightgreen">para eliminar cuellos de botella y reducir tiempos de
+                                ejecución drásticamente.</span></p>
                     </div>
                 </div>
                 <!-- Servicio 2 -->
-                <div class="flex flex-col bg-ingeny-card rounded-2xl overflow-hidden border border-white/5 h-full">
-                    <div class="w-full h-48 overflow-hidden">
+                <div class="flex flex-col bg-ingeny-card rounded-xl overflow-hidden">
+                    <div class="w-full h-56 bg-ingeny-gray overflow-hidden">
                         <img src="./assets/beneficios/beneficio2.png" alt="Agentes y Asistentes IA"
-                            class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
+                            class="w-full h-full object-cover filter grayscale opacity-70 hover:opacity-100 transition-opacity hover:grayscale-0">
                     </div>
-                    <div class="p-8 flex-grow">
-                        <h3 class="text-2xl font-title mb-4 text-white">Agentes y<br>Asistentes IA</h3>
-                        <p class="text-[15px] text-body-contrast leading-relaxed font-normal">Implementamos soluciones
-                            de lenguaje natural (LLMs) para atención al cliente, soporte técnico o gestión interna,
-                            disponibles 24/7 con el tono y alma de tu marca.</p>
+                    <div class="p-8">
+                        <h3 class="text-3xl font-bold font-title mb-6">Agentes y<br>Asistentes IA</h3>
+                        <p class="text-lg text-gray-400 leading-relaxed font-normal">Implementamos soluciones de
+                            lenguaje natural (LLMs) para <span class="text-ingeny-lightgreen">atención al cliente,
+                                soporte
+                                técnico o gestión interna, disponibles 24/7 con el tono y alma de tu marca.</span></p>
                     </div>
                 </div>
                 <!-- Servicio 3 -->
-                <div class="flex flex-col bg-ingeny-card rounded-2xl overflow-hidden border border-white/5 h-full">
-                    <div class="w-full h-48 overflow-hidden">
+                <div class="flex flex-col bg-ingeny-card rounded-xl overflow-hidden">
+                    <div class="w-full h-56 bg-ingeny-gray overflow-hidden">
                         <img src="./assets/beneficios/beneficio3.png" alt="Inteligencia de Datos Aplicada"
-                            class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
+                            class="w-full h-full object-cover filter grayscale opacity-70 hover:opacity-100 transition-opacity hover:grayscale-0">
                     </div>
-                    <div class="p-8 flex-grow">
-                        <h3 class="text-2xl font-title mb-4 text-white">Inteligencia de<br>Datos Aplicada</h3>
-                        <p class="text-[15px] text-body-contrast leading-relaxed font-normal">Transformamos datos
-                            dispersos en tableros de control predictivos. Identificamos oportunidades de ahorro y
-                            crecimiento en tiempo real para decisiones basadas en evidencia.</p>
+                    <div class="p-8">
+                        <h3 class="text-3xl font-bold font-title mb-6">Inteligencia de<br>Datos Aplicada</h3>
+                        <p class="text-lg text-gray-400 leading-relaxed font-normal">Transformamos datos dispersos en
+                            tableros de control predictivos. <span class="text-ingeny-lightgreen">Identificamos
+                                oportunidades
+                                de ahorro y crecimiento en tiempo real</span> para decisiones basadas en evidencia.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Soluciones Ágiles Banners -->
-            <div class="flex flex-col gap-6 w-full">
-                <!-- Soluciones Ágiles -->
-                <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden flex flex-col md:flex-row text-left border border-white/5 w-full items-stretch">
-                    <div class="w-full md:w-5/12 h-56 md:h-auto">
-                        <img src="./assets/Soluciones Ágiles para el Estado.png" alt="Soluciones Estado"
-                            class="w-full h-full object-cover">
-                    </div>
-                    <div class="w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-                        <h3 class="text-2xl font-title mb-3 text-white">Soluciones Ágiles para el Estado:</h3>
-                        <p class="text-body-contrast mb-8 text-[15px] font-normal leading-relaxed">Realizamos auditorías
-                            rápidas y diagnósticos preventivos adaptados a la Compra Ágil y Requerimientos de Ejecución
-                            Inmediata.</p>
-                        <a href="#contacto"
-                            class="font-title inline-flex self-start px-6 py-3 border border-ingeny-lightgreen text-ingeny-lightgreen text-[15px] rounded-full hover:bg-ingeny-lightgreen hover:text-black transition-colors">
-                            Solicitar diagnóstico preventivo
-                        </a>
-                    </div>
+            <!-- Soluciones Ágiles -->
+            <div
+                class="bg-black rounded-3xl overflow-hidden flex flex-col md:flex-row text-left mb-10 border border-white/10 group">
+                <div class="w-full md:w-5/12 overflow-hidden h-72 md:h-auto">
+                    <img src="./assets/Soluciones Ágiles para el Estado.png" alt="Soluciones Estado"
+                        class="w-full h-full object-cover filter grayscale">
                 </div>
+                <div class="w-full md:w-7/12 p-12 md:p-16 flex flex-col justify-center">
+                    <h3 class="text-3xl font-bold font-title mb-6">Soluciones Ágiles para el Estado:</h3>
+                    <p class="text-gray-400 mb-10 max-w-xl text-lg font-normal">Realizamos auditorías rápidas y
+                        diagnósticos preventivos adaptados a la Compra Ágil y Requerimientos de Ejecución Inmediata.</p>
+                    <a href="#contacto"
+                        class="self-start px-10 py-5 bg-transparent border-2 border-ingeny-lightgreen text-ingeny-lightgreen text-lg font-bold rounded-full hover:bg-ingeny-lightgreen hover:text-black transition-colors">
+                        Solicitar diagnóstico preventivo
+                    </a>
+                </div>
+            </div>
 
-                <!-- Desafío Unico -->
-                <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden flex flex-col md:flex-row text-left border border-white/5 w-full items-stretch">
-                    <div class="w-full md:w-5/12 h-56 md:h-auto">
-                        <img src="./assets/¿Tu desafío requiere una solución única.png" alt="Solución Única"
-                            class="w-full h-full object-cover">
-                    </div>
-                    <div class="w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-                        <h3 class="text-2xl font-title mb-3 text-white">¿Tu desafío requiere una solución única?</h3>
-                        <p class="text-body-contrast mb-8 text-[15px] font-normal leading-relaxed">Diseñamos
-                            arquitecturas de IA personalizadas para problemas que las herramientas estándar no pueden
-                            resolver. Unimos visión estratégica y ejecución técnica a tu medida.</p>
-                        <a href="#contacto"
-                            class="font-title inline-flex self-start px-6 py-3 bg-ingeny-lightgreen text-black text-[15px] rounded-full hover:bg-white transition-colors">
-                            Consultar viabilidad de mi proyecto
-                        </a>
-                    </div>
+            <!-- Desafío Unico -->
+            <div
+                class="bg-black rounded-3xl overflow-hidden flex flex-col md:flex-row text-left border border-white/10 group">
+                <div class="w-full md:w-5/12 overflow-hidden h-72 md:h-auto">
+                    <img src="./assets/¿Tu desafío requiere una solución única.png" alt="Solución Única"
+                        class="w-full h-full object-cover filter grayscale">
+                </div>
+                <div class="w-full md:w-7/12 p-12 md:p-16 flex flex-col justify-center">
+                    <h3 class="text-3xl font-bold font-title mb-6">¿Tu desafío requiere una solución única?</h3>
+                    <p class="text-gray-400 mb-10 max-w-xl text-lg font-normal">Diseñamos arquitecturas de IA
+                        personalizadas para problemas que las herramientas estándar no pueden resolver. Unimos visión
+                        estratégica y ejecución técnica a tu medida.</p>
+                    <a href="#contacto"
+                        class="self-start px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors border border-transparent">
+                        Consultar viabilidad de mi proyecto
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Metodología Section -->
-    <section id="metodologia" class="py-24 bg-ingeny-black border-t border-white/5 section">
-        <div class="max-w-4xl mx-auto px-6 text-center">
-            <h2 class="text-4xl md:text-5xl font-title mb-4">Nuestra Metodología:<br>Del Diagnóstico a la Autonomía</h2>
-            <p class="text-body-contrast mb-16 text-lg font-normal">Nos alineamos a los objetivos de tu organización,
-                priorizando siempre una experiencia de usuario intuitiva y de alto rendimiento.</p>
+    <section id="metodologia" class="py-32 bg-ingeny-black border-t border-white/5 section">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h2 class="text-5xl md:text-6xl font-bold mb-8 font-title">Nuestra Metodología: Del<br>Diagnóstico a la
+                Autonomía</h2>
+            <p class="text-gray-400 mb-20 max-w-3xl mx-auto text-xl font-normal">Nos alineamos a los objetivos de tu
+                organización, priorizando siempre una experiencia de usuario intuitiva y de alto rendimiento.</p>
 
-            <div class="space-y-6 text-left">
+            <div class="space-y-8 text-left">
                 <div
-                    class="bg-ingeny-gray p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                    <div class="shrink-0">
-                        <img src="./assets/icons-metodologia/Roadmap.svg" class="w-12 h-12" alt="Roadmap">
+                    class="bg-ingeny-gray p-10 md:p-12 rounded-3xl border border-white/5 flex flex-col md:flex-row gap-8 items-start md:items-center">
+                    <div class="shrink-0 bg-transparent">
+                        <img src="./assets/icons-metodologia/Roadmap.svg" class="w-16 h-16" alt="Roadmap">
                     </div>
                     <div class="flex-grow">
-                        <h4 class="font-title text-xl mb-2 text-white">1. Diagnóstico y Roadmap</h4>
-                        <p class="text-body-contrast leading-relaxed text-[15px] font-normal">No empezamos con código,
-                            sino con entendimiento. Analizamos tu arquitectura actual para identificar los puntos de
-                            mayor impacto y trazamos una hoja de ruta técnica alineada con tus objetivos de negocio.</p>
+                        <h4 class="font-bold font-title text-2xl mb-4">1. Diagnóstico y Roadmap</h4>
+                        <p class="text-gray-400 leading-relaxed text-lg font-normal">No empezamos con código, sino con
+                            entendimiento. Analizamos tu arquitectura actual para identificar los puntos de mayor
+                            impacto y trazamos una hoja de ruta técnica alineada con tus objetivos de negocio.</p>
                     </div>
                 </div>
 
                 <div
-                    class="bg-ingeny-gray p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                    <div class="shrink-0">
-                        <img src="./assets/icons-metodologia/Code.svg" class="w-12 h-12" alt="Desarrollo">
+                    class="bg-ingeny-gray p-10 md:p-12 rounded-3xl border border-white/5 flex flex-col md:flex-row gap-8 items-start md:items-center">
+                    <div class="shrink-0 bg-transparent">
+                        <img src="./assets/icons-metodologia/Code.svg" class="w-16 h-16" alt="Desarrollo">
                     </div>
                     <div class="flex-grow">
-                        <h4 class="font-title text-xl mb-2 text-white">2. Desarrollo e Integración</h4>
-                        <p class="text-body-contrast leading-relaxed text-[15px] font-normal">Construimos tu solución a
-                            medida utilizando los modelos más avanzados de IA. Nos aseguramos de que el sistema se
-                            integre de forma fluida y ética con tus herramientas y equipo humano.</p>
+                        <h4 class="font-bold font-title text-2xl mb-4">2. Desarrollo e Integración</h4>
+                        <p class="text-gray-400 leading-relaxed text-lg font-normal">Construimos tu solución a medida
+                            utilizando los modelos más avanzados de IA. Nos aseguramos de que el sistema se integre de
+                            forma fluida y ética con tus herramientas y equipo humano.</p>
                     </div>
                 </div>
 
                 <div
-                    class="bg-ingeny-gray p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                    <div class="shrink-0">
-                        <img src="./assets/icons-metodologia/Deployment.svg" class="w-12 h-12" alt="Despliegue">
+                    class="bg-ingeny-gray p-10 md:p-12 rounded-3xl border border-white/5 flex flex-col md:flex-row gap-8 items-start md:items-center">
+                    <div class="shrink-0 bg-transparent">
+                        <img src="./assets/icons-metodologia/Deployment.svg" class="w-16 h-16" alt="Despliegue">
                     </div>
                     <div class="flex-grow">
-                        <h4 class="font-title text-xl mb-2 text-white">3. Despliegue y Optimización</h4>
-                        <p class="text-body-contrast leading-relaxed text-[15px] font-normal">Lanzamos la solución y
-                            monitoreamos su rendimiento en tiempo real. Ajustamos y escalamos para garantizar que tu
-                            motor de IA aprenda, evolucione y entregue resultados medibles desde el primer día.</p>
+                        <h4 class="font-bold font-title text-2xl mb-4">3. Despliegue y Optimización</h4>
+                        <p class="text-gray-400 leading-relaxed text-lg font-normal">Lanzamos la solución y monitoreamos
+                            su rendimiento en tiempo real. Ajustamos y escalamos para garantizar que tu motor de IA
+                            aprenda, evolucione y entregue resultados medibles desde el primer día.</p>
                     </div>
                 </div>
             </div>
@@ -364,15 +376,16 @@
     </section>
 
     <!-- Visión Section -->
-    <section class="py-24 relative overflow-hidden bg-ingeny-black flex items-center justify-center min-h-[50vh]">
+    <section class="py-40 relative overflow-hidden bg-ingeny-black flex items-center justify-center min-h-[60vh]">
         <img src="./assets/vision.png" alt="Visión"
-            class="absolute inset-0 w-full h-full object-cover mx-auto opacity-30 mix-blend-screen">
+            class="absolute inset-0 w-full h-full object-cover mx-auto max-w-[1920px] opacity-40 mix-blend-screen">
         <div class="absolute inset-0 bg-gradient-to-t from-ingeny-black via-ingeny-black/60 to-ingeny-black"></div>
-        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
-            <h2 class="text-4xl md:text-5xl font-title mb-6">Nuestra Visión:<br>El futuro de la colaboración</h2>
-            <p class="text-lg text-body-contrast leading-relaxed mb-6 font-normal">
-                <span class="text-white">Visualizamos un ecosistema donde la tecnología no reemplaza el talento, sino
-                    que lo libera.</span><br><br>
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <h2 class="text-5xl md:text-6xl font-bold mb-10 font-title">Nuestra Visión: El futuro de la<br>colaboración
+            </h2>
+            <p class="text-xl text-gray-300 leading-relaxed mb-6 font-normal">
+                <span class="font-bold text-white">Visualizamos un ecosistema donde la tecnología no reemplaza el
+                    talento, sino que lo libera.</span><br><br>
                 Diseñamos un mañana empresarial donde la fricción operativa desaparece, permitiendo que agentes de IA y
                 equipos humanos colaboren fluidamente. Nuestra meta es que tu organización deje de ocuparse de lo
                 repetitivo para enfocarse puramente en la innovación y la estrategia.
@@ -381,19 +394,19 @@
     </section>
 
     <!-- Contacto Section -->
-    <section id="contacto" class="py-24 bg-ingeny-black text-center border-t border-white/5 section">
-        <div class="max-w-4xl mx-auto px-6">
-            <h2 class="text-4xl md:text-5xl font-title mb-6">¿Listo para integrar verdadera<br>inteligencia en tus
-                procesos?</h2>
-            <p class="text-body-contrast mb-12 text-lg font-normal">
+    <section id="contacto" class="py-32 bg-ingeny-black text-center border-t border-white/5 section">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-5xl md:text-6xl font-bold mb-8 font-title">¿Listo para integrar verdadera<br>inteligencia en
+                tus procesos?</h2>
+            <p class="text-white mb-16 text-xl font-normal px-4">
                 Diseñamos soluciones de IA a medida que resuelven desafíos reales, garantizando una adopción fluida y
-                resultados medibles. Ya sea en el sector privado o a través de Mercado Público, somos el socio
-                estratégico que tu organización necesita para liderar el cambio.
+                resultados medibles. <span class="text-white">Ya sea en el sector privado o a través de Mercado
+                    Público</span>, somos el socio estratégico que tu organización necesita para liderar el cambio.
             </p>
 
             <a href="#"
-                class="font-title inline-flex items-center gap-2 px-8 py-4 bg-ingeny-lightgreen text-black text-lg rounded-full hover:bg-white transition-colors mb-20 shadow-xl">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                class="inline-flex items-center gap-3 px-10 py-5 bg-ingeny-lightgreen text-black text-lg font-bold rounded-full hover:bg-white transition-colors mb-24 shadow-2xl">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
                 </svg>
@@ -401,24 +414,24 @@
             </a>
 
             <!-- Newsletter -->
-            <div class="max-w-2xl mx-auto mb-16 text-[15px] text-body-contrast font-normal">
-                <p class="mb-6">Recibe guías prácticas, casos de uso aplicados y las últimas tendencias en
+            <div class="max-w-3xl mx-auto mb-24 text-base text-gray-400 font-normal">
+                <p class="mb-8">Recibe guías prácticas, casos de uso aplicados y las últimas tendencias en
                     automatización que están moviendo la aguja en el sector empresarial.</p>
-                <form class="flex flex-col sm:flex-row gap-3 justify-center">
+                <form class="flex flex-col sm:flex-row gap-4 justify-center">
                     <input type="email" placeholder="Ingresa tu email aquí"
-                        class="bg-white text-black px-6 py-3 rounded-full sm:flex-grow max-w-sm outline-none font-medium placeholder:text-gray-500"
+                        class="bg-white text-black px-8 py-4 rounded-full sm:flex-grow max-w-sm outline-none font-medium placeholder:text-gray-500"
                         required>
                     <button type="submit"
-                        class="font-title px-8 py-3 border-2 border-white text-white rounded-full hover:bg-white hover:text-black transition-colors">
+                        class="px-10 py-4 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-colors">
                         Suscribirme
                     </button>
                 </form>
             </div>
 
-            <div class="mt-12 flex flex-col justify-center items-center opacity-70">
+            <div class="mt-16 flex flex-col justify-center items-center opacity-80">
                 <img src="./assets/logos/chilecompra.png" alt="ChileCompra"
-                    class="h-10 object-contain mb-4 filter brightness-0 invert">
-                <p class="text-sm text-body-contrast font-normal">Proveedor acreditado en Mercado Público | Expertos en
+                    class="h-12 object-contain mb-6 filter brightness-0 invert">
+                <p class="text-sm text-gray-400 font-normal">Proveedor acreditado en Mercado Público | Expertos en
                     soluciones para instituciones y grandes empresas.</p>
             </div>
         </div>
@@ -426,26 +439,26 @@
 
     <!-- Footer -->
     <footer
-        class="bg-ingeny-green text-ingeny-black py-6 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center text-[15px] gap-6">
+        class="bg-ingeny-green text-ingeny-black py-8 px-8 md:px-16 flex flex-col md:flex-row justify-between items-center text-base font-bold gap-8">
         <div class="flex items-center gap-2">
-            <img src="./assets/logo.png" alt="Ingeny Labs Logo" class="h-8 object-contain filter brightness-0">
+            <img src="./assets/logo.png" alt="Ingeny Labs Logo" class="h-10 object-contain filter brightness-0">
         </div>
-        <div class="flex items-center gap-6 font-bold">
+        <div class="flex items-center gap-8">
             <a href="#" aria-label="LinkedIn" class="hover:opacity-70 transition-opacity">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
             </a>
             <a href="#" aria-label="Instagram" class="hover:opacity-70 transition-opacity">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                 </svg>
             </a>
             <a href="https://ingenylabs.cl/blog" class="hover:opacity-70 transition-opacity">Visita nuestro Blog</a>
         </div>
-        <div class="font-normal opacity-80">
+        <div class="font-medium">
             &copy; 2026 Ingeny Labs. Todos los derechos reservados.
         </div>
     </footer>
