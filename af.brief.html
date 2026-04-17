@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentForge | The Autonomous Agent Factory — Investor Deck 2026</title>
+    <meta name="description"
+        content="AgentForge es la fábrica de agentes autónomos que genera software empresarial completo en segundos. Presentación para inversores 2026.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: { black: '#050505', accent: '#00f2ff', magenta: '#ff007a', gold: '#ffb300', green: '#00ff88' }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Syncopate', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --c-accent: #00f2ff;
+            --c-magenta: #ff007a;
+            --c-gold: #ffb300;
+            --c-green: #00ff88;
+            --c-bg: #050505;
+            --slide-pad: clamp(1.2rem, 4vw, 4.5rem);
+            --h1: clamp(2.2rem, 8vw, 6rem);
+            --h2: clamp(1.6rem, 4.5vw, 3.8rem);
+            --h3: clamp(1.1rem, 2vw, 1.6rem);
+            --body: clamp(0.9rem, 1.4vw, 1.15rem);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--c-bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        /* ─── SLIDE SYSTEM ─── */
+        #presentation {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        #presentation::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #presentation::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #presentation::-webkit-scrollbar-thumb {
+            background: var(--c-accent);
+            border-radius: 4px;
+        }
+
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            position: relative;
+            padding: var(--slide-pad);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .slide-inner {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            padding-top: 80px;
+            padding-bottom: 60px;
+        }
+
+        /* ─── FIXEDLAYERS ─── */
+        #hero-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .custom-cursor {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--c-accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease, background 0.2s;
+        }
+
+        .cursor-ring {
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(0, 242, 255, 0.4);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.18s ease;
+        }
+
+        /* ─── NAV ─── */
+        #main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(5, 5, 5, 0.95) 0%, transparent 100%);
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-gem {
+            width: 32px;
+            height: 32px;
+            background: var(--c-accent);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+            animation: gemPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes gemPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(0, 242, 255, 1), 0 0 80px rgba(0, 242, 255, 0.3);
+            }
+        }
+
+        .logo-gem::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: #050505;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .logo-text {
+            font-family: 'Syncopate', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            color: #fff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--c-accent);
+        }
+
+        .nav-cta {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            border: 1px solid var(--c-accent);
+            color: var(--c-accent);
+            padding: 0.6rem 1.4rem;
+            border-radius: 100px;
+            background: transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-cta:hover {
+            background: var(--c-accent);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+        }
+
+        /* ─── PROGRESS ─── */
+        #slide-progress {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 100;
+            align-items: center;
+        }
+
+        .prog-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.25);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .prog-dot.active {
+            background: var(--c-accent);
+            width: 24px;
+            box-shadow: 0 0 8px var(--c-accent);
+        }
+
+        /* ─── SLIDE NUMBER ─── */
+        #slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.3);
+            z-index: 100;
+        }
+
+        /* ─── COMMON ELEMENTS ─── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.45rem 1rem;
+            border-radius: 100px;
+            border: 1px solid rgba(0, 242, 255, 0.4);
+            color: var(--c-accent);
+            background: rgba(0, 242, 255, 0.06);
+        }
+
+        .badge.magenta {
+            border-color: rgba(255, 0, 122, 0.4);
+            color: var(--c-magenta);
+            background: rgba(255, 0, 122, 0.06);
+        }
+
+        .badge.gold {
+            border-color: rgba(255, 179, 0, 0.4);
+            color: var(--c-gold);
+            background: rgba(255, 179, 0, 0.06);
+        }
+
+        .badge.green {
+            border-color: rgba(0, 255, 136, 0.4);
+            color: var(--c-green);
+            background: rgba(0, 255, 136, 0.06);
+        }
+
+        .glass {
+            background: rgba(10, 10, 12, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+        }
+
+        .glow-accent {
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.15);
+        }
+
+        .glow-magenta {
+            box-shadow: 0 0 40px rgba(255, 0, 122, 0.15);
+        }
+
+        .glow-gold {
+            box-shadow: 0 0 40px rgba(255, 179, 0, 0.15);
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            pointer-events: none;
+        }
+
+        .noise {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ─── ANIMATION CLASSES ─── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+
+        /* ─── GRADIENT TEXT ─── */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--c-accent) 0%, #7b61ff 50%, var(--c-magenta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn-primary {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 1.1rem 3rem;
+            border-radius: 14px;
+            background: #fff;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--c-accent), #7b61ff);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 242, 255, 0.3);
+            color: #000;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-ghost {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 1.1rem 2.5rem;
+            border-radius: 14px;
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--c-accent);
+            color: var(--c-accent);
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        /* ─── SWARM ANIMATION ─── */
+        .swarm-node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-align: center;
+            border: 1px solid;
+            transition: all 0.3s;
+        }
+
+        .swarm-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, var(--c-accent), transparent);
+            height: 1px;
+            transform-origin: left center;
+        }
+
+        .data-packet {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--c-accent);
+            box-shadow: 0 0 10px var(--c-accent);
+            pointer-events: none;
+        }
+
+        /* ─── COUNTER ─── */
+        .stat-value {
+            font-family: 'Syncopate', sans-serif;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* ─── ROADMAP ─── */
+        .roadmap-step {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .roadmap-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid;
+        }
+
+        .roadmap-step::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 1.4rem;
+            bottom: -1.5rem;
+            width: 2px;
+            background: linear-gradient(to bottom, currentColor, transparent);
+            opacity: 0.3;
+        }
+
+        .roadmap-step:last-child::after {
+            display: none;
+        }
+
+        /* ─── TERMINAL ─── */
+        .terminal {
+            background: #0a0a0c;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-radius: 14px;
+            overflow: hidden;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.78rem;
+        }
+
+        .terminal-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .t-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .terminal-body {
+            padding: 1.25rem;
+            line-height: 1.8;
+        }
+
+        .t-comment {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .t-cmd {
+            color: var(--c-accent);
+        }
+
+        .t-output {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .t-success {
+            color: var(--c-green);
+        }
+
+        .t-warn {
+            color: var(--c-gold);
+        }
+
+        .t-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: var(--c-accent);
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* ─── COMPARISON TABLE ─── */
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comp-table th {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.85rem 1.2rem;
+            text-align: left;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .comp-table td {
+            padding: 0.9rem 1.2rem;
+            font-size: 0.88rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .comp-table tr.highlight {
+            background: linear-gradient(90deg, rgba(0, 242, 255, 0.04), transparent);
+        }
+
+        .comp-table tr.highlight td {
+            color: #fff;
+        }
+
+        .check {
+            color: var(--c-green);
+            font-size: 1.1rem;
+        }
+
+        .cross {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .partial {
+            color: var(--c-gold);
+        }
+
+        /* ─── PRICING ─── */
+        .pricing-card {
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.08), rgba(123, 97, 255, 0.08));
+            border: 1px solid rgba(0, 242, 255, 0.3);
+        }
+
+        .pricing-card:not(.featured) {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .price-amount {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            font-weight: 700;
+        }
+
+        /* ─── SCROLL INDICATOR ─── */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            animation: bounceY 2s ease-in-out infinite;
+        }
+
+        @keyframes bounceY {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(6px);
+            }
+        }
+
+        .scroll-arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+            transform: rotate(45deg);
+            margin-top: -6px;
+        }
+
+        /* ─── ORBIT ─── */
+        .orbit-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .orbit-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ─── SLIDE SPECIFIC ─── */
+        #slide-hero {
+            z-index: 1;
+        }
+
+        #slide-hero .slide-inner {
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Swarm live animation */
+        #swarm-canvas-wrapper {
+            position: relative;
+            width: 100%;
+            height: 340px;
+        }
+
+        /* Typing effect */
+        .typing-text::after {
+            content: '|';
+            animation: blink 0.8s step-end infinite;
+            color: var(--c-accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CURSOR -->
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <!-- BACKGROUND CANVAS -->
+    <canvas id="hero-canvas"></canvas>
+
+    <!-- NAVIGATION -->
+    <nav id="main-nav">
+        <div class="nav-logo">
+            <div class="logo-gem"></div>
+            <span class="logo-text">AGENTFORGE</span>
+        </div>
+        <div class="nav-links hidden md:flex">
+            <a href="#" class="nav-link" onclick="goToSlide(0)">Visión</a>
+            <a href="#" class="nav-link" onclick="goToSlide(2)">Arquitectura</a>
+            <a href="#" class="nav-link" onclick="goToSlide(4)">IA Neural</a>
+            <a href="#" class="nav-link" onclick="goToSlide(7)">Competidores</a>
+            <a href="#" class="nav-link" onclick="goToSlide(9)">Roadmap</a>
+        </div>
+        <button class="nav-cta" onclick="goToSlide(10)">INVERTIR</button>
+    </nav>
+
+    <!-- SLIDE PROGRESS DOTS -->
+    <div id="slide-progress">
+        <!-- generated by JS -->
+    </div>
+    <div id="slide-counter">01 / 11</div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!--                   PRESENTATION                     -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <div id="presentation">
+
+        <!-- ─── SLIDE 1: HERO ─── -->
+        <section class="slide" id="slide-hero" data-index="0">
+            <div class="slide-inner" style="align-items:center;text-align:center;">
+                <div class="badge reveal-scale" style="margin-bottom:2rem;">
+                    <span
+                        style="width:6px;height:6px;border-radius:50%;background:var(--c-accent);display:inline-block;box-shadow:0 0 8px var(--c-accent);"></span>
+                    Sistema Activo — Swarm Online
+                </div>
+                <h1 class="reveal"
+                    style="font-family:'Syncopate',sans-serif;font-size:var(--h1);font-weight:700;line-height:1.05;margin-bottom:1.5rem;letter-spacing:-0.02em;">
+                    AGENT<span style="color:var(--c-accent);text-shadow:0 0 40px rgba(0,242,255,0.5);">FORGE</span>
+                </h1>
+                <p class="reveal"
+                    style="max-width:700px;font-size:clamp(1.1rem,1.8vw,1.4rem);opacity:0.65;line-height:1.7;margin:0 auto 2.5rem;font-weight:300;">
+                    No es otra herramienta de IA. Es la arquitectura definitiva para construir, desplegar y escalar
+                    <strong style="color:#fff;font-weight:600;">enjambres de agentes autónomos</strong> que generan
+                    software empresarial completo en segundos.
+                </p>
+                <div class="reveal"
+                    style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem;">
+                    <button class="btn-primary" onclick="goToSlide(1)"><span>Explorar Ecosistema</span></button>
+                    <button class="btn-ghost" onclick="goToSlide(10)">Ver Oportunidad de Inversión</button>
+                </div>
+                <!-- Stats Row -->
+                <div class="reveal"
+                    style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:600px;margin:0 auto;">
+                    <div style="text-align:center;">
+                        <div class="stat-value" style="font-size:2rem;color:var(--c-accent);" id="counter-agents">0
+                        </div>
+                        <div
+                            style="font-size:0.72rem;opacity:0.5;font-family:'Space Grotesk',monospace;letter-spacing:0.1em;text-transform:uppercase;margin-top:0.3rem;">
+                            Agentes Activos</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="stat-value" style="font-size:2rem;color:var(--c-magenta);" id="counter-speed">0x
+                        </div>
+                        <div
+                            style="font-size:0.72rem;opacity:0.5;font-family:'Space Grotesk',monospace;letter-spacing:0.1em;text-transform:uppercase;margin-top:0.3rem;">
+                            Más Rápido</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="stat-value" style="font-size:2rem;color:var(--c-gold);" id="counter-uptime">0%</div>
+                        <div
+                            style="font-size:0.72rem;opacity:0.5;font-family:'Space Grotesk',monospace;letter-spacing:0.1em;text-transform:uppercase;margin-top:0.3rem;">
+                            Precisión</div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-hint">Desplazar<div class="scroll-arrow"></div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 2: PROBLEMA ─── -->
+        <section class="slide" id="slide-problem" data-index="1">
+            <div class="grid-bg"></div>
+            <div class="noise"></div>
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;" class="md-grid-2">
+                    <div class="reveal-left">
+                        <div class="badge magenta" style="margin-bottom:1.5rem;">El Problema Global</div>
+                        <h2
+                            style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;line-height:1.1;margin-bottom:1.5rem;">
+                            EL DESARROLLO ALCANZÓ UN <span style="color:var(--c-magenta);">LÍMITE FÍSICO.</span>
+                        </h2>
+                        <p style="opacity:0.65;line-height:1.8;margin-bottom:2rem;font-size:var(--body);">
+                            Con copilotajes e IA generativa, los equipos aún gastan el <strong style="color:#fff;">80%
+                                del tiempo</strong> en "atar cabos": configurar infra, manejar dependencias, dockerizar,
+                            y parchar errores de cohesión multi-archivo.
+                        </p>
+                        <div style="display:flex;flex-direction:column;gap:0.85rem;">
+                            <div
+                                style="display:flex;align-items:flex-start;gap:1rem;padding:1rem;border-radius:12px;border:1px solid rgba(255,0,122,0.15);background:rgba(255,0,122,0.04);">
+                                <ion-icon name="time-outline"
+                                    style="font-size:1.4rem;color:var(--c-magenta);flex-shrink:0;margin-top:2px;"></ion-icon>
+                                <div>
+                                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.2rem;">Boilerplate Hell
+                                    </div>
+                                    <div style="font-size:0.8rem;opacity:0.6;">3-5 días perdidos en configuraciones
+                                        antes de escribir una línea de lógica de negocio.</div>
+                                </div>
+                            </div>
+                            <div
+                                style="display:flex;align-items:flex-start;gap:1rem;padding:1rem;border-radius:12px;border:1px solid rgba(255,0,122,0.15);background:rgba(255,0,122,0.04);">
+                                <ion-icon name="bug-outline"
+                                    style="font-size:1.4rem;color:var(--c-magenta);flex-shrink:0;margin-top:2px;"></ion-icon>
+                                <div>
+                                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.2rem;">Deuda Técnica
+                                        Exponencial</div>
+                                    <div style="font-size:0.8rem;opacity:0.6;">Errores de cohesión entre archivos que un
+                                        LLM genérico no puede diagnosticar ni reparar.</div>
+                                </div>
+                            </div>
+                            <div
+                                style="display:flex;align-items:flex-start;gap:1rem;padding:1rem;border-radius:12px;border:1px solid rgba(255,0,122,0.15);background:rgba(255,0,122,0.04);">
+                                <ion-icon name="people-outline"
+                                    style="font-size:1.4rem;color:var(--c-magenta);flex-shrink:0;margin-top:2px;"></ion-icon>
+                                <div>
+                                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.2rem;">Costo de Talento
+                                        Insostenible</div>
+                                    <div style="font-size:0.8rem;opacity:0.6;">Un equipo de 5 desarrolladores senior
+                                        cuesta $50K+/mes. El FOMO tecnológico acelera el burn rate.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reveal-right">
+                        <div class="terminal">
+                            <div class="terminal-bar">
+                                <div class="t-dot" style="background:#ff5f57;"></div>
+                                <div class="t-dot" style="background:#febc2e;"></div>
+                                <div class="t-dot" style="background:#28c840;"></div>
+                                <div
+                                    style="font-size:0.65rem;opacity:0.4;margin-left:0.5rem;font-family:'Space Grotesk',monospace;">
+                                    dev_team_standup.log</div>
+                            </div>
+                            <div class="terminal-body">
+                                <div class="t-comment"># SEMANA 3 — MEETING #14</div>
+                                <br>
+                                <div class="t-cmd">&gt; npm install --force</div>
+                                <div class="t-output">npm ERR! code ERESOLVE</div>
+                                <div class="t-output" style="color:rgba(255,80,80,0.7);">npm ERR! Could not resolve
+                                    dependency</div>
+                                <br>
+                                <div class="t-cmd">&gt; docker-compose up --build</div>
+                                <div class="t-output" style="color:rgba(255,80,80,0.7);">Error: Port 3000 already in use
+                                </div>
+                                <div class="t-output" style="color:rgba(255,80,80,0.7);">Error: Cannot find module
+                                    './auth'</div>
+                                <br>
+                                <div class="t-cmd">&gt; git status</div>
+                                <div class="t-warn">47 archivos modificados, 12 conflictos</div>
+                                <br>
+                                <div class="t-comment"># SPRINT RETRO: Feature delivery 0/8</div>
+                                <div class="t-comment"># Burn rate: $18,500 esta semana</div>
+                                <br>
+                                <span class="t-cursor"></span>
+                            </div>
+                        </div>
+                        <div style="margin-top:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div class="glass"
+                                style="padding:1.2rem;text-align:center;border-color:rgba(255,0,122,0.2);">
+                                <div
+                                    style="font-family:'Syncopate',sans-serif;font-size:1.8rem;font-weight:700;color:var(--c-magenta);">
+                                    $2.4T</div>
+                                <div
+                                    style="font-size:0.72rem;opacity:0.5;margin-top:0.3rem;font-family:'Space Grotesk',monospace;">
+                                    Pérdida anual global<br>por deuda técnica</div>
+                            </div>
+                            <div class="glass"
+                                style="padding:1.2rem;text-align:center;border-color:rgba(255,0,122,0.2);">
+                                <div
+                                    style="font-family:'Syncopate',sans-serif;font-size:1.8rem;font-weight:700;color:var(--c-magenta);">
+                                    73%</div>
+                                <div
+                                    style="font-size:0.72rem;opacity:0.5;margin-top:0.3rem;font-family:'Space Grotesk',monospace;">
+                                    Proyectos software<br>que fallan o se retrasan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 3: SOLUCIÓN ─── -->
+        <section class="slide" id="slide-solution" data-index="2">
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="text-align:center;margin-bottom:2.5rem;" class="reveal">
+                    <div class="badge" style="margin-bottom:1rem;">La Solución</div>
+                    <h2 style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;line-height:1.1;">
+                        NO SOLO ESCRIBE CÓDIGO.<br><span class="gradient-text">FABRICA ECOSISTEMAS.</span>
+                    </h2>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;" class="reveal-scale">
+                    <!-- Card 1 -->
+                    <div class="glass glow-accent"
+                        style="padding:1.8rem;border-color:rgba(0,242,255,0.2);position:relative;overflow:hidden;">
+                        <div
+                            style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(0,242,255,0.15),transparent);border-radius:50%;">
+                        </div>
+                        <ion-icon name="hardware-chip-outline"
+                            style="font-size:2.5rem;color:var(--c-accent);margin-bottom:1rem;display:block;"></ion-icon>
+                        <h3
+                            style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.95rem;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.75rem;">
+                            Neural Brain RL</h3>
+                        <p style="font-size:0.82rem;opacity:0.6;line-height:1.7;">Motor de decisión por Reinforcement
+                            Learning que orquesta el enjambre y selecciona la estrategia óptima en tiempo real.</p>
+                        <div
+                            style="margin-top:1.2rem;font-family:'Space Grotesk',monospace;font-size:0.65rem;color:var(--c-accent);background:rgba(0,242,255,0.08);padding:0.5rem 0.75rem;border-radius:8px;">
+                            agent_factory.py · neural_brain()</div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="glass glow-magenta"
+                        style="padding:1.8rem;border-color:rgba(255,0,122,0.2);position:relative;overflow:hidden;">
+                        <div
+                            style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(255,0,122,0.15),transparent);border-radius:50%;">
+                        </div>
+                        <ion-icon name="git-network-outline"
+                            style="font-size:2.5rem;color:var(--c-magenta);margin-bottom:1rem;display:block;"></ion-icon>
+                        <h3
+                            style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.95rem;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.75rem;">
+                            Swarm Mesh</h3>
+                        <p style="font-size:0.82rem;opacity:0.6;line-height:1.7;">Ejecución asíncrona paralela mediante
+                            <code style="color:var(--c-magenta);">asyncio.gather()</code>. Múltiples agentes
+                            especializados desarrollan tu app simultáneamente.</p>
+                        <div
+                            style="margin-top:1.2rem;font-family:'Space Grotesk',monospace;font-size:0.65rem;color:var(--c-magenta);background:rgba(255,0,122,0.08);padding:0.5rem 0.75rem;border-radius:8px;">
+                            swarm_orchestrator.py · delegate_tasks()</div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="glass"
+                        style="padding:1.8rem;border-color:rgba(0,255,136,0.2);position:relative;overflow:hidden;">
+                        <div
+                            style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(0,255,136,0.15),transparent);border-radius:50%;">
+                        </div>
+                        <ion-icon name="shield-checkmark-outline"
+                            style="font-size:2.5rem;color:var(--c-green);margin-bottom:1rem;display:block;"></ion-icon>
+                        <h3
+                            style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.95rem;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.75rem;">
+                            Self-Healing Engine</h3>
+                        <p style="font-size:0.82rem;opacity:0.6;line-height:1.7;">Motor de reflexión que audita
+                            iterativamente el código generado y fuerza a los agentes a reparar defectos — sin
+                            intervención humana.</p>
+                        <div
+                            style="margin-top:1.2rem;font-family:'Space Grotesk',monospace;font-size:0.65rem;color:var(--c-green);background:rgba(0,255,136,0.08);padding:0.5rem 0.75rem;border-radius:8px;">
+                            reflection_engine.py · audit_loop()</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-top:1.2rem;"
+                    class="reveal">
+                    <div class="glass glow-gold"
+                        style="padding:1.8rem;border-color:rgba(255,179,0,0.2);display:flex;gap:1.2rem;align-items:center;">
+                        <ion-icon name="cube-outline"
+                            style="font-size:2.2rem;color:var(--c-gold);flex-shrink:0;"></ion-icon>
+                        <div>
+                            <h3
+                                style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.88rem;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.4rem;">
+                                Docker Orchestrator</h3>
+                            <p style="font-size:0.8rem;opacity:0.6;">Empaquetado y testing aislado automático. Garantiza
+                                ejecución en cualquier servidor al primer intento.</p>
+                        </div>
+                    </div>
+                    <div class="glass"
+                        style="padding:1.8rem;border-color:rgba(123,97,255,0.2);display:flex;gap:1.2rem;align-items:center;">
+                        <ion-icon name="share-social-outline"
+                            style="font-size:2.2rem;color:#7b61ff;flex-shrink:0;"></ion-icon>
+                        <div>
+                            <h3
+                                style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.88rem;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.4rem;">
+                                N8N Automation Bridge</h3>
+                            <p style="font-size:0.8rem;opacity:0.6;">Integración nativa con N8N para orquestación visual
+                                de flujos empresariales complejos sin código adicional.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 4: SWARM EN ACCIÓN ─── -->
+        <section class="slide" id="slide-swarm" data-index="3">
+            <div class="grid-bg"></div>
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="text-align:center;margin-bottom:2rem;" class="reveal">
+                    <div class="badge magenta" style="margin-bottom:1rem;">Live Demo — asyncio.gather()</div>
+                    <h2 style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;line-height:1.1;">
+                        SWARM EN <span style="color:var(--c-accent);">PARALELO</span>
+                    </h2>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;">
+                    <!-- Swarm Visual -->
+                    <div class="reveal-left" style="position:relative;height:320px;">
+                        <canvas id="swarm-canvas" width="500" height="320" style="width:100%;height:100%;"></canvas>
+                    </div>
+                    <!-- Flow Steps -->
+                    <div class="reveal-right" style="display:flex;flex-direction:column;gap:1rem;">
+                        <div class="glass" style="padding:1.2rem 1.5rem;border-color:rgba(0,242,255,0.2);">
+                            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
+                                <div
+                                    style="width:32px;height:32px;border-radius:8px;background:rgba(0,242,255,0.1);border:1px solid rgba(0,242,255,0.3);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',monospace;font-size:0.75rem;color:var(--c-accent);font-weight:700;flex-shrink:0;">
+                                    01</div>
+                                <div style="font-weight:700;font-size:0.9rem;">Usuario envía misión</div>
+                            </div>
+                            <div class="terminal" style="padding:0.75rem 1rem;border-radius:8px;">
+                                <code
+                                    style="font-size:0.72rem;color:var(--c-accent);">POST /api/generate <span style="color:rgba(255,255,255,0.5);">{</span> <span style="color:var(--c-gold);">"type"</span>: <span style="color:var(--c-green);">"saas-fullstack"</span> <span style="color:rgba(255,255,255,0.5);">}</span></code>
+                            </div>
+                        </div>
+                        <div class="glass" style="padding:1.2rem 1.5rem;border-color:rgba(255,0,122,0.2);">
+                            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
+                                <div
+                                    style="width:32px;height:32px;border-radius:8px;background:rgba(255,0,122,0.1);border:1px solid rgba(255,0,122,0.3);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',monospace;font-size:0.75rem;color:var(--c-magenta);font-weight:700;flex-shrink:0;">
+                                    02</div>
+                                <div style="font-weight:700;font-size:0.9rem;">Neural Brain asigna roles</div>
+                            </div>
+                            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.68rem;padding:0.3rem 0.7rem;border-radius:6px;background:rgba(0,242,255,0.1);color:var(--c-accent);border:1px solid rgba(0,242,255,0.2);">FRONTEND_MASTER</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.68rem;padding:0.3rem 0.7rem;border-radius:6px;background:rgba(255,0,122,0.1);color:var(--c-magenta);border:1px solid rgba(255,0,122,0.2);">BACKEND_ARCHITECT</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.68rem;padding:0.3rem 0.7rem;border-radius:6px;background:rgba(255,179,0,0.1);color:var(--c-gold);border:1px solid rgba(255,179,0,0.2);">DATA_ENGINEER</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.68rem;padding:0.3rem 0.7rem;border-radius:6px;background:rgba(0,255,136,0.1);color:var(--c-green);border:1px solid rgba(0,255,136,0.2);">DEVOPS_CORE</span>
+                            </div>
+                        </div>
+                        <div class="glass" style="padding:1.2rem 1.5rem;border-color:rgba(0,255,136,0.2);">
+                            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
+                                <div
+                                    style="width:32px;height:32px;border-radius:8px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',monospace;font-size:0.75rem;color:var(--c-green);font-weight:700;flex-shrink:0;">
+                                    03</div>
+                                <div style="font-weight:700;font-size:0.9rem;">Ejecución paralela + Self-Healing</div>
+                            </div>
+                            <div class="terminal" style="padding:0.75rem 1rem;border-radius:8px;">
+                                <code style="font-size:0.72rem;">
+                                <span style="color:var(--c-accent);">await</span> asyncio.gather(<br>
+                                &nbsp;&nbsp;frontend.build(), backend.scaffold(),<br>
+                                &nbsp;&nbsp;db.migrate(), docker.package()<br>
+                                ) <span style="color:var(--c-green);">✓ 18.4s</span>
+                            </code>
+                            </div>
+                        </div>
+                        <div class="glass"
+                            style="padding:1rem 1.5rem;background:rgba(0,255,136,0.04);border-color:rgba(0,255,136,0.25);display:flex;align-items:center;gap:1rem;">
+                            <ion-icon name="checkmark-circle-outline"
+                                style="font-size:1.8rem;color:var(--c-green);flex-shrink:0;"></ion-icon>
+                            <div>
+                                <div style="font-weight:700;font-size:0.9rem;color:var(--c-green);">Entregable Listo
+                                </div>
+                                <div style="font-size:0.78rem;opacity:0.6;margin-top:0.2rem;">Full-stack app
+                                    dockerizada, testeada y desplegable. Sin intervención humana.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 5: ARQUITECTURA TÉCNICA ─── -->
+        <section class="slide" id="slide-arch" data-index="4">
+            <div class="noise"></div>
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="text-align:center;margin-bottom:2.5rem;" class="reveal">
+                    <div class="badge" style="margin-bottom:1rem;">Deep Technical Stack</div>
+                    <h2 style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;">
+                        LA PILA <span style="color:var(--c-accent);">MAESTRA</span>
+                    </h2>
+                </div>
+                <!-- Stack Diagram -->
+                <div style="display:flex;flex-direction:column;gap:0.6rem;width:100%;" class="reveal-scale">
+                    <!-- Layer 1 -->
+                    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;align-items:stretch;">
+                        <div
+                            style="background:rgba(0,242,255,0.08);border:1px solid rgba(0,242,255,0.25);border-right:none;border-radius:12px 0 0 12px;display:flex;align-items:center;justify-content:center;padding:1rem;font-family:'Space Grotesk',monospace;font-size:0.7rem;color:var(--c-accent);letter-spacing:0.08em;text-transform:uppercase;text-align:center;font-weight:700;">
+                            Capa 5<br>Inversores</div>
+                        <div
+                            style="background:rgba(0,242,255,0.04);border:1px solid rgba(0,242,255,0.15);border-radius:0 12px 12px 0;padding:1rem 1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+                            <div style="font-size:0.82rem;opacity:0.8;">Dashboard Web · REST API · WebSocket Events ·
+                                CLI Interface</div>
+                            <div style="margin-left:auto;display:flex;gap:0.5rem;">
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(0,242,255,0.1);color:var(--c-accent);">React</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(0,242,255,0.1);color:var(--c-accent);">FastAPI</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Layer 2 -->
+                    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;align-items:stretch;">
+                        <div
+                            style="background:rgba(255,0,122,0.08);border:1px solid rgba(255,0,122,0.25);border-right:none;border-radius:12px 0 0 12px;display:flex;align-items:center;justify-content:center;padding:1rem;font-family:'Space Grotesk',monospace;font-size:0.7rem;color:var(--c-magenta);letter-spacing:0.08em;text-transform:uppercase;text-align:center;font-weight:700;">
+                            Capa 4<br>Neural</div>
+                        <div
+                            style="background:rgba(255,0,122,0.04);border:1px solid rgba(255,0,122,0.15);border-radius:0 12px 12px 0;padding:1rem 1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+                            <div style="font-size:0.82rem;opacity:0.8;">Neural Brain RL · Priority Inversion · ChromaDB
+                                Vector Memory · Semantic Cache</div>
+                            <div style="margin-left:auto;display:flex;gap:0.5rem;">
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(255,0,122,0.1);color:var(--c-magenta);">ChromaDB</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(255,0,122,0.1);color:var(--c-magenta);">Embeddings</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Layer 3 -->
+                    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;align-items:stretch;">
+                        <div
+                            style="background:rgba(123,97,255,0.12);border:1px solid rgba(123,97,255,0.3);border-right:none;border-radius:12px 0 0 12px;display:flex;align-items:center;justify-content:center;padding:1rem;font-family:'Space Grotesk',monospace;font-size:0.7rem;color:#a78bff;letter-spacing:0.08em;text-transform:uppercase;text-align:center;font-weight:700;">
+                            Capa 3<br>Swarm</div>
+                        <div
+                            style="background:rgba(123,97,255,0.04);border:1px solid rgba(123,97,255,0.15);border-radius:0 12px 12px 0;padding:1rem 1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+                            <div style="font-size:0.82rem;opacity:0.8;">Swarm Orchestrator · Agent Pool · Role Router ·
+                                Self-Healing Loop · Reflection Engine</div>
+                            <div style="margin-left:auto;display:flex;gap:0.5rem;">
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(123,97,255,0.15);color:#a78bff;">asyncio</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(123,97,255,0.15);color:#a78bff;">LangChain</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Layer 4 -->
+                    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;align-items:stretch;">
+                        <div
+                            style="background:rgba(255,179,0,0.08);border:1px solid rgba(255,179,0,0.25);border-right:none;border-radius:12px 0 0 12px;display:flex;align-items:center;justify-content:center;padding:1rem;font-family:'Space Grotesk',monospace;font-size:0.7rem;color:var(--c-gold);letter-spacing:0.08em;text-transform:uppercase;text-align:center;font-weight:700;">
+                            Capa 2<br>Deploy</div>
+                        <div
+                            style="background:rgba(255,179,0,0.04);border:1px solid rgba(255,179,0,0.15);border-radius:0 12px 12px 0;padding:1rem 1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+                            <div style="font-size:0.82rem;opacity:0.8;">Docker Orchestrator · Multi-Stage Builds ·
+                                Auto-Testing · Deployment Pipeline · Health Monitor</div>
+                            <div style="margin-left:auto;display:flex;gap:0.5rem;">
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(255,179,0,0.1);color:var(--c-gold);">Docker</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(255,179,0,0.1);color:var(--c-gold);">K8s-Ready</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Layer 5 -->
+                    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;align-items:stretch;">
+                        <div
+                            style="background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.25);border-right:none;border-radius:12px 0 0 12px;display:flex;align-items:center;justify-content:center;padding:1rem;font-family:'Space Grotesk',monospace;font-size:0.7rem;color:var(--c-green);letter-spacing:0.08em;text-transform:uppercase;text-align:center;font-weight:700;">
+                            Capa 1<br>Infra</div>
+                        <div
+                            style="background:rgba(0,255,136,0.03);border:1px solid rgba(0,255,136,0.12);border-radius:0 12px 12px 0;padding:1rem 1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+                            <div style="font-size:0.82rem;opacity:0.8;">PostgreSQL · Redis · ChromaDB · N8N · NATS
+                                Messaging · Prometheus + Grafana</div>
+                            <div style="margin-left:auto;display:flex;gap:0.5rem;">
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(0,255,136,0.08);color:var(--c-green);">PostgreSQL</span>
+                                <span
+                                    style="font-family:'Space Grotesk',monospace;font-size:0.65rem;padding:0.25rem 0.6rem;border-radius:6px;background:rgba(0,255,136,0.08);color:var(--c-green);">Redis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 6: NEURAL BRAIN / MEMORIA ─── -->
+        <section class="slide" id="slide-brain" data-index="5" style="background:#fff;color:#000;">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#f0f0f0,#fff);"></div>
+            <div class="slide-inner" style="justify-content:center;position:relative;z-index:1;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;">
+                    <!-- Priority Diagram -->
+                    <div class="reveal-left" style="position:relative;">
+                        <div
+                            style="background:#050505;border-radius:24px;padding:2.5rem;border:1px solid rgba(0,242,255,0.2);box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+                            <div
+                                style="font-family:'Space Grotesk',monospace;font-size:0.7rem;color:var(--c-accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1.8rem;opacity:0.8;">
+                                Inversión de Prioridad Vectorial</div>
+                            <!-- Priority 1 -->
+                            <div
+                                style="position:relative;padding:1rem 1.2rem;background:linear-gradient(90deg,rgba(0,242,255,0.08),rgba(0,242,255,0.02));border:1px solid rgba(0,242,255,0.25);border-radius:12px;margin-bottom:0.75rem;">
+                                <div
+                                    style="position:absolute;left:-1px;top:0;bottom:0;width:3px;background:var(--c-accent);border-radius:2px;">
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                                    <span
+                                        style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.8rem;color:var(--c-accent);">PRIORIDAD
+                                        #1 — Local Gold</span>
+                                    <span
+                                        style="font-size:0.65rem;opacity:0.5;font-family:'Space Grotesk',monospace;">&lt;2ms</span>
+                                </div>
+                                <div style="font-size:0.78rem;color:rgba(255,255,255,0.6);">Plantillas locales aprobadas
+                                    + patrones corporativos certificados en ChromaDB.</div>
+                            </div>
+                            <!-- Priority 2 -->
+                            <div
+                                style="position:relative;padding:1rem 1.2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;margin-bottom:0.75rem;">
+                                <div
+                                    style="position:absolute;left:-1px;top:0;bottom:0;width:3px;background:rgba(255,179,0,0.6);border-radius:2px;">
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                                    <span
+                                        style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.8rem;color:var(--c-gold);">PRIORIDAD
+                                        #2 — Nexus Library</span>
+                                    <span
+                                        style="font-size:0.65rem;opacity:0.5;font-family:'Space Grotesk',monospace;">~50ms</span>
+                                </div>
+                                <div style="font-size:0.78rem;color:rgba(255,255,255,0.6);">Biblioteca de componentes
+                                    semánticamente indexados y validados por el enjambre.</div>
+                            </div>
+                            <!-- Priority 3 -->
+                            <div
+                                style="position:relative;padding:1rem 1.2rem;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;">
+                                <div
+                                    style="position:absolute;left:-1px;top:0;bottom:0;width:3px;background:rgba(255,0,122,0.5);border-radius:2px;">
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                                    <span
+                                        style="font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.8rem;color:var(--c-magenta);">PRIORIDAD
+                                        #3 — FMHY Web Scrape</span>
+                                    <span
+                                        style="font-size:0.65rem;opacity:0.5;font-family:'Space Grotesk',monospace;">~800ms</span>
+                                </div>
+                                <div style="font-size:0.78rem;color:rgba(255,255,255,0.6);">Agente raspa docs en tiempo
+                                    real si enfrenta un framework o API completamente nuevo.</div>
+                            </div>
+                            <div
+                                style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,0.06);font-family:'Space Grotesk',monospace;font-size:0.72rem;color:var(--c-green);display:flex;align-items:center;gap:0.5rem;">
+                                <ion-icon name="shield-checkmark-outline" style="font-size:1rem;"></ion-icon>
+                                Resultado: Cero alucinaciones. Código verificado en cada nivel.
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Text -->
+                    <div class="reveal-right">
+                        <div
+                            style="font-family:'Space Grotesk',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#000;opacity:0.5;margin-bottom:1rem;">
+                            Inteligencia Evolutiva</div>
+                        <h2
+                            style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;line-height:1.1;color:#000;margin-bottom:1.5rem;">
+                            MEMORIA<br>A LARGO <span style="background:#000;color:#fff;padding:0 0.3em;">PLAZO.</span>
+                        </h2>
+                        <p style="opacity:0.65;line-height:1.8;margin-bottom:2rem;font-size:var(--body);color:#000;">
+                            El Neural Brain combina <strong>Reinforcement Learning</strong> con memoria vectorial para
+                            aprender de cada proyecto generado. Cada ejecución mejora la precisión del siguiente
+                            enjambre. El sistema evoluciona.
+                        </p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div
+                                style="padding:1.2rem;background:#f5f5f5;border-radius:12px;border:1px solid rgba(0,0,0,0.08);">
+                                <div
+                                    style="font-family:'Syncopate',sans-serif;font-size:1.5rem;font-weight:700;color:#000;">
+                                    98.7%</div>
+                                <div
+                                    style="font-size:0.75rem;opacity:0.6;margin-top:0.3rem;font-family:'Space Grotesk',monospace;">
+                                    Tasa de éxito<br>en primer intento</div>
+                            </div>
+                            <div
+                                style="padding:1.2rem;background:#f5f5f5;border-radius:12px;border:1px solid rgba(0,0,0,0.08);">
+                                <div
+                                    style="font-family:'Syncopate',sans-serif;font-size:1.5rem;font-weight:700;color:#000;">
+                                    12x</div>
+                                <div
+                                    style="font-size:0.75rem;opacity:0.6;margin-top:0.3rem;font-family:'Space Grotesk',monospace;">
+                                    Mejora de contexto<br>vs LLM genérico</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 7: MÉTRICAS TIEMPO ─── -->
+        <section class="slide" id="slide-metrics" data-index="6">
+            <div class="grid-bg"></div>
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="text-align:center;margin-bottom:2rem;" class="reveal">
+                    <div class="badge" style="margin-bottom:1rem;">Ventaja Competitiva</div>
+                    <h2 style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;">
+                        TIME-TO-<span style="color:var(--c-accent);">MARKET</span>
+                    </h2>
+                    <p style="opacity:0.5;margin-top:0.75rem;font-size:var(--body);">Comparativa de tiempo real para
+                        generar aplicaciones End-to-End completas y desplegables.</p>
+                </div>
+                <div class="glass" style="width:100%;padding:1.5rem;border-color:rgba(0,242,255,0.15);"
+                    class="reveal-scale">
+                    <div style="height:min(50vh,360px);">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.2rem;"
+                    class="reveal">
+                    <div
+                        style="text-align:center;padding:1rem;background:rgba(0,242,255,0.05);border-radius:12px;border:1px solid rgba(0,242,255,0.15);">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.4rem;color:var(--c-accent);">18s
+                        </div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.3rem;">
+                            SaaS completo generado</div>
+                    </div>
+                    <div
+                        style="text-align:center;padding:1rem;background:rgba(0,242,255,0.05);border-radius:12px;border:1px solid rgba(0,242,255,0.15);">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.4rem;color:var(--c-accent);">4s</div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.3rem;">
+                            Landing UI deployada</div>
+                    </div>
+                    <div
+                        style="text-align:center;padding:1rem;background:rgba(0,242,255,0.05);border-radius:12px;border:1px solid rgba(0,242,255,0.15);">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.4rem;color:var(--c-accent);">8s</div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.3rem;">
+                            Docker container listo</div>
+                    </div>
+                    <div
+                        style="text-align:center;padding:1rem;background:rgba(0,242,255,0.05);border-radius:12px;border:1px solid rgba(0,242,255,0.15);">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.4rem;color:var(--c-accent);">2s</div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.3rem;">
+                            Deploy automático</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 8: COMPETITOR TABLE ─── -->
+        <section class="slide" id="slide-competitors" data-index="7">
+            <div class="noise"></div>
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="text-align:center;margin-bottom:2rem;" class="reveal">
+                    <div class="badge magenta" style="margin-bottom:1rem;">Análisis Competitivo</div>
+                    <h2 style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;">
+                        ¿POR QUÉ <span style="color:var(--c-accent);">AGENTFORGE</span>?
+                    </h2>
+                </div>
+                <div class="glass reveal-scale" style="width:100%;overflow-x:auto;border-color:rgba(0,242,255,0.15);">
+                    <table class="comp-table" style="width:100%;min-width:680px;">
+                        <thead>
+                            <tr>
+                                <th style="width:22%;">Capacidad</th>
+                                <th style="text-align:center;color:var(--c-accent);">AgentForge</th>
+                                <th style="text-align:center;">GitHub Copilot</th>
+                                <th style="text-align:center;">Devin AI</th>
+                                <th style="text-align:center;">Cursor IDE</th>
+                                <th style="text-align:center;">ChatGPT Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight">
+                                <td style="font-weight:600;font-size:0.85rem;">Enjambre Multi-Agente</td>
+                                <td style="text-align:center;"><span class="check">✦</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="partial">~</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;font-size:0.85rem;opacity:0.8;">Deploy Docker Automático</td>
+                                <td style="text-align:center;"><span class="check">✦</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="check">✦</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                            </tr>
+                            <tr class="highlight">
+                                <td style="font-weight:600;font-size:0.85rem;">Memoria Vectorial Propia</td>
+                                <td style="text-align:center;"><span class="check">✦</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;font-size:0.85rem;opacity:0.8;">Self-Healing / Auto-Repair
+                                </td>
+                                <td style="text-align:center;"><span class="check">✦</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="partial">~</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                            </tr>
+                            <tr class="highlight">
+                                <td style="font-weight:600;font-size:0.85rem;">N8N / Automation Bridge</td>
+                                <td style="text-align:center;"><span class="check">✦</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600;font-size:0.85rem;opacity:0.8;">Full App End-to-End (&lt;30s)
+                                </td>
+                                <td style="text-align:center;"><span class="check">✦</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="partial">~</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                                <td style="text-align:center;"><span class="cross">✗</span></td>
+                            </tr>
+                            <tr class="highlight">
+                                <td style="font-weight:600;font-size:0.85rem;">Precio/mes</td>
+                                <td
+                                    style="text-align:center;font-family:'Space Grotesk',monospace;color:var(--c-accent);font-weight:700;">
+                                    $99–$499</td>
+                                <td style="text-align:center;font-family:'Space Grotesk',monospace;opacity:0.6;">
+                                    $19/user</td>
+                                <td style="text-align:center;font-family:'Space Grotesk',monospace;opacity:0.6;">$500+
+                                </td>
+                                <td style="text-align:center;font-family:'Space Grotesk',monospace;opacity:0.6;">
+                                    $20/user</td>
+                                <td style="text-align:center;font-family:'Space Grotesk',monospace;opacity:0.6;">
+                                    $20/user</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align:center;margin-top:1.2rem;font-family:'Space Grotesk',monospace;font-size:0.72rem;opacity:0.4;font-style:italic;"
+                    class="reveal">
+                    ✦ Funcionalidad completa &nbsp;|&nbsp; ~ Parcial/limitado &nbsp;|&nbsp; ✗ No disponible · Fuente:
+                    documentación pública Q1 2026
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 9: MODELO DE NEGOCIO ─── -->
+        <section class="slide" id="slide-business" data-index="8">
+            <div class="grid-bg"></div>
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="text-align:center;margin-bottom:2rem;" class="reveal">
+                    <div class="badge gold" style="margin-bottom:1rem;">Modelo de Negocio</div>
+                    <h2 style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;">
+                        INGRESOS <span style="color:var(--c-gold);">ESCALABLES</span>
+                    </h2>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:1.5rem;">
+                    <!-- Starter -->
+                    <div class="pricing-card glass reveal" style="transition-delay:0.1s;">
+                        <div
+                            style="font-family:'Space Grotesk',monospace;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.5;margin-bottom:0.75rem;">
+                            Starter</div>
+                        <div class="price-amount" style="margin-bottom:0.3rem;">$99<span
+                                style="font-size:1rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;opacity:0.5;">/mes</span>
+                        </div>
+                        <div
+                            style="font-size:0.78rem;opacity:0.5;margin-bottom:1.5rem;font-family:'Space Grotesk',monospace;">
+                            Hasta 50 generaciones</div>
+                        <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.82rem;">
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> 2 agentes simultáneos</div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> Web Builder + Docker</div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:rgba(255,255,255,0.25);">✗</span> Swarm Mesh</div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:rgba(255,255,255,0.25);">✗</span> Neural Brain RL</div>
+                        </div>
+                    </div>
+                    <!-- Pro -->
+                    <div class="pricing-card featured reveal" style="transition-delay:0.2s;">
+                        <div
+                            style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--c-accent);color:#000;font-family:'Space Grotesk',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.3rem 1rem;border-radius:100px;white-space:nowrap;">
+                            MÁS POPULAR</div>
+                        <div
+                            style="font-family:'Space Grotesk',monospace;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--c-accent);margin-bottom:0.75rem;">
+                            Professional</div>
+                        <div class="price-amount" style="margin-bottom:0.3rem;color:var(--c-accent);">$299<span
+                                style="font-size:1rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;opacity:0.5;color:#fff;">/mes</span>
+                        </div>
+                        <div
+                            style="font-size:0.78rem;opacity:0.5;margin-bottom:1.5rem;font-family:'Space Grotesk',monospace;">
+                            Generaciones ilimitadas</div>
+                        <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.82rem;">
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> <strong>10 agentes simultáneos</strong></div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> Swarm Mesh completo</div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> Neural Brain RL</div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> N8N Integration</div>
+                        </div>
+                    </div>
+                    <!-- Enterprise -->
+                    <div class="pricing-card reveal"
+                        style="transition-delay:0.3s;border:1px solid rgba(255,179,0,0.25);background:rgba(255,179,0,0.03);">
+                        <div
+                            style="font-family:'Space Grotesk',monospace;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--c-gold);margin-bottom:0.75rem;">
+                            Enterprise</div>
+                        <div class="price-amount" style="margin-bottom:0.3rem;color:var(--c-gold);">$499<span
+                                style="font-size:1rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;opacity:0.5;color:#fff;">+/mes</span>
+                        </div>
+                        <div
+                            style="font-size:0.78rem;opacity:0.5;margin-bottom:1.5rem;font-family:'Space Grotesk',monospace;">
+                            Custom SLA + Soporte</div>
+                        <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.82rem;">
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> <strong>Agentes ilimitados</strong></div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> K8s Multi-región</div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> ChromaDB privado</div>
+                            <div style="display:flex;align-items:center;gap:0.6rem;"><span
+                                    style="color:var(--c-green);">✓</span> Fine-tuning dedicado</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- TAM chart hint -->
+                <div class="glass reveal"
+                    style="padding:1.2rem 2rem;border-color:rgba(255,179,0,0.2);display:flex;align-items:center;justify-content:space-around;flex-wrap:wrap;gap:1.5rem;">
+                    <div style="text-align:center;">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.6rem;color:var(--c-gold);">$780B
+                        </div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.2rem;">
+                            TAM — Mercado Global<br>Dev Tools 2026</div>
+                    </div>
+                    <div style="width:1px;height:50px;background:rgba(255,255,255,0.1);"></div>
+                    <div style="text-align:center;">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.6rem;color:var(--c-gold);">$4.2B
+                        </div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.2rem;">
+                            SAM — AI Code Platforms<br>target reachable</div>
+                    </div>
+                    <div style="width:1px;height:50px;background:rgba(255,255,255,0.1);"></div>
+                    <div style="text-align:center;">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.6rem;color:var(--c-gold);">$42M</div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.2rem;">
+                            SOM — Objetivo Año 2<br>1% market share</div>
+                    </div>
+                    <div style="width:1px;height:50px;background:rgba(255,255,255,0.1);"></div>
+                    <div style="text-align:center;">
+                        <div style="font-family:'Syncopate',sans-serif;font-size:1.6rem;color:var(--c-green);">340%
+                        </div>
+                        <div
+                            style="font-size:0.7rem;opacity:0.5;font-family:'Space Grotesk',monospace;margin-top:0.2rem;">
+                            ROI proyectado<br>en 18 meses</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 10: ROADMAP ─── -->
+        <section class="slide" id="slide-roadmap" data-index="9">
+            <div class="grid-bg"></div>
+            <div class="slide-inner" style="justify-content:center;">
+                <div style="text-align:center;margin-bottom:2rem;" class="reveal">
+                    <div class="badge" style="margin-bottom:1rem;">Hoja de Ruta</div>
+                    <h2 style="font-family:'Syncopate',sans-serif;font-size:var(--h2);font-weight:700;">
+                        DE <span style="color:var(--c-accent);">MVP</span> A <span
+                            style="color:var(--c-magenta);">PLATAFORMA</span>
+                    </h2>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;">
+                    <!-- Timeline -->
+                    <div class="reveal-left" style="display:flex;flex-direction:column;gap:2rem;">
+                        <div class="roadmap-step" style="color:var(--c-green);">
+                            <div
+                                style="position:absolute;left:0;top:0.35rem;width:16px;height:16px;border-radius:50%;background:var(--c-green);box-shadow:0 0 10px var(--c-green);">
+                            </div>
+                            <div
+                                style="font-family:'Space Grotesk',monospace;font-size:0.65rem;color:var(--c-green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">
+                                Q1 2026 — COMPLETADO</div>
+                            <div style="font-weight:700;font-size:1rem;color:#fff;margin-bottom:0.3rem;">Fase MVP —
+                                Docker + Swarm</div>
+                            <div style="font-size:0.82rem;opacity:0.6;">FRONTEND_MASTER, BACKEND_ARCHITECT,
+                                DATA_ENGINEER, DEVOPS_CORE activos. Docker Orchestrator online. Self-Healing operativo.
+                            </div>
+                        </div>
+                        <div class="roadmap-step" style="color:var(--c-accent);">
+                            <div
+                                style="position:absolute;left:0;top:0.35rem;width:16px;height:16px;border-radius:50%;border:2px solid var(--c-accent);background:#050505;animation:gemPulse 2s infinite;">
+                            </div>
+                            <div
+                                style="font-family:'Space Grotesk',monospace;font-size:0.65rem;color:var(--c-accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">
+                                Q2 2026 — EN CURSO</div>
+                            <div style="font-weight:700;font-size:1rem;color:#fff;margin-bottom:0.3rem;">Fase Escala —
+                                Multi-Swarm + ChromaDB</div>
+                            <div style="font-size:0.82rem;opacity:0.6;">Horizontal scaling del enjambre, memoria
+                                episódica persistente, integración Langflow visual, dashboard v2.</div>
+                        </div>
+                        <div class="roadmap-step" style="color:rgba(255,255,255,0.35);">
+                            <div
+                                style="position:absolute;left:0;top:0.35rem;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:#050505;">
+                            </div>
+                            <div
+                                style="font-family:'Space Grotesk',monospace;font-size:0.65rem;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">
+                                Q3 2026 — PLANIFICADO</div>
+                            <div style="font-weight:700;font-size:1rem;color:#fff;margin-bottom:0.3rem;">Fase Producción
+                                — K8s + Fine-tuning</div>
+                            <div style="font-size:0.82rem;opacity:0.45;">Kubernetes Operators personalizados, LoRA
+                                fine-tuning por vertical, marketplace de agentes especializados.</div>
+                        </div>
+                        <div class="roadmap-step" style="color:rgba(255,255,255,0.25);">
+                            <div
+                                style="position:absolute;left:0;top:0.35rem;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.12);background:#050505;">
+                            </div>
+                            <div
+                                style="font-family:'Space Grotesk',monospace;font-size:0.65rem;color:rgba(255,255,255,0.25);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">
+                                Q4 2026 — VISIÓN</div>
+                            <div style="font-weight:700;font-size:1rem;color:#fff;margin-bottom:0.3rem;">Fase Global —
+                                Multi-Region SaaS</div>
+                            <div style="font-size:0.82rem;opacity:0.35;">Multi-cloud deployment automático, Raft
+                                consensus para agentes distribuidos, SLA 99.99% garantizado.</div>
+                        </div>
+                    </div>
+                    <!-- KPIs -->
+                    <div class="reveal-right" style="display:flex;flex-direction:column;gap:1rem;">
+                        <div class="glass" style="padding:1.5rem;border-color:rgba(0,242,255,0.15);">
+                            <div
+                                style="font-family:'Space Grotesk',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--c-accent);margin-bottom:1rem;">
+                                Stack Técnico Objetivo</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> Kubernetes Operators</div>
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> NATS Messaging</div>
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> Temporal Workflows</div>
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> Pinecone / Weaviate</div>
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> LangSmith (Tracing)</div>
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> Istio Service Mesh</div>
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> Prometheus + Grafana</div>
+                                <div style="font-size:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span
+                                        style="color:var(--c-accent);">→</span> gVisor Sandboxing</div>
+                            </div>
+                        </div>
+                        <div class="glass" style="padding:1.5rem;border-color:rgba(255,179,0,0.15);">
+                            <div
+                                style="font-family:'Space Grotesk',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--c-gold);margin-bottom:1rem;">
+                                KPIs de Inversión</div>
+                            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.82rem;opacity:0.7;">Tiempo de generación objetivo</span>
+                                    <span
+                                        style="font-family:'Space Grotesk',monospace;font-weight:700;color:var(--c-gold);">&lt;15s</span>
+                                </div>
+                                <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.82rem;opacity:0.7;">Tasa de auto-corrección</span>
+                                    <span
+                                        style="font-family:'Space Grotesk',monospace;font-weight:700;color:var(--c-gold);">99.5%</span>
+                                </div>
+                                <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.82rem;opacity:0.7;">Clientes Year 1</span>
+                                    <span
+                                        style="font-family:'Space Grotesk',monospace;font-weight:700;color:var(--c-gold);">500+</span>
+                                </div>
+                                <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:0.82rem;opacity:0.7;">ARR Proyectado Y1</span>
+                                    <span
+                                        style="font-family:'Space Grotesk',monospace;font-weight:700;color:var(--c-green);">$1.8M</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── SLIDE 11: CTA / INVERSIÓN ─── -->
+        <section class="slide" id="slide-cta" data-index="10"
+            style="background:var(--c-accent);color:#000;overflow:hidden;">
+            <div
+                style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%, rgba(0,0,0,0.08), transparent 60%),radial-gradient(ellipse at 70% 50%, rgba(255,255,255,0.12), transparent 60%);">
+            </div>
+            <!-- Large BG text -->
+            <div
+                style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;">
+                <div
+                    style="font-family:'Syncopate',sans-serif;font-size:22vw;font-weight:700;color:rgba(0,0,0,0.05);white-space:nowrap;user-select:none;letter-spacing:-0.05em;">
+                    AF</div>
+            </div>
+            <div class="slide-inner"
+                style="justify-content:center;align-items:center;text-align:center;position:relative;z-index:1;">
+                <div style="font-family:'Space Grotesk',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.5);margin-bottom:1.5rem;"
+                    class="reveal">La Oportunidad</div>
+                <h2 class="reveal"
+                    style="font-family:'Syncopate',sans-serif;font-size:var(--h1);font-weight:700;line-height:1.02;margin-bottom:1.5rem;letter-spacing:-0.02em;">
+                    EL FUTURO<br><span style="color:#fff;text-shadow:0 4px 20px rgba(0,0,0,0.15);">ESTÁ AQUÍ.</span>
+                </h2>
+                <p class="reveal"
+                    style="max-width:600px;margin:0 auto 2.5rem;font-size:clamp(1rem,1.6vw,1.3rem);opacity:0.75;line-height:1.7;font-weight:500;">
+                    AgentForge no es solo el futuro de nuestra compañía. Es el futuro del desarrollo de software a
+                    escala global. Invierta hoy en la infraestructura que el mundo necesitará mañana.
+                </p>
+                <div class="reveal"
+                    style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem;">
+                    <button
+                        style="background:#000;color:#fff;font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;padding:1.2rem 3rem;border-radius:14px;border:none;cursor:pointer;transition:all 0.3s;"
+                        onmouseover="this.style.background='#111';this.style.transform='scale(1.05)'"
+                        onmouseout="this.style.background='#000';this.style.transform='scale(1)'">
+                        Solicitar Acceso Inversor
+                    </button>
+                    <button
+                        style="background:rgba(0,0,0,0.12);color:#000;font-family:'Space Grotesk',monospace;font-weight:700;font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;padding:1.2rem 2.5rem;border-radius:14px;border:2px solid rgba(0,0,0,0.2);cursor:pointer;transition:all 0.3s;backdrop-filter:blur(10px);"
+                        onmouseover="this.style.background='rgba(0,0,0,0.2)'"
+                        onmouseout="this.style.background='rgba(0,0,0,0.12)'">
+                        Ver Demo en Vivo
+                    </button>
+                </div>
+                <!-- Contact -->
+                <div class="reveal"
+                    style="margin-bottom:2.5rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;font-family:'Space Grotesk',monospace;font-size:0.8rem;color:rgba(0,0,0,0.6);font-weight:600;">
+                    <a href="mailto:founders@agentforge.ai"
+                        style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:0.4rem;">
+                        <ion-icon name="mail-outline" style="font-size:1rem;"></ion-icon>founders@agentforge.ai
+                    </a>
+                    <a href="#" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:0.4rem;">
+                        <ion-icon name="globe-outline" style="font-size:1rem;"></ion-icon>agentforge.ai
+                    </a>
+                    <span style="display:flex;align-items:center;gap:0.4rem;">
+                        <ion-icon name="location-outline" style="font-size:1rem;"></ion-icon>Latin America · Remote
+                        First
+                    </span>
+                </div>
+                <!-- Tags -->
+                <div class="reveal"
+                    style="display:flex;justify-content:center;gap:0.75rem;flex-wrap:wrap;font-family:'Space Grotesk',monospace;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;color:rgba(0,0,0,0.5);">
+                    <span>/// KUBERNETES-READY</span>
+                    <span>/// MULTI-AGENT SWARM</span>
+                    <span>/// SELF-HEALING</span>
+                    <span>/// N8N AUTOMATION</span>
+                    <span>/// DOCKER ORCHESTRATED</span>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- end #presentation -->
+
+    <script>
+        // ══════════════════════════════════════════════════
+        //  CURSOR
+        // ══════════════════════════════════════════════════
+        const cursor = document.getElementById('cursor');
+        const cursorRing = document.getElementById('cursor-ring');
+        let cx = 0, cy = 0, rx = 0, ry = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            cx = e.clientX; cy = e.clientY;
+            cursor.style.left = cx + 'px';
+            cursor.style.top = cy + 'px';
+        });
+
+        function animateCursorRing() {
+            rx += (cx - rx) * 0.12;
+            ry += (cy - ry) * 0.12;
+            cursorRing.style.left = rx + 'px';
+            cursorRing.style.top = ry + 'px';
+            requestAnimationFrame(animateCursorRing);
+        }
+        animateCursorRing();
+
+        document.querySelectorAll('button, a, [onclick]').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+                cursor.style.background = 'rgba(0,242,255,0.3)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+                cursor.style.background = 'transparent';
+            });
+        });
+
+        // ══════════════════════════════════════════════════
+        //  THREE.JS BACKGROUND
+        // ══════════════════════════════════════════════════
+        if (window.innerWidth > 768) {
+            const canvas = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x050505, 0.04);
+            const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Particle field
+            const count = 3000;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            for (let i = 0; i < count; i++) {
+                const r = 6 + Math.random() * 10;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+                positions[i * 3 + 2] = r * Math.cos(phi);
+                // Cyan to magenta gradient
+                const t = Math.random();
+                colors[i * 3] = t * 1.0;
+                colors[i * 3 + 1] = (1 - t) * 0.95;
+                colors[i * 3 + 2] = 1.0;
+            }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            const mat = new THREE.PointsMaterial({
+                size: 0.025, vertexColors: true,
+                blending: THREE.AdditiveBlending, transparent: true, opacity: 0.5
+            });
+            const particles = new THREE.Points(geo, mat);
+            scene.add(particles);
+
+            // Wireframe core
+            const coreGeo = new THREE.IcosahedronGeometry(1.8, 1);
+            const coreMat = new THREE.MeshBasicMaterial({ color: 0xff007a, wireframe: true, transparent: true, opacity: 0.08 });
+            const core = new THREE.Mesh(coreGeo, coreMat);
+            scene.add(core);
+
+            // Outer ring
+            const ringGeo = new THREE.TorusGeometry(3.5, 0.01, 16, 100);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x00f2ff, transparent: true, opacity: 0.08 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 3;
+            scene.add(ring);
+
+            camera.position.z = 7;
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+            });
+
+            const clock = new THREE.Clock();
+            function animate3D() {
+                requestAnimationFrame(animate3D);
+                const t = clock.getElapsedTime();
+                particles.rotation.y = t * 0.04;
+                particles.rotation.x = Math.sin(t * 0.02) * 0.1;
+                core.rotation.y = -t * 0.08;
+                core.rotation.z = t * 0.04;
+                ring.rotation.z = t * 0.06;
+                camera.position.x += (mouseX * 1.5 - camera.position.x) * 0.03;
+                camera.position.y += (-mouseY * 1.5 - camera.position.y) * 0.03;
+                camera.lookAt(scene.position);
+                renderer.render(scene, camera);
+            }
+            animate3D();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            window.addEventListener('beforeunload', () => {
+                renderer.dispose();
+                geo.dispose(); mat.dispose();
+                coreGeo.dispose(); coreMat.dispose();
+                ringGeo.dispose(); ringMat.dispose();
+            });
+        }
+
+        // ══════════════════════════════════════════════════
+        //  SLIDE SYSTEM + PROGRESS DOTS
+        // ══════════════════════════════════════════════════
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progressEl = document.getElementById('slide-progress');
+        const counterEl = document.getElementById('slide-counter');
+        const presentation = document.getElementById('presentation');
+        let currentSlide = 0;
+
+        // Build progress dots
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'prog-dot' + (i === 0 ? ' active' : '');
+            dot.title = `Slide ${i + 1}`;
+            dot.addEventListener('click', () => goToSlide(i));
+            progressEl.appendChild(dot);
+        }
+
+        function updateProgress(idx) {
+            currentSlide = idx;
+            document.querySelectorAll('.prog-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === idx);
+            });
+            counterEl.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(totalSlides).padStart(2, '0');
+        }
+
+        function goToSlide(idx) {
+            idx = Math.max(0, Math.min(totalSlides - 1, idx));
+            slides[idx].scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown') {
+                e.preventDefault();
+                goToSlide(currentSlide + 1);
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                goToSlide(currentSlide - 1);
+            }
+        });
+
+        // IntersectionObserver for active slide
+        const slideObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                    const idx = parseInt(entry.target.dataset.index);
+                    updateProgress(idx);
+                    // Trigger slide-specific actions
+                    if (idx === 0) animateCounters();
+                    if (idx === 6 && !window.chartDone) initChart();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        slides.forEach(s => slideObserver.observe(s));
+
+        // ══════════════════════════════════════════════════
+        //  GSAP SCROLL ANIMATIONS
+        // ══════════════════════════════════════════════════
+        gsap.registerPlugin(ScrollTrigger);
+
+        ScrollTrigger.defaults({ scroller: '#presentation' });
+
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+            let xFrom = 0, yFrom = 0, scaleFrom = 1;
+            if (el.classList.contains('reveal')) yFrom = 45;
+            else if (el.classList.contains('reveal-left')) xFrom = -55;
+            else if (el.classList.contains('reveal-right')) xFrom = 55;
+            else if (el.classList.contains('reveal-scale')) scaleFrom = 0.82;
+
+            gsap.fromTo(el,
+                { opacity: 0, x: xFrom, y: yFrom, scale: scaleFrom },
+                {
+                    opacity: 1, x: 0, y: 0, scale: 1,
+                    duration: 1.1, ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el, start: 'top 88%',
+                        toggleActions: 'play none none reverse',
+                        scroller: '#presentation'
+                    }
+                }
+            );
+        });
+
+        // ══════════════════════════════════════════════════
+        //  HERO COUNTERS
+        // ══════════════════════════════════════════════════
+        let countersAnimated = false;
+        function animateCounters() {
+            if (countersAnimated) return;
+            countersAnimated = true;
+
+            function countUp(el, target, suffix, duration = 1800) {
+                let start = 0;
+                const step = target / (duration / 16);
+                const timer = setInterval(() => {
+                    start = Math.min(start + step, target);
+                    el.textContent = Math.floor(start) + suffix;
+                    if (start >= target) clearInterval(timer);
+                }, 16);
+            }
+
+            countUp(document.getElementById('counter-agents'), 12, '');
+            setTimeout(() => {
+                const el = document.getElementById('counter-speed');
+                let v = 0;
+                const t = setInterval(() => {
+                    v = Math.min(v + 1, 700);
+                    el.textContent = Math.floor(v) + 'x';
+                    if (v >= 700) clearInterval(t);
+                }, 16 * (1800 / 700));
+            }, 200);
+            setTimeout(() => countUp(document.getElementById('counter-uptime'), 98, '.7%'), 400);
+        }
+
+        // ══════════════════════════════════════════════════
+        //  SWARM CANVAS ANIMATION
+        // ══════════════════════════════════════════════════
+        function initSwarmCanvas() {
+            const canvas = document.getElementById('swarm-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
+
+            const nodes = [
+                { x: W / 2, y: H / 2, label: 'KERNEL', color: '#00f2ff', size: 36, role: 'orchestrator' },
+                { x: W * 0.15, y: H * 0.25, label: 'FRONTEND\nMASTER', color: '#00f2ff', size: 28, role: 'worker' },
+                { x: W * 0.85, y: H * 0.25, label: 'BACKEND\nARCHITECT', color: '#ff007a', size: 28, role: 'worker' },
+                { x: W * 0.15, y: H * 0.75, label: 'DATA\nENGINEER', color: '#ffb300', size: 28, role: 'worker' },
+                { x: W * 0.85, y: H * 0.75, label: 'DEVOPS\nCORE', color: '#00ff88', size: 28, role: 'worker' },
+                { x: W * 0.5, y: H * 0.08, label: 'REFLECTION\nENGINE', color: '#7b61ff', size: 24, role: 'monitor' },
+            ];
+
+            const packets = [];
+
+            function spawnPacket(fromIdx, toIdx) {
+                const from = nodes[fromIdx];
+                const to = nodes[toIdx];
+                packets.push({ x: from.x, y: from.y, tx: to.x, ty: to.y, progress: 0, color: from.color, speed: 0.008 + Math.random() * 0.012 });
+            }
+
+            let frame = 0;
+            function drawSwarm() {
+                ctx.clearRect(0, 0, W, H);
+
+                // Draw connections
+                nodes.slice(1).forEach((node, i) => {
+                    const center = nodes[0];
+                    const grad = ctx.createLinearGradient(center.x, center.y, node.x, node.y);
+                    grad.addColorStop(0, 'rgba(0,242,255,0.15)');
+                    grad.addColorStop(1, node.color + '22');
+                    ctx.beginPath();
+                    ctx.moveTo(center.x, center.y);
+                    ctx.lineTo(node.x, node.y);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                });
+
+                // Monitor connection
+                const mon = nodes[5];
+                nodes.slice(1, 5).forEach(node => {
+                    ctx.beginPath();
+                    ctx.moveTo(mon.x, mon.y);
+                    ctx.lineTo(node.x, node.y);
+                    ctx.strokeStyle = 'rgba(123,97,255,0.08)';
+                    ctx.lineWidth = 0.5;
+                    ctx.setLineDash([4, 8]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+
+                // Draw packets
+                for (let i = packets.length - 1; i >= 0; i--) {
+                    const p = packets[i];
+                    p.progress += p.speed;
+                    if (p.progress >= 1) { packets.splice(i, 1); continue; }
+                    const t = p.progress;
+                    const ex = p.x + (p.tx - p.x) * t;
+                    const ey = p.y + (p.ty - p.y) * t;
+                    ctx.beginPath();
+                    ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = p.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                // Draw nodes
+                nodes.forEach((node, idx) => {
+                    // Glow
+                    const grd = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.size * 1.8);
+                    grd.addColorStop(0, node.color + '22');
+                    grd.addColorStop(1, 'transparent');
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.size * 1.8, 0, Math.PI * 2);
+                    ctx.fillStyle = grd;
+                    ctx.fill();
+
+                    // Circle
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+                    ctx.fillStyle = '#0a0a0c';
+                    ctx.fill();
+                    ctx.strokeStyle = node.color;
+                    ctx.lineWidth = idx === 0 ? 2 : 1;
+                    ctx.globalAlpha = 0.8;
+                    ctx.stroke();
+                    ctx.globalAlpha = 1;
+
+                    // Label
+                    const lines = node.label.split('\n');
+                    ctx.font = `bold ${idx === 0 ? 9 : 7}px "Space Grotesk", monospace`;
+                    ctx.fillStyle = node.color;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    lines.forEach((line, li) => {
+                        const offsetY = (li - (lines.length - 1) / 2) * 9;
+                        ctx.fillText(line, node.x, node.y + offsetY);
+                    });
+                });
+
+                // Spawn packets
+                frame++;
+                if (frame % 40 === 0) spawnPacket(0, 1 + Math.floor(Math.random() * 4));
+                if (frame % 55 === 0) spawnPacket(1 + Math.floor(Math.random() * 4), 0);
+                if (frame % 80 === 0) spawnPacket(5, 1 + Math.floor(Math.random() * 4));
+
+                requestAnimationFrame(drawSwarm);
+            }
+            drawSwarm();
+        }
+        initSwarmCanvas();
+
+        // ══════════════════════════════════════════════════
+        //  CHART.JS — TIME TO MARKET
+        // ══════════════════════════════════════════════════
+        function initChart() {
+            window.chartDone = true;
+            const ctx = document.getElementById('timeChart');
+            if (!ctx) return;
+            const c = ctx.getContext('2d');
+
+            const gradAF = c.createLinearGradient(0, 0, 0, 400);
+            gradAF.addColorStop(0, '#00f2ff');
+            gradAF.addColorStop(1, 'rgba(0,242,255,0.25)');
+
+            const gradManual = c.createLinearGradient(0, 0, 0, 400);
+            gradManual.addColorStop(0, 'rgba(255,0,122,0.7)');
+            gradManual.addColorStop(1, 'rgba(255,0,122,0.15)');
+
+            const gradGPT = c.createLinearGradient(0, 0, 0, 400);
+            gradGPT.addColorStop(0, 'rgba(255,179,0,0.7)');
+            gradGPT.addColorStop(1, 'rgba(255,179,0,0.15)');
+
+            Chart.defaults.color = 'rgba(255,255,255,0.55)';
+            Chart.defaults.font.family = "'Space Grotesk', monospace";
+            Chart.defaults.font.size = 11;
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['SaaS Full-Stack', 'Landing Page', 'API + Docker', 'CI/CD Pipeline'],
+                    datasets: [
+                        {
+                            label: 'Manual (horas)',
+                            data: [350, 40, 24, 16],
+                            backgroundColor: gradManual,
+                            borderColor: 'rgba(255,0,122,0.6)',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'GPT Genérico (horas)',
+                            data: [80, 12, 8, 6],
+                            backgroundColor: gradGPT,
+                            borderColor: 'rgba(255,179,0,0.6)',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'AgentForge (horas)',
+                            data: [0.005, 0.001, 0.002, 0.0005],
+                            backgroundColor: gradAF,
+                            borderColor: '#00f2ff',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: 'rgba(255,255,255,0.5)' }
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: 'rgba(255,255,255,0.5)' },
+                            title: { display: true, text: 'Horas (Escala Logarítmica)', color: 'rgba(255,255,255,0.35)', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { usePointStyle: true, padding: 20, color: 'rgba(255,255,255,0.65)' }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(5,5,5,0.92)',
+                            borderColor: 'rgba(0,242,255,0.2)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: (ctx) => {
+                                    const v = ctx.parsed.y;
+                                    if (ctx.datasetIndex === 2) {
+                                        return ` AgentForge: ${Math.round(v * 3600)}s`;
+                                    }
+                                    return ` ${ctx.dataset.label}: ${v} hrs`;
+                                }
+                            }
+                        }
+                    },
+                    animation: { duration: 1600, easing: 'easeOutQuart' }
+                }
+            });
+        }
+
+        // ══════════════════════════════════════════════════
+        //  NAV CLICK HELPERS
+        // ══════════════════════════════════════════════════
+        // (Prevent default on nav links)
+        document.querySelectorAll('#main-nav a').forEach(a => {
+            a.addEventListener('click', e => e.preventDefault());
+        });
+    </script>
+</body>
+
+</html>

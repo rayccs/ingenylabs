@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentForge ULTIMATE — Auditoría del Sistema</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0e17;--bg2:#111827;--bg3:#1f2937;--bg4:#283548;
+--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;
+--accent:#f59e0b;--accent2:#fbbf24;
+--crit:#ef4444;--warn:#f59e0b;--med:#22c55e;--info:#06b6d4;
+--user:#3b82f6;--fe:#10b981;--be:#8b5cf6;--svc:#f59e0b;
+--wrk:#ec4899;--db:#06b6d4;--ai:#ef4444;--n8n:#ff6b35;--ctn:#14b8a6;
+--radius:12px;--glow:0 0 20px rgba(245,158,11,.15);
+}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--bg3) var(--bg)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+code,mono,.mono{font-family:'JetBrains Mono',monospace}
+a{color:var(--accent);text-decoration:none}
+
+/* Progress bar */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:1001;transition:width .1s;width:0}
+
+/* Nav lateral */
+#nav{position:fixed;left:0;top:0;height:100vh;width:56px;background:rgba(10,14,23,.92);backdrop-filter:blur(12px);border-right:1px solid rgba(255,255,255,.06);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:16px 0;transition:width .3s}
+#nav:hover{width:200px}
+#nav .logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--bg);margin-bottom:32px;flex-shrink:0}
+#nav a{display:flex;align-items:center;gap:12px;width:100%;padding:10px 16px;color:var(--muted);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap;overflow:hidden;position:relative}
+#nav a i{font-size:16px;width:24px;text-align:center;flex-shrink:0}
+#nav a span{opacity:0;transition:opacity .2s}
+#nav:hover a span{opacity:1}
+#nav a:hover,#nav a.active{color:var(--text)}
+#nav a.active::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;background:var(--accent);border-radius:0 3px 3px 0}
+
+/* Secciones */
+section{min-height:100vh;padding:80px 80px 80px 96px;position:relative}
+.section-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+.section-title{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:16px}
+.section-desc{color:var(--muted);font-size:15px;max-width:640px;margin-bottom:48px}
+
+/* Hero */
+#hero{display:flex;flex-direction:column;justify-content:center;min-height:100vh;position:relative;overflow:hidden}
+#hero canvas{position:absolute;top:0;left:0;width:100%;height:100%;opacity:.4}
+.hero-content{position:relative;z-index:2}
+.hero-title{font-size:clamp(36px,6vw,72px);font-weight:800;line-height:1.05;margin-bottom:16px}
+.hero-title .accent{color:var(--accent)}
+.hero-sub{color:var(--muted);font-size:clamp(14px,1.5vw,18px);margin-bottom:48px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;max-width:780px}
+.stat-card{background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:transform .3s,border-color .3s}
+.stat-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.stat-card:hover::after{opacity:1}
+.stat-num{font-size:32px;font-weight:800;color:var(--accent)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+.scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--dim);font-size:12px;animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* Grid animado de fondo */
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.03) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite}
+@keyframes gridMove{to{background-position:60px 60px}}
+
+/* Arquitectura */
+#arch{padding-top:60px}
+#archCanvas{width:100%;height:70vh;border-radius:var(--radius);background:rgba(17,24,39,.6);border:1px solid rgba(255,255,255,.06);cursor:grab;display:block}
+#archCanvas:active{cursor:grabbing}
+.arch-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.arch-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.arch-legend-dot{width:10px;height:10px;border-radius:50%}
+.node-detail{position:fixed;right:-420px;top:0;width:400px;height:100vh;background:var(--bg2);border-left:1px solid rgba(255,255,255,.08);z-index:999;padding:32px;overflow-y:auto;transition:right .4s cubic-bezier(.16,1,.3,1)}
+.node-detail.open{right:0}
+.node-detail-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer}
+.node-detail h3{font-size:20px;font-weight:700;margin-bottom:8px}
+.node-detail .comp-list{list-style:none;margin-top:16px}
+.node-detail .comp-list li{padding:8px 12px;background:var(--bg3);border-radius:8px;margin-bottom:6px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.node-detail .comp-list li i{font-size:10px;color:var(--accent)}
+
+/* Auth Flow */
+.auth-tabs{display:flex;gap:4px;margin-bottom:32px;flex-wrap:wrap}
+.auth-tab{padding:10px 20px;background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:all .2s;font-family:inherit}
+.auth-tab:hover{border-color:var(--accent);color:var(--text)}
+.auth-tab.active{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.auth-flow{display:none}
+.auth-flow.active{display:block}
+.timeline{position:relative;padding-left:48px}
+.timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--bg3))}
+.tl-item{position:relative;margin-bottom:24px;opacity:0;transform:translateX(-20px);transition:all .4s}
+.tl-item.visible{opacity:1;transform:translateX(0)}
+.tl-dot{position:absolute;left:-42px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--accent);z-index:2}
+.tl-dot.green{border-color:var(--med);background:var(--med)}
+.tl-dot.red{border-color:var(--crit);background:var(--crit)}
+.tl-card{background:var(--bg2);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px 20px}
+.tl-actor{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.tl-actor.a-user{color:var(--user)}.tl-actor.a-fe{color:var(--fe)}.tl-actor.a-api{color:var(--be)}.tl-actor.a-auth{color:var(--svc)}.tl-actor.a-db{color:var(--db)}.tl-actor.a-google{color:var(--ai)}
+.tl-msg{font-size:14px;color:var(--text)}
+.tl-detail{font-size:12px;color:var(--dim);margin-top:6px;font-family:'JetBrains Mono',monospace}
+.tl-branch{margin-left:24px;padding:12px 16px;border-left:2px solid var(--bg3);margin-top:8px}
+.tl-branch.success{border-color:var(--med)}
+.tl-branch.error{border-color:var(--crit)}
+.tl-branch-label{font-size:11px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.tl-branch-label.ok{color:var(--med)}.tl-branch-label.fail{color:var(--crit)}
+
+/* Creación Flow */
+.creation-phases{position:relative}
+.phase-progress{position:absolute;left:24px;top:0;bottom:0;width:3px;background:var(--bg3)}
+.phase-progress-fill{width:100%;background:var(--accent);transition:height .3s;height:0}
+.phase-block{margin-bottom:48px;padding-left:64px;position:relative}
+.phase-num{position:absolute;left:0;top:0;width:50px;height:50px;border-radius:50%;background:var(--bg2);border:2px solid var(--bg3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--muted);transition:all .4s;z-index:2}
+.phase-block.in-view .phase-num{border-color:var(--accent);color:var(--accent);box-shadow:0 0 20px rgba(245,158,11,.2)}
+.phase-header{margin-bottom:16px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.phase-header h3{font-size:20px;font-weight:700;flex:1}
+.phase-toggle{width:28px;height:28px;border-radius:6px;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:transform .3s}
+.phase-block.expanded .phase-toggle{transform:rotate(180deg)}
+.phase-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.16,1,.3,1)}
+.phase-block.expanded .phase-body{max-height:5000px}
+.substep{background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px;transition:border-color .2s}
+.substep:hover{border-color:rgba(245,158,11,.3)}
+.substep-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.substep-title i{color:var(--accent);font-size:12px}
+.substep p{font-size:13px;color:var(--muted);line-height:1.7}
+.substep .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.tag-green{background:rgba(34,197,94,.15);color:var(--med)}
+.tag-red{background:rgba(239,68,68,.15);color:var(--crit)}
+.tag-amber{background:rgba(245,158,11,.15);color:var(--warn)}
+.tag-blue{background:rgba(59,130,246,.15);color:var(--user)}
+.substep .branch{margin:8px 0 8px 16px;padding:8px 12px;border-radius:6px;font-size:13px;color:var(--muted)}
+.branch-ok{background:rgba(34,197,94,.08);border-left:2px solid var(--med)}
+.branch-err{background:rgba(239,68,68,.08);border-left:2px solid var(--crit)}
+.fallback-chain{display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap}
+.fallback-node{padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--bg3);color:var(--muted);transition:all .3s}
+.fallback-node.active{border-color:var(--accent);color:var(--accent);background:rgba(245,158,11,.1)}
+.fallback-arrow{color:var(--dim);font-size:10px}
+.gauge{width:100%;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin:8px 0}
+.gauge-fill{height:100%;border-radius:4px;transition:width 1s}
+.health-loop{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.health-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg3);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all .3s}
+.health-dot.pass{border-color:var(--med);color:var(--med);background:rgba(34,197,94,.1)}
+.health-dot.fail{border-color:var(--crit);color:var(--crit);background:rgba(239,68,68,.1)}
+
+/* Auditoría */
+.audit-filters{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.audit-filter{padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:var(--bg2);cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:6px}
+.audit-filter:hover{border-color:var(--accent)}
+.audit-filter.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.audit-filter .dot{width:8px;height:8px;border-radius:50%}
+.audit-search{padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:var(--bg2);color:var(--text);font-size:13px;font-family:inherit;width:240px;outline:none;transition:border-color .2s}
+.audit-search:focus{border-color:var(--accent)}
+.audit-count{font-size:13px;color:var(--dim);margin-bottom:16px}
+.audit-bars{display:flex;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+.audit-bar-item{flex:1;min-width:120px}
+.audit-bar-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.audit-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.audit-bar-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.16,1,.3,1);width:0}
+.audit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.audit-card{background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius);padding:20px;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.audit-card:hover{border-color:rgba(245,158,11,.3);transform:translateY(-2px)}
+.audit-card.sev-crit{border-left:3px solid var(--crit)}
+.audit-card.sev-crit::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--crit),transparent);animation:pulse-line 2s ease-in-out infinite}
+@keyframes pulse-line{0%,100%{opacity:.3}50%{opacity:1}}
+.audit-card.sev-high{border-left:3px solid var(--warn)}
+.audit-card.sev-med{border-left:3px solid var(--med)}
+.audit-card-num{font-size:28px;font-weight:800;opacity:.15;position:absolute;top:12px;right:16px}
+.audit-card-loc{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.audit-card-problem{font-size:14px;font-weight:600;margin-bottom:6px;line-height:1.4}
+.audit-card-impact{font-size:13px;color:var(--muted);margin-bottom:10px}
+.audit-card-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:4px}
+.status-nofix{background:rgba(239,68,68,.12);color:var(--crit)}
+.status-partial{background:rgba(245,158,11,.12);color:var(--warn)}
+.status-reverted{background:rgba(34,197,94,.12);color:var(--med)}
+.status-verify{background:rgba(6,182,212,.12);color:var(--info)}
+.audit-card-detail{max-height:0;overflow:hidden;transition:max-height .3s;font-size:13px;color:var(--dim);line-height:1.6}
+.audit-card.expanded .audit-card-detail{max-height:200px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+
+/* Estado */
+.status-section{margin-bottom:40px}
+.status-section h3{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.status-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.status-item{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:8px;font-size:13px;transition:all .2s}
+.status-item:hover{border-color:rgba(255,255,255,.12)}
+.status-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.status-icon.ok{background:rgba(34,197,94,.15);color:var(--med)}
+.status-icon.fail{background:rgba(239,68,68,.15);color:var(--crit);animation:glitch-icon 3s infinite}
+.status-icon.unknown{background:rgba(6,182,212,.15);color:var(--info);animation:pulse-icon 2s infinite}
+@keyframes pulse-icon{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes glitch-icon{0%,90%,100%{transform:translate(0)}92%{transform:translate(-1px,1px)}94%{transform:translate(1px,-1px)}96%{transform:translate(-1px,0)}98%{transform:translate(1px,0)}}
+
+/* E2E Flow */
+.e2e-flow{display:flex;flex-direction:column;gap:0;align-items:center;margin:32px 0}
+.e2e-row{display:flex;align-items:center;gap:0;width:100%;justify-content:center;flex-wrap:wrap}
+.e2e-block{padding:14px 20px;background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:13px;font-weight:600;text-align:center;min-width:160px;position:relative;transition:all .3s}
+.e2e-block:hover{border-color:var(--accent);transform:scale(1.03)}
+.e2e-block.fail-block{border-color:var(--crit);animation:pulse-border 2s infinite}
+@keyframes pulse-border{0%,100%{border-color:rgba(239,68,68,.3)}50%{border-color:rgba(239,68,68,.8)}}
+.e2e-arrow{color:var(--dim);font-size:18px;margin:0 6px}
+.e2e-arrow-down{color:var(--dim);font-size:18px;margin:6px 0;transform:rotate(90deg)}
+.e2e-branch{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.e2e-sub{padding:8px 14px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--muted)}
+
+/* Footer */
+footer{text-align:center;padding:40px;color:var(--dim);font-size:13px;border-top:1px solid rgba(255,255,255,.05)}
+
+/* Utilidades */
+.mt-8{margin-top:8px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}.mb-8{margin-bottom:8px}.mb-16{margin-bottom:16px}
+.text-crit{color:var(--crit)}.text-warn{color:var(--warn)}.text-med{color:var(--med)}.text-info{color:var(--info)}.text-accent{color:var(--accent)}.text-muted{color:var(--muted)}.text-dim{color:var(--dim)}
+.fw-700{font-weight:700}.fs-12{font-size:12px}.fs-13{font-size:13px}
+
+/* Animaciones reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:all .6s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}.reveal-delay-2{transition-delay:.2s}.reveal-delay-3{transition-delay:.3s}.reveal-delay-4{transition-delay:.4s}.reveal-delay-5{transition-delay:.5s}
+
+/* Responsive */
+@media(max-width:900px){
+  section{padding:60px 24px 60px 72px}
+  #nav{width:48px}#nav:hover{width:48px}#nav a span{display:none}
+  .audit-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .node-detail{width:100%;right:-100%}
+}
+
+/* Glow de fondo sutil por sección */
+section::before{content:'';position:absolute;top:20%;left:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(245,158,11,.04),transparent 70%);pointer-events:none;border-radius:50%}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div id="progress"></div>
+
+<!-- Nav lateral -->
+<nav id="nav">
+  <div class="logo">AF</div>
+  <a href="#hero" class="active" data-sec="hero"><i class="fas fa-home"></i><span>Inicio</span></a>
+  <a href="#arch" data-sec="arch"><i class="fas fa-project-diagram"></i><span>Arquitectura</span></a>
+  <a href="#auth" data-sec="auth"><i class="fas fa-shield-halved"></i><span>Autenticación</span></a>
+  <a href="#creation" data-sec="creation"><i class="fas fa-wand-magic-sparkles"></i><span>Creación</span></a>
+  <a href="#audit" data-sec="audit"><i class="fas fa-bug"></i><span>Auditoría</span></a>
+  <a href="#status" data-sec="status"><i class="fas fa-heart-pulse"></i><span>Estado</span></a>
+</nav>
+
+<!-- Panel detalle de nodo -->
+<div class="node-detail" id="nodeDetail">
+  <button class="node-detail-close" onclick="closeNodeDetail()"><i class="fas fa-times"></i></button>
+  <div id="nodeDetailContent"></div>
+</div>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section id="hero">
+  <div class="grid-bg"></div>
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <div class="section-label">Auditoría Completa del Sistema</div>
+    <h1 class="hero-title">AgentForge <span class="accent">ULTIMATE</span></h1>
+    <p class="hero-sub">Mapeo exhaustivo de cada componente, cada flujo, cada decisión.<br>Fecha de auditoría: 2026-04-13</p>
+    <div class="stats-grid">
+      <div class="stat-card reveal"><div class="stat-num" data-target="9">0</div><div class="stat-label">Subsistemas mapeados</div></div>
+      <div class="stat-card reveal reveal-delay-1"><div class="stat-num" data-target="48">0</div><div class="stat-label">Componentes identificados</div></div>
+      <div class="stat-card reveal reveal-delay-2"><div class="stat-num" data-target="20">0</div><div class="stat-label">Puntos críticos</div></div>
+      <div class="stat-card reveal reveal-delay-3"><div class="stat-num" data-target="5">0</div><div class="stat-label">Flujos de autenticación</div></div>
+      <div class="stat-card reveal reveal-delay-4"><div class="stat-num" data-target="5">0</div><div class="stat-label">Fases de creación</div></div>
+      <div class="stat-card reveal reveal-delay-5"><div class="stat-num" data-target="7">0</div><div class="stat-label">Fallas confirmadas</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><i class="fas fa-chevron-down"></i> Scroll para explorar</div>
+</section>
+
+<!-- ═══════════════════ ARQUITECTURA ═══════════════════ -->
+<section id="arch">
+  <div class="section-label">Visión Macro</div>
+  <h2 class="section-title">Arquitectura General del Sistema</h2>
+  <p class="section-desc">9 subsistemas interconectados con 48+ componentes. Arrastra para rotar, haz click en un nodo para ver sus componentes internos.</p>
+  <canvas id="archCanvas"></canvas>
+  <div class="arch-legend" id="archLegend"></div>
+</section>
+
+<!-- ═══════════════════ AUTENTICACIÓN ═══════════════════ -->
+<section id="auth">
+  <div class="section-label">Flujo de Seguridad</div>
+  <h2 class="section-title">Autenticación — 5 Flujos Completos</h2>
+  <p class="section-desc">Desde el login con email/password hasta la expiración del token. Cada decisión, cada error, cada fallback documentado.</p>
+  <div class="auth-tabs" id="authTabs">
+    <button class="auth-tab active" data-flow="f1"><i class="fas fa-envelope"></i> Email / Password</button>
+    <button class="auth-tab" data-flow="f2"><i class="fab fa-google"></i> Google OAuth</button>
+    <button class="auth-tab" data-flow="f3"><i class="fas fa-save"></i> Persistencia de Sesión</button>
+    <button class="auth-tab" data-flow="f4"><i class="fas fa-lock"></i> Rutas Protegidas</button>
+    <button class="auth-tab" data-flow="f5"><i class="fas fa-clock"></i> Expiración de Token</button>
+  </div>
+
+  <!-- Flow 1: Email/Password -->
+  <div class="auth-flow active" id="flow-f1">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-user">Usuario</div><div class="tl-msg">Click "Iniciar Sesión"</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend</div><div class="tl-msg">openModal() → LoginModal visible</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-user">Usuario</div><div class="tl-msg">Ingresa email + password → Submit</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend → API</div><div class="tl-msg">POST /api/v1/auth/login</div><div class="tl-detail">form-data: username, password</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-api">Backend → auth.py</div><div class="tl-msg">login() endpoint → SELECT user WHERE email = ?</div></div>
+        <div class="tl-branch error"><div class="tl-branch-label fail"><i class="fas fa-xmark"></i> Usuario NO existe</div>HTTP 401 "Incorrect email or password" → "Email o contraseña incorrectos"</div>
+      </div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-auth">auth.py</div><div class="tl-msg">bcrypt.verify(password, hashed_password)</div></div>
+        <div class="tl-branch error"><div class="tl-branch-label fail"><i class="fas fa-xmark"></i> Password WRONG</div>HTTP 401 "Incorrect email or password"</div>
+      </div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-card"><div class="tl-actor a-auth">auth.py — Login exitoso</div><div class="tl-msg">create_access_token({sub: user.id}) → JWT</div><div class="tl-detail">Respuesta: {access_token: "eyJ...", token_type: "bearer"}</div></div></div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend</div><div class="tl-msg">GET /api/v1/auth/me (Bearer token) → recibe User object</div><div class="tl-detail">{id, email, name, picture, plan}</div></div></div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend</div><div class="tl-msg">login(token, userData) → localStorage + AuthContext → closeModal()</div></div></div>
+    </div>
+  </div>
+
+  <!-- Flow 2: Google OAuth -->
+  <div class="auth-flow" id="flow-f2">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-user">Usuario</div><div class="tl-msg">Click "Continuar con Google"</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend</div><div class="tl-msg">useGoogleLogin() → Google OAuth popup</div><div class="tl-detail text-crit">BUG #1: Falta flow:'implicit' — devuelve code en vez de access_token</div></div></div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-card"><div class="tl-actor a-google">Google OAuth</div><div class="tl-msg">codeResponse {access_token, ...}</div></div>
+        <div class="tl-branch error"><div class="tl-branch-label fail"><i class="fas fa-xmark"></i> OAuth falla</div>onError callback → "Error al conectar con Google"</div>
+      </div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend → API</div><div class="tl-msg">POST /api/v1/auth/google_sync {token: access_token}</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-auth">auth.py → Google</div><div class="tl-msg">GET https://www.googleapis.com/oauth2/v3/userinfo</div></div>
+        <div class="tl-branch error"><div class="tl-branch-label fail"><i class="fas fa-xmark"></i> Token inválido/expirado</div>HTTP 401 → "Token inválido o expirado"</div>
+      </div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-card"><div class="tl-actor a-google">Google responde</div><div class="tl-msg">{email, sub, name, picture}</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-db">PostgreSQL</div><div class="tl-msg">SELECT user WHERE email = ?</div></div>
+        <div class="tl-branch success"><div class="tl-branch-label ok"><i class="fas fa-plus"></i> Usuario NO existe</div>INSERT User(google_id, email, name, picture) → create_access_token → JWT</div>
+        <div class="tl-branch success"><div class="tl-branch-label ok"><i class="fas fa-pen"></i> Usuario YA existe</div>UPDATE User SET google_id=?, name=?, picture=? → create_access_token → JWT</div>
+      </div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend</div><div class="tl-msg">login(token, userData) → localStorage + AuthContext → closeModal()</div></div></div>
+    </div>
+  </div>
+
+  <!-- Flow 3: Persistencia -->
+  <div class="auth-flow" id="flow-f3">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend [on mount]</div><div class="tl-msg">localStorage.getItem("token") + getItem("user")</div></div>
+        <div class="tl-branch success"><div class="tl-branch-label ok"><i class="fas fa-check"></i> Token y user existen</div>setToken + setUser + setIsAuthenticated(true)</div>
+        <div class="tl-branch error"><div class="tl-branch-label fail"><i class="fas fa-xmark"></i> No hay sesión guardada</div>isAuthenticated = false</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flow 4: Rutas Protegidas -->
+  <div class="auth-flow" id="flow-f4">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-user">Usuario</div><div class="tl-msg">Navega a /projects (ProtectedRoute)</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend</div><div class="tl-msg">check isAuthenticated</div></div>
+        <div class="tl-branch error"><div class="tl-branch-label fail"><i class="fas fa-xmark"></i> NO autenticado</div>openModal() → LoginModal visible → Navigate to "/"<div class="tl-detail text-warn mt-8">BUG #15: useEffect con openModal() puede crear loop si isAuthenticated cambia rápido</div></div>
+        <div class="tl-branch success"><div class="tl-branch-label ok"><i class="fas fa-check"></i> Autenticado</div>Render &lt;ProjectsView /&gt;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flow 5: Token Expiración -->
+  <div class="auth-flow" id="flow-f5">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Frontend</div><div class="tl-msg">Any request with Bearer token → API returns 401</div></div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-card"><div class="tl-actor a-fe">Interceptor</div><div class="tl-msg">Interceptor catches 401</div></div>
+        <div class="tl-branch success"><div class="tl-branch-label ok"><i class="fas fa-shield"></i> URL incluye '/auth/' OR isLoggingIn.current</div>SKIP logout (evitar recursión durante login)</div>
+        <div class="tl-branch error"><div class="tl-branch-label fail"><i class="fas fa-right-from-bracket"></i> Otra ruta</div>logout() → clear localStorage + state → LoginModal opens automatically<div class="tl-detail text-warn mt-8">BUG #14: No distingue rutas protegidas vs públicas → logout accidental</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CREACIÓN DE PROYECTO ═══════════════════ -->
+<section id="creation">
+  <div class="section-label">Pipeline Completo</div>
+  <h2 class="section-title">Flujo de Creación de Proyecto</h2>
+  <p class="section-desc">5 fases, 9+ sub-pasos en el worker, múltiples puntos de decisión y fallback. Click en cada fase para expandir.</p>
+  <div class="creation-phases" id="creationPhases">
+    <div class="phase-progress"><div class="phase-progress-fill" id="phaseProgressFill"></div></div>
+
+    <!-- FASE 1 -->
+    <div class="phase-block" data-phase="1">
+      <div class="phase-num">1</div>
+      <div class="phase-header" onclick="togglePhase(this)">
+        <h3>Consultación Interactiva — 3 Fases</h3>
+        <div class="phase-toggle"><i class="fas fa-chevron-down"></i></div>
+      </div>
+      <div class="phase-body">
+        <div class="substep"><div class="substep-title"><i class="fas fa-message"></i> Usuario envía idea del proyecto</div><p>POST /api/v1/orchestrate/consult {message, session_id} → orchestrate.py → consult_architect() → SELECT/CREATE ChatSession → ConsultationService.generate_response()</p></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-robot"></i> System prompt: 3-phase flow</div><p>Type → Customization → Blueprint. El LLM debe responder JSON con {status: "ASKING"|"READY", message, blueprint?}</p>
+        <div class="mt-8 text-muted fs-12">Cadena de fallback LLM:</div>
+        <div class="fallback-chain" id="fallbackChain">
+          <div class="fallback-node active"><i class="fas fa-bolt"></i> Groq (llama-3.3-70b)</div>
+          <div class="fallback-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="fallback-node"><i class="fas fa-diamond"></i> Gemini (gemini-2.0-flash)</div>
+          <div class="fallback-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="fallback-node"><i class="fas fa-brain"></i> Claude (claude-3-5-sonnet)</div>
+          <div class="fallback-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="fallback-node"><i class="fas fa-route"></i> OpenRouter (gemini-2.0-flash-lite:free)</div>
+        </div>
+        </div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-comments"></i> Loop ASKING hasta READY</div><p>Mientras status == "ASKING", el arquitecto hace preguntas de tipo, personalización y blueprint. El usuario responde iterativamente.</p>
+        <div class="branch branch-ok">Ejemplo: "¿Qué tipo de solución necesitas? 1) Web 2) App 3) Software 4) Automatización"</div></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-file-lines"></i> status == "READY" → Blueprint generado</div><p>Respuesta: {status: "READY", blueprint: {agent_type, features, stack, detailed_prompt}} → Se muestra al usuario para aprobación.</p>
+        <div class="tl-detail text-warn mt-8">BUG #12: LLM puede no seguir estrictamente el 3-phase flow → Blueprint sin contexto suficiente</div></div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase-block" data-phase="2">
+      <div class="phase-num">2</div>
+      <div class="phase-header" onclick="togglePhase(this)">
+        <h3>Blueprint Approval</h3>
+        <div class="phase-toggle"><i class="fas fa-chevron-down"></i></div>
+      </div>
+      <div class="phase-body">
+        <div class="substep"><div class="substep-title"><i class="fas fa-eye"></i> Blueprint mostrado al usuario</div><p>Se muestran: agent_type, features, stack, detailed_prompt. El usuario revisa y decide aprobar o modificar.</p></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-check-circle"></i> Click "Crear Proyecto"</div><p>POST /api/v1/orchestrate/create {prompt, name, solution_type?} → Dispara la Fase 3 (async vía Celery).</p></div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase-block" data-phase="3">
+      <div class="phase-num">3</div>
+      <div class="phase-header" onclick="togglePhase(this)">
+        <h3>Creación Async — Celery Queue</h3>
+        <div class="phase-toggle"><i class="fas fa-chevron-down"></i></div>
+      </div>
+      <div class="phase-body">
+        <div class="substep"><div class="substep-title"><i class="fas fa-database"></i> INSERT Task en PostgreSQL</div><p>Task(status="PENDING", request=prompt, type="agent_generation") → generate_agent_task.apply_async(args=[prompt, user_id, solution_type]) vía Redis broker (port 6389)</p></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-spinner"></i> Frontend inicia polling</div><p>GET /api/v1/orchestrate/status/{taskId} cada 2 segundos → Muestra "Generando agente..." + spinner</p></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-play"></i> Celery Worker ejecuta task</div><p>generate_agent_task(prompt, user_id, solution_type) → UPDATE Task SET status="RUNNING" → agent_factory.process_request()</p></div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div class="phase-block" data-phase="4">
+      <div class="phase-num">4</div>
+      <div class="phase-header" onclick="togglePhase(this)">
+        <h3>Worker Execution — 9 Sub-pasos</h3>
+        <div class="phase-toggle"><i class="fas fa-chevron-down"></i></div>
+      </div>
+      <div class="phase-body">
+        <div class="substep"><div class="substep-title"><i class="fas fa-wand-magic-sparkles"></i> 4.1 Prompt Optimization — Lyra</div><p>lyra_optimizer.optimize(prompt) → {enhanced_prompt, analysis...}</p><div class="tl-detail text-warn mt-8">BUG #11: lyra_optimizer.py puede no estar actualizado</div></div>
+
+        <div class="substep"><div class="substep-title"><i class="fas fa-brain"></i> 4.2 Agent Type Decision — NeuralBrain + RL</div>
+        <div class="branch branch-ok"><span class="tag tag-green">Si solution_type proporcionado</span> SKIP classification, usar directamente. decision = {action: solution_type, confidence: 1.0}</div>
+        <div class="branch branch-err"><span class="tag tag-red">Si NO solution_type (fallback)</span> neural_brain.analyze_request(prompt):
+          <div class="mt-8">1. Check automation keywords (whatsapp, telegram, n8n...)</div>
+          <div class="branch branch-ok"><span class="tag tag-green">Match automation</span> → {action: "agent-creator", confidence: 0.95}</div>
+          <div class="branch branch-err"><span class="tag tag-red">No match</span> → Fallback: Local AI → Groq → Gemini → OpenRouter → Heuristic
+            <div class="mt-8">+ neural_brain_rl.decide_agent_type(): VAE encode → GRU → SAC select_action</div>
+            <div class="tl-detail text-warn mt-8">BUG #8: Keyword matching limitado (no cubre "cotización", "inventario", "descuento")</div>
+            <div class="tl-detail text-warn">BUG #20: Modelo RL no entrenado con datos reales → decisiones aleatorias</div>
+          </div>
+        </div></div>
+
+        <div class="substep"><div class="substep-title"><i class="fas fa-sitemap"></i> 4.3 Plan Generation</div>
+        <div class="branch branch-ok"><span class="tag tag-blue">action == "agent-creator"</span>
+          <div class="mt-8">LLM genera Plan JSON: {description, architecture, system_prompt, model, tools[]}</div>
+          <div class="mt-8">→ n8n_orchestrator.create_flow_for_project():</div>
+          <div class="mt-8">  _detect_auth_required() → _build_workflow_json() (trigger + code node + respond node)</div>
+          <div class="mt-8">  POST /api/v1/workflows → PATCH activate → {flow_id, editor_url}</div>
+          <div class="mt-8">  → n8n_web_admin_generator → {index.html, server.js, package.json}</div>
+          <div class="tl-detail text-warn mt-8">BUG #6: n8n workflow NO se crea cuando agent_type != "agent-creator"</div>
+          <div class="tl-detail text-warn">BUG #7: HTML generado sin UI/UX usable</div>
+        </div>
+        <div class="branch branch-err"><span class="tag tag-amber">action == web/app/software-builder</span> LLM genera architecture plan (texto/JSON)</div></div>
+
+        <div class="substep"><div class="substep-title"><i class="fas fa-code"></i> 4.4 Code Generation</div>
+        <div class="branch branch-ok"><span class="tag tag-green">web-builder</span> SINGLE index.html con Tailwind CDN + GSAP + Phosphor Icons</div>
+        <div class="branch branch-ok"><span class="tag tag-green">app-builder (Python)</span> FastAPI main.py + requirements.txt</div>
+        <div class="branch branch-ok"><span class="tag tag-green">app-builder (JS)</span> Next.js/React code + package.json</div>
+        <div class="branch branch-ok"><span class="tag tag-green">software-builder</span> Python/Node scripts</div>
+        <div class="branch branch-err"><span class="tag tag-blue">agent-creator</span> code = plan_json (ya generado en 4.3)</div>
+        <div class="mt-8">→ apply_self_healing(code, plan): Audit → find issues → regenerate → re-audit</div></div>
+
+        <div class="substep"><div class="substep-title"><i class="fas fa-clipboard-check"></i> 4.6 Quality Gate — Score mínimo: 70</div>
+        <p>run_eslint(--no-eslintrc) + run_pylint(E0602) → final_score = avg()</p>
+        <div class="gauge"><div class="gauge-fill" style="width:75%;background:var(--med)"></div></div>
+        <div class="branch branch-ok"><span class="tag tag-green">score >= 70</span> Passed</div>
+        <div class="branch branch-err"><span class="tag tag-red">score < 70</span> FAILURE — Quality Gate falló<div class="tl-detail text-warn mt-8">BUG #9: ESLint --no-eslintrc da falsos positivos en código generado por IA</div></div></div>
+
+        <div class="substep"><div class="substep-title"><i class="fas fa-shield-virus"></i> 4.7 SCA Scanner</div>
+        <p>Extraer dependencias → Check contra vulnerability DB local → SCA_BLOCK_CRITICAL</p>
+        <div class="branch branch-ok"><span class="tag tag-green">No vulnerabilidades críticas</span> {valid: true}</div>
+        <div class="branch branch-err"><span class="tag tag-red">Vulnerabilidades críticas</span> FAILURE</div></div>
+
+        <div class="substep"><div class="substep-title"><i class="fas fa-docker"></i> 4.8 Docker Deploy</div>
+        <p>parse_markdown_to_dir → _inject_base_template → _pre_build_syntax_check (node -c / python -m py_compile) → _run_sandbox_pre_build → docker images.build (timeout: 300s, 3 intentos)</p>
+        <div class="tl-detail text-warn mt-8">BUG #10: Timeout 300s puede ser insuficiente para Next.js builds</div>
+        <div class="tl-detail text-warn">BUG #13: Sandbox usa node:18-alpine vs node:20 del proyecto</div>
+        <div class="mt-16 fw-700 text-muted fs-12">Si build success → port_manager._get_free_port() (8000-9000) → containers.run</div>
+        <div class="mt-8 fw-700 text-muted fs-12">Health Check Loop — 10 retries, exponential backoff:</div>
+        <div class="health-loop" id="healthLoop">
+          <div class="health-dot pass"><i class="fas fa-check"></i></div>
+          <div class="health-dot fail"><i class="fas fa-xmark"></i></div>
+          <div class="health-dot pass"><i class="fas fa-check"></i></div>
+          <div class="health-dot fail"><i class="fas fa-xmark"></i></div>
+          <div class="health-dot fail"><i class="fas fa-xmark"></i></div>
+          <div class="health-dot fail"><i class="fas fa-xmark"></i></div>
+          <div class="health-dot fail"><i class="fas fa-xmark"></i></div>
+          <div class="health-dot fail"><i class="fas fa-xmark"></i></div>
+          <div class="health-dot fail"><i class="fas fa-xmark"></i></div>
+          <div class="health-dot pass"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="fs-12 text-dim mt-8">Backoff: 5s → 10s → 15s → 20s → 30s | Fallbacks: docker exec curl → log analysis (listening/ready/started)</div>
+        <div class="tl-detail text-warn mt-8">BUG #4: http://{container_name}:3000 puede fallar por DNS en Docker Desktop Windows</div>
+        <div class="tl-detail text-crit">BUG #5: Se crean 2 contenedores para 1 proyecto (web-builder + n8n admin)</div>
+        <div class="branch branch-err"><span class="tag tag-red">Health check FAILED</span> Captura logs (tail=200) → Guarda en /tmp/agentforge-ctn-{id}-failed.log → NO elimina container (debug)</div></div>
+
+        <div class="substep"><div class="substep-title"><i class="fas fa-floppy-disk"></i> 4.9 Persist Results</div>
+        <div class="branch branch-ok"><span class="tag tag-green">Deploy SUCCESS</span> INSERT Project + INSERT Deployment + UPDATE Task status="SUCCESS", result_data={project_id, container_id, port, url}</div>
+        <div class="branch branch-err"><span class="tag tag-red">Deploy FAILED</span> INSERT Project (still saved) + UPDATE Task status="FAILURE", result_data={error}</div></div>
+      </div>
+    </div>
+
+    <!-- FASE 5 -->
+    <div class="phase-block" data-phase="5">
+      <div class="phase-num">5</div>
+      <div class="phase-header" onclick="togglePhase(this)">
+        <h3>Frontend Polling + Display</h3>
+        <div class="phase-toggle"><i class="fas fa-chevron-down"></i></div>
+      </div>
+      <div class="phase-body">
+        <div class="substep"><div class="substep-title"><i class="fas fa-rotate"></i> Loop: Poll cada 2 segundos</div><p>GET /api/v1/orchestrate/status/{taskId} → SELECT Task → {status, result_data}</p></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-check"></i> status == "SUCCESS"</div><p>Mostrar proyecto + preview URL + WebContainerPreview. Cargar code en editor, url en iframe. Fetch projects list para actualizar grid.</p>
+        <div class="tl-detail text-warn mt-8">BUG #17: WebContainer API requiere HTTPS en producción</div>
+        <div class="tl-detail text-warn">BUG #18: Crash si proyecto no tiene generated_code (n8n-only)</div></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-xmark"></i> status == "FAILURE"</div><p>Mostrar error message + suggestion al usuario.</p></div>
+        <div class="substep"><div class="substep-title"><i class="fas fa-hourglass-half"></i> PENDING / RUNNING</div><p>Continuar mostrando "Generando agente..." + spinner</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ AUDITORÍA ═══════════════════ -->
+<section id="audit">
+  <div class="section-label">Hallazgos</div>
+  <h2 class="section-title">Puntos Críticos — 20 Issues</h2>
+  <p class="section-desc">Clasificados por severidad. Los críticos bloquean el sistema. Filtra y busca para explorar cada hallazgo.</p>
+  <div class="audit-bars reveal" id="auditBars">
+    <div class="audit-bar-item"><div class="audit-bar-label"><span class="text-crit">Críticos</span><span>7</span></div><div class="audit-bar"><div class="audit-bar-fill" data-w="35" style="background:var(--crit)"></div></div></div>
+    <div class="audit-bar-item"><div class="audit-bar-label"><span class="text-warn">Altos</span><span>6</span></div><div class="audit-bar"><div class="audit-bar-fill" data-w="30" style="background:var(--warn)"></div></div></div>
+    <div class="audit-bar-item"><div class="audit-bar-label"><span class="text-med">Medios</span><span>7</span></div><div class="audit-bar"><div class="audit-bar-fill" data-w="35" style="background:var(--med)"></div></div></div>
+  </div>
+  <div class="audit-filters reveal">
+    <button class="audit-filter active" data-sev="all">Todos (20)</button>
+    <button class="audit-filter" data-sev="crit"><span class="dot" style="background:var(--crit)"></span> Críticos (7)</button>
+    <button class="audit-filter" data-sev="high"><span class="dot" style="background:var(--warn)"></span> Altos (6)</button>
+    <button class="audit-filter" data-sev="med"><span class="dot" style="background:var(--med)"></span> Medios (7)</button>
+    <input type="text" class="audit-search" placeholder="Buscar por archivo, descripción..." id="auditSearch">
+  </div>
+  <div class="audit-count" id="auditCount">Mostrando 20 de 20 issues</div>
+  <div class="audit-grid" id="auditGrid"></div>
+</section>
+
+<!-- ═══════════════════ ESTADO ═══════════════════ -->
+<section id="status">
+  <div class="section-label">Conclusión</div>
+  <h2 class="section-title">Estado del Sistema</h2>
+  <p class="section-desc">Resumen final: lo que funciona, lo que falla, lo que necesita verificación.</p>
+
+  <div class="status-section reveal">
+    <h3><span class="status-icon ok"><i class="fas fa-check"></i></span> Componentes que Funcionan (19)</h3>
+    <div class="status-grid" id="statusOk"></div>
+  </div>
+
+  <div class="status-section reveal">
+    <h3><span class="status-icon fail"><i class="fas fa-xmark"></i></span> Componentes que Fallan (7)</h3>
+    <div class="status-grid" id="statusFail"></div>
+  </div>
+
+  <div class="status-section reveal">
+    <h3><span class="status-icon unknown"><i class="fas fa-question"></i></span> Necesitan Verificación (5)</h3>
+    <div class="status-grid" id="statusUnknown"></div>
+  </div>
+
+  <div class="reveal">
+    <h3 class="fw-700 mb-16" style="font-size:18px">Flujo de Datos End-to-End</h3>
+    <div class="e2e-flow">
+      <div class="e2e-row">
+        <div class="e2e-block" style="border-color:var(--user)">User Browser</div>
+        <div class="e2e-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="e2e-block" style="border-color:var(--fe)">Frontend<br><span class="fs-12 text-muted">React + Vite + Tailwind :3009</span></div>
+        <div class="e2e-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="e2e-block" style="border-color:var(--be)">Backend<br><span class="fs-12 text-muted">FastAPI + Uvicorn :8000</span></div>
+      </div>
+      <div class="e2e-arrow-down"><i class="fas fa-arrow-right"></i></div>
+      <div class="e2e-branch">
+        <div class="e2e-block" style="border-color:var(--wrk)">Celery Worker<br><span class="fs-12 text-muted">Redis :6389</span></div>
+        <div class="e2e-block">Direct Service Call<br><span class="fs-12 text-muted">Consultation / Health / Container</span></div>
+      </div>
+      <div class="e2e-arrow-down"><i class="fas fa-arrow-right"></i></div>
+      <div class="e2e-branch">
+        <div class="e2e-block" style="border-color:var(--db)">PostgreSQL :5445</div>
+        <div class="e2e-block" style="border-color:var(--db)">Redis :6389</div>
+        <div class="e2e-block" style="border-color:var(--db)">ChromaDB :8006</div>
+        <div class="e2e-block fail-block">Docker Engine<br><span class="fs-12 text-crit">BUG #4 #5</span></div>
+      </div>
+      <div class="e2e-arrow-down"><i class="fas fa-arrow-right"></i></div>
+      <div class="e2e-branch">
+        <div class="e2e-block" style="border-color:var(--n8n)">n8n Service :5678</div>
+        <div class="e2e-block fail-block">User Containers<br><span class="fs-12 text-crit">:8000-9000 — BUG #5</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="color:var(--accent);font-weight:600;margin-bottom:8px">Fin del documento de auditoría</p>
+  <p>AgentForge ULTIMATE — 2026-04-13 — Generado para revisión técnica</p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATOS COMPLETOS DEL DOCUMENTO
+// ═══════════════════════════════════════════════════════════════
+
+// Nodos de arquitectura (9 subsistemas)
+const archNodes = [
+  {id:'user',label:'Usuario',icon:'fa-user',color:'#3b82f6',x:0,y:-3.5,z:0,r:.55,
+   components:['Usuario no autenticado','Usuario autenticado']},
+  {id:'fe',label:'Frontend',icon:'fa-desktop',color:'#10b981',x:0,y:-1.8,z:0,r:.7,
+   components:['main.tsx → App.tsx','Routes: / /projects /content /marketplace /connectors /analytics /admin /settings /automation/:id','AuthContext + ModalContext + ProtectedRoute','LoginModal: Email/Password + Google OAuth','Sidebar: 8 nav items','HomeView: Chat + NeuralArchitect + WebContainerPreview','ProjectsView: Grid + Deploy/Stop/Start/Delete','ContentView: 6 content types','AdminDashboard: Overview/Billing/Security','AnalyticsView: 4 tabs + 5s polling','SettingsView: API keys config','MarketplaceView: Clone projects','ConnectorsView: Catalog + Automation','AutomationAdminView: n8n workflow control','WebContainerPreview: Code editor + preview + deploy','api.ts: axios baseURL=/api/v1 + Bearer token']},
+  {id:'be',label:'Backend',icon:'fa-gear',color:'#8b5cf6',x:0,y:0,z:0,r:.7,
+   components:['main.py: CORS + Audit + RateLimit + 9 routers','auth.py: /register /login /me /google_sync /fix_admin','orchestrate.py: /consult /create /status /deploy /automation','dashboard.py: /stats /projects /metrics /versions /deploy','containers.py: /stop /start /delete','admin.py: /telemetry /services /command /oracle','marketplace.py: /list /clone /publish','integrations.py: /catalog /generate /execute /flow/create','security.py: MFA /api-keys /teams']},
+  {id:'svc',label:'Services',icon:'fa-cogs',color:'#f59e0b',x:0,y:2,z:0,r:.85,
+   components:['consultation_service.py: 3-phase interview','agent_factory.py: process_request → Lyra → NeuralBrain → plan → code → deploy','docker_orchestrator.py: parse_markdown → build → run → health_check','neural_brain.py: classify intent (Local→Groq→Gemini→OpenRouter→heuristic)','neural_brain_rl.py: RL model (VAE+GRU+SAC)','n8n_orchestrator.py: create n8n workflow via REST API','n8n_admin_orchestrator.py: admin interface for n8n','n8n_web_admin_generator.py: generate HTML admin dashboard','lyra_optimizer.py: optimize prompts','quality_gate.py: ESLint + Pylint → score','sca_scanner.py: vulnerability scan (offline DB)','sandbox_test.py: docker-based code test','health_checker.py: 8 health endpoints','port_manager.py: dynamic port assignment','web_researcher.py: scrape fmhy.net','code_validator.py: syntax validation','import_checker.py: dependency verification']},
+  {id:'wrk',label:'Workers',icon:'fa-rotate',color:'#ec4899',x:-2.5,y:1,z:0,r:.5,
+   components:['Celery App (Redis broker :6389)','tasks.py: generate_agent_task (asyncio loop)']},
+  {id:'db',label:'Databases',icon:'fa-database',color:'#06b6d4',x:2.5,y:1,z:0,r:.65,
+   components:['PostgreSQL :5445','Redis :6389 — Celery broker','ChromaDB :8006 — Vector memory','User: id, email, name, picture, plan, credits','Project: id, name, code, agent_type, llm_used, n8n_id, n8n_editor_url','ChatSession: id, user_id, messages (JSON)','Deployment: id, container_id, port, status, project_id','Task: id, request, type, status, result_data, project_id','ProjectVersion: id, project_id, version, code','AuditLog: id, project_id, user_id, action, code_hash']},
+  {id:'ai',label:'AI APIs',icon:'fa-robot',color:'#ef4444',x:-3.5,y:-0.5,z:0,r:.55,
+   components:['Groq: llama-3.3-70b-versatile','Google Gemini: gemini-2.0-flash','Anthropic: claude-3-5-sonnet-20240620','OpenRouter: google/gemini-2.0-flash-lite:free','Local AI: localhost:5001','Google OAuth 2.0']},
+  {id:'n8n',label:'n8n Service',icon:'fa-palette',color:'#ff6b35',x:3,y:3,z:0,r:.5,
+   components:['n8n REST API: /api/v1/workflows, /executions','Workflow execution engine','Webhook triggers','Puerto: 5678']},
+  {id:'ctn',label:'Containers',icon:'fa-box',color:'#14b8a6',x:-1.5,y:3.8,z:0,r:.55,
+   components:['User app containers (agentforge-ctn-*)','n8n container','n8n Admin container (generated)','Puertos: 8000-9000']}
+];
+
+// Conexiones entre subsistemas
+const archEdges = [
+  {from:'user',to:'fe'},{from:'fe',to:'be'},{from:'be',to:'svc'},
+  {from:'be',to:'wrk'},{from:'wrk',to:'svc'},{from:'svc',to:'ai'},
+  {from:'svc',to:'ctn'},{from:'svc',to:'n8n'},{from:'svc',to:'db'},
+  {from:'wrk',to:'db'},{from:'be',to:'db'},{from:'be',to:'ai'},
+  {from:'n8n',to:'ctn'}
+];
+
+// Issues de auditoría (20 items exactos del documento)
+const auditItems = [
+  {id:1,sev:'crit',loc:'LoginModal.tsx:104',prob:'useGoogleLogin default flow devuelve code, pero código espera access_token. Falta flow: \'implicit\'',impact:'Google login siempre falla',status:'nofix',statusText:'SIN FIX'},
+  {id:2,sev:'crit',loc:'agent_factory.py',prob:'get_orchestrator importado dentro de try block → UnboundLocalError cuando se ejecuta n8n admin deploy',impact:'Deploy falla con "variable not associated"',status:'reverted',statusText:'REVERTIDO'},
+  {id:3,sev:'crit',loc:'HomeView.tsx',prob:'Pantalla negra = servidor frontend no corre en puerto 3009',impact:'Sistema inaccesible',status:'nofix',statusText:'SIN FIX'},
+  {id:4,sev:'crit',loc:'docker_orchestrator.py',prob:'Health check usa http://{container_name}:3000 como primera URL → DNS de contenedor puede fallar en Docker Desktop Windows',impact:'Health check falla aunque container funciona',status:'partial',statusText:'PARCIALMENTE FIX'},
+  {id:5,sev:'crit',loc:'docker_orchestrator.py',prob:'Se crean 2 contenedores para 1 proyecto (web-builder + n8n admin) cuando solo debería ser 1',impact:'Consumo doble de recursos, URLs incorrectas',status:'nofix',statusText:'SIN FIX'},
+  {id:6,sev:'crit',loc:'n8n_orchestrator.py',prob:'n8n workflow NO se crea cuando agent_type != "agent-creator" → automatizaciones no tienen workflow',impact:'Automatizaciones sin flujo n8n',status:'partial',statusText:'PARCIALMENTE FIX'},
+  {id:7,sev:'crit',loc:'n8n_web_admin_generator.py',prob:'Genera HTML sin UI/UX usable (básico, sin estilo profesional)',impact:'Admin web no funcional visualmente',status:'partial',statusText:'NECESITA MEJORA'},
+  {id:8,sev:'high',loc:'neural_brain.py',prob:'Keyword matching para detectar automatizaciones es limitado (no cubre "cotización", "inventario", "descuento")',impact:'Clasifica "app-builder" en vez de "agent-creator"',status:'partial',statusText:'PARCIALMENTE FIX'},
+  {id:9,sev:'high',loc:'quality_gate.py',prob:'ESLint con --no-eslintrc puede dar falsos positivos en código generado por IA',impact:'Code válido bloqueado por linting',status:'partial',statusText:'PARCIALMENTE FIX'},
+  {id:10,sev:'high',loc:'docker_orchestrator.py',prob:'Docker build timeout 300s puede ser insuficiente para Next.js builds',impact:'Builds fallan en proyectos grandes',status:'nofix',statusText:'SIN FIX'},
+  {id:11,sev:'high',loc:'agent_factory.py',prob:'lyra_optimizer.py importa pero el módulo puede no estar actualizado',impact:'Prompt optimization puede fallar',status:'verify',statusText:'NECESITA VERIFICAR'},
+  {id:12,sev:'high',loc:'consultation_service.py',prob:'LLM puede no seguir estrictamente el 3-phase flow (ASKING→READY)',impact:'Blueprint se genera antes de tener contexto suficiente',status:'nofix',statusText:'SIN FIX'},
+  {id:13,sev:'high',loc:'sandbox_test.py',prob:'Sandbox usa node:18-alpine pero proyecto usa node:20 → discrepancia de versiones',impact:'Tests sandbox no reflejan realidad del container',status:'nofix',statusText:'SIN FIX'},
+  {id:14,sev:'med',loc:'AuthContext.tsx',prob:'Interceptor 401 no distingue entre rutas protegidas y públicas',impact:'Logout accidental en rutas públicas',status:'partial',statusText:'PARCIALMENTE FIX'},
+  {id:15,sev:'med',loc:'ProtectedRoute.tsx',prob:'useEffect con openModal() puede crear loop si isAuthenticated cambia rápido',impact:'Modal se abre/cierra erráticamente',status:'nofix',statusText:'SIN FIX'},
+  {id:16,sev:'med',loc:'api.ts',prob:'No tiene timeout configurado',impact:'Requests pueden colgarse indefinidamente',status:'nofix',statusText:'SIN FIX'},
+  {id:17,sev:'med',loc:'WebContainerPreview.tsx',prob:'WebContainer API requiere HTTPS en producción, localhost HTTP puede fallar',impact:'Preview no funciona en ciertos navegadores',status:'nofix',statusText:'SIN FIX'},
+  {id:18,sev:'med',loc:'ProjectsView.tsx',prob:'No hay manejo de error cuando proyecto no tiene generated_code',impact:'Crash al renderizar proyectos n8n-only',status:'nofix',statusText:'SIN FIX'},
+  {id:19,sev:'med',loc:'port_manager.py',prob:'No verifica si puerto está en uso por otro container antes de asignar',impact:'Collisiones de puerto',status:'nofix',statusText:'SIN FIX'},
+  {id:20,sev:'med',loc:'neural_brain_rl.py',prob:'Modelo RL no está entrenado con datos reales → decisiones aleatorias',impact:'Clasificación inconsistente',status:'nofix',statusText:'SIN FIX'}
+];
+
+// Componentes por estado
+const statusOk = [
+  'AuthContext + localStorage persistence','ModalContext + LoginModal UI',
+  'FastAPI server (main.py, routers, middleware)','PostgreSQL models + database schema',
+  'Celery worker setup','ConsultationService (3-phase interview flow)',
+  'Lyra optimizer','NeuralBrain (heuristic classification)',
+  'Docker orchestrator (build + run)','Port manager',
+  'Quality Gate (ESLint + Pylint)','SCA Scanner (offline DB)',
+  'Code validator + import checker','Health checker (post-deploy)',
+  'n8n orchestrator (create + activate workflow)','n8n admin orchestrator',
+  'Projects CRUD (dashboard endpoints)','Marketplace clone/publish',
+  'Security (MFA, API keys, teams)','Admin terminal + telemetry'
+];
+const statusFail = [
+  'Google Login (useGoogleLogin flow mismatch)',
+  'n8n workflow creation for non-agent-creator types',
+  'n8n web admin UI/UX',
+  'Frontend rendering (pantalla negra — servidor no corre)',
+  'Neural Brain RL model (untrained)',
+  'WebContainer preview (HTTPS requirement)',
+  'Double container creation'
+];
+const statusUnknown = [
+  'lyra_optimizer.py (¿actualizado?)',
+  'Frontend server running on port 3009',
+  'Docker Desktop networking on Windows',
+  'n8n API key auth (¿key expirada?)',
+  'Sandbox test version mismatch (node:18 vs node:20)'
+];
+
+// ═══════════════════════════════════════════════════════════════
+// HERO — Canvas de partículas
+// ═══════════════════════════════════════════════════════════════
+(function initHeroCanvas(){
+  const c = document.getElementById('heroCanvas');
+  const ctx = c.getContext('2d');
+  let W, H, particles = [];
+  function resize(){ W = c.width = c.offsetWidth; H = c.height = c.offsetHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  // Crear partículas
+  for(let i = 0; i < 80; i++){
+    particles.push({
+      x: Math.random()*2000, y: Math.random()*1200,
+      vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+      r: Math.random()*2+1, a: Math.random()*.4+.1
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // Dibujar partículas
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0) p.x = W; if(p.x > W) p.x = 0;
+      if(p.y < 0) p.y = H; if(p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(0.5, p.r), 0, Math.PI*2);
+      ctx.fillStyle = `rgba(245,158,11,${p.a})`;
+      ctx.fill();
+    });
+    // Dibujar líneas entre partículas cercanas
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 150){
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(245,158,11,${.06*(1-dist/150)})`;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// Contadores animados del Hero
+// ═══════════════════════════════════════════════════════════════
+function animateCounters(){
+  document.querySelectorAll('.stat-num[data-target]').forEach(el => {
+    const target = +el.dataset.target;
+    let current = 0;
+    const step = Math.max(1, Math.floor(target / 40));
+    const interval = setInterval(() => {
+      current += step;
+      if(current >= target){ current = target; clearInterval(interval); }
+      el.textContent = current;
+    }, 40);
+  });
+}
+// Ejecutar al cargar
+setTimeout(animateCounters, 400);
+
+// ═══════════════════════════════════════════════════════════════
+// ARQUITECTURA — Canvas 2D con proyección perspectiva 3D
+// ═══════════════════════════════════════════════════════════════
+(function initArchCanvas(){
+  const canvas = document.getElementById('archCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, rotY = -0.3, rotX = 0.3, dragging = false, lastMX, lastMY;
+  let hoveredNode = null, selectedNode = null;
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    W = canvas.width = rect.width * devicePixelRatio;
+    H = canvas.height = rect.height * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const displayW = () => W / devicePixelRatio;
+  const displayH = () => H / devicePixelRatio;
+
+  // Proyección 3D → 2D
+  function project(x, y, z){
+    // Rotación Y
+    let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+    let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+    // Rotación X
+    let y1 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+    let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
+    // Perspectiva
+    const fov = 600;
+    const scale = fov / (fov + z2 + 5);
+    return { x: displayW()/2 + x1 * 120 * scale, y: displayH()/2 + y1 * 80 * scale, s: scale, z: z2 };
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, displayW(), displayH());
+    const projected = archNodes.map(n => {
+      const p = project(n.x, n.y, n.z);
+      return { ...n, px: p.x, py: p.y, ps: p.s, pz: p.z };
+    });
+
+    // Dibujar conexiones
+    archEdges.forEach(e => {
+      const a = projected.find(n => n.id === e.from);
+      const b = projected.find(n => n.id === e.to);
+      if(!a || !b) return;
+      const isHighlight = hoveredNode && (hoveredNode === e.from || hoveredNode === e.to);
+      const dimmed = hoveredNode && !isHighlight;
+      ctx.beginPath();
+      ctx.moveTo(a.px, a.py);
+      ctx.lineTo(b.px, b.py);
+      ctx.strokeStyle = dimmed ? 'rgba(255,255,255,.03)' : isHighlight ? 'rgba(245,158,11,.5)' : 'rgba(255,255,255,.08)';
+      ctx.lineWidth = isHighlight ? 2 : 1;
+      ctx.stroke();
+    });
+
+    // Dibujar nodos (ordenados por profundidad)
+    projected.sort((a,b) => a.pz - b.pz);
+    projected.forEach(n => {
+      const isHovered = hoveredNode === n.id;
+      const isSelected = selectedNode === n.id;
+      const dimmed = hoveredNode && hoveredNode !== n.id && !archEdges.some(e => (e.from===hoveredNode&&e.to===n.id)||(e.to===hoveredNode&&e.from===n.id));
+      const baseR = n.r * 40 * n.ps;
+      const r = Math.max(8, baseR);
+
+      // Glow
+      if(isHovered || isSelected){
+        ctx.beginPath();
+        ctx.arc(n.px, n.py, r + 12, 0, Math.PI*2);
+        const glow = ctx.createRadialGradient(n.px, n.py, r, n.px, n.py, r+12);
+        glow.addColorStop(0, n.color + '40');
+        glow.addColorStop(1, n.color + '00');
+        ctx.fillStyle = glow;
+        ctx.fill();
+      }
+
+      // Esfera con gradiente
+      ctx.beginPath();
+      ctx.arc(n.px, n.py, r, 0, Math.PI*2);
+      const grad = ctx.createRadialGradient(n.px - r*.3, n.py - r*.3, r*.1, n.px, n.py, r);
+      const alpha = dimmed ? '40' : 'ff';
+      grad.addColorStop(0, n.color + alpha);
+      grad.addColorStop(1, n.color + (dimmed ? '10' : '60'));
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = dimmed ? n.color + '20' : n.color + '80';
+      ctx.lineWidth = isHovered ? 2 : 1;
+      ctx.stroke();
+
+      // Etiqueta
+      if(!dimmed || isHovered){
+        ctx.font = `${isHovered?'600':'500'} ${Math.max(10, 12*n.ps)}px 'Space Grotesk'`;
+        ctx.fillStyle = dimmed ? 'rgba(255,255,255,.2)' : '#f1f5f9';
+        ctx.textAlign = 'center';
+        ctx.fillText(n.label, n.px, n.py + r + 16);
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Auto-rotación lenta
+  let autoRot;
+  function startAutoRot(){ autoRot = setInterval(() => { if(!dragging) rotY += 0.002; }, 16); }
+  startAutoRot();
+
+  // Mouse interaction
+  canvas.addEventListener('mousedown', e => { dragging = true; lastMX = e.clientX; lastMY = e.clientY; clearInterval(autoRot); });
+  window.addEventListener('mousemove', e => {
+    if(!dragging) return;
+    rotY += (e.clientX - lastMX) * 0.005;
+    rotX += (e.clientY - lastMY) * 0.005;
+    rotX = Math.max(-1, Math.min(1, rotX));
+    lastMX = e.clientX; lastMY = e.clientY;
+  });
+  window.addEventListener('mouseup', () => { dragging = false; startAutoRot(); });
+
+  // Hover detection
+  canvas.addEventListener('mousemove', e => {
+    if(dragging) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    hoveredNode = null;
+    for(const n of archNodes){
+      const p = project(n.x, n.y, n.z);
+      const r = Math.max(8, n.r * 40 * p.s);
+      const dx = mx - p.x, dy = my - p.y;
+      if(dx*dx+dy*dy < (r+8)*(r+8)){ hoveredNode = n.id; break; }
+    }
+    canvas.style.cursor = hoveredNode ? 'pointer' : 'grab';
+  });
+
+  // Click → mostrar detalle
+  canvas.addEventListener('click', e => {
+    if(hoveredNode){
+      selectedNode = hoveredNode;
+      showNodeDetail(hoveredNode);
+    }
+  });
+
+  // Leyenda
+  const legend = document.getElementById('archLegend');
+  archNodes.forEach(n => {
+    legend.innerHTML += `<div class="arch-legend-item"><div class="arch-legend-dot" style="background:${n.color}"></div>${n.label}</div>`;
+  });
+})();
+
+// Panel de detalle de nodo
+function showNodeDetail(id){
+  const node = archNodes.find(n => n.id === id);
+  if(!node) return;
+  const panel = document.getElementById('nodeDetail');
+  const content = document.getElementById('nodeDetailContent');
+  content.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:40px;height:40px;border-radius:10px;background:${node.color}20;display:flex;align-items:center;justify-content:center">
+        <i class="fas ${node.icon}" style="color:${node.color};font-size:18px"></i>
+      </div>
+      <div>
+        <h3 style="color:${node.color}">${node.label}</h3>
+        <span class="fs-12 text-muted">${node.components.length} componentes</span>
+      </div>
+    </div>
+    <ul class="comp-list">${node.components.map(c => `<li><i class="fas fa-circle"></i>${c}</li>`).join('')}</ul>
+  `;
+  panel.classList.add('open');
+}
+function closeNodeDetail(){
+  document.getElementById('nodeDetail').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH FLOW — Tabs
+// ═══════════════════════════════════════════════════════════════
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-flow').forEach(f => f.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('flow-' + tab.dataset.flow).classList.add('active');
+    // Animar timeline items
+    setTimeout(() => {
+      document.querySelectorAll('#flow-' + tab.dataset.flow + ' .tl-item').forEach((item, i) => {
+        setTimeout(() => item.classList.add('visible'), i * 100);
+      });
+    }, 50);
+  });
+});
+// Animar primer flow al cargar
+setTimeout(() => {
+  document.querySelectorAll('#flow-f1 .tl-item').forEach((item, i) => {
+    setTimeout(() => item.classList.add('visible'), i * 100);
+  });
+}, 600);
+
+// ═══════════════════════════════════════════════════════════════
+// CREATION FLOW — Accordion + Progress
+// ═══════════════════════════════════════════════════════════════
+function togglePhase(header){
+  const block = header.parentElement;
+  const wasExpanded = block.classList.contains('expanded');
+  // Cerrar todos
+  document.querySelectorAll('.phase-block').forEach(b => b.classList.remove('expanded'));
+  // Abrir si no estaba abierto
+  if(!wasExpanded) block.classList.add('expanded');
+  updatePhaseProgress();
+}
+
+function updatePhaseProgress(){
+  const blocks = document.querySelectorAll('.phase-block');
+  const total = blocks.length;
+  let expanded = 0;
+  blocks.forEach((b, i) => { if(b.classList.contains('expanded')) expanded = i + 1; });
+  const fill = document.getElementById('phaseProgressFill');
+  fill.style.height = (expanded / total * 100) + '%';
+}
+
+// Fallback chain animation
+let fallbackIndex = 0;
+setInterval(() => {
+  const nodes = document.querySelectorAll('#fallbackChain .fallback-node');
+  nodes.forEach((n, i) => {
+    n.classList.toggle('active', i <= fallbackIndex);
+    if(i === fallbackIndex) n.style.boxShadow = '0 0 12px rgba(245,158,11,.4)';
+    else n.style.boxShadow = 'none';
+  });
+  fallbackIndex = (fallbackIndex + 1) % nodes.length;
+}, 1500);
+
+// ═══════════════════════════════════════════════════════════════
+// AUDITORÍA — Renderizar cards + Filtros
+// ═══════════════════════════════════════════════════════════════
+function renderAudit(items){
+  const grid = document.getElementById('auditGrid');
+  grid.innerHTML = '';
+  items.forEach(item => {
+    const sevClass = item.sev === 'crit' ? 'sev-crit' : item.sev === 'high' ? 'sev-high' : 'sev-med';
+    const statusClass = item.status === 'nofix' ? 'status-nofix' : item.status === 'partial' ? 'status-partial' : item.status === 'reverted' ? 'status-reverted' : 'status-verify';
+    const statusIcon = item.status === 'nofix' ? '❌' : item.status === 'partial' ? '⚠️' : item.status === 'reverted' ? '✅' : '❓';
+    grid.innerHTML += `
+      <div class="audit-card ${sevClass}" onclick="this.classList.toggle('expanded')">
+        <div class="audit-card-num">#${item.id}</div>
+        <div class="audit-card-loc"><i class="fas fa-file-code"></i> ${item.loc}</div>
+        <div class="audit-card-problem">${item.prob}</div>
+        <div class="audit-card-impact"><strong>Impacto:</strong> ${item.impact}</div>
+        <div class="audit-card-status ${statusClass}">${statusIcon} ${item.statusText}</div>
+        <div class="audit-card-detail">Severidad: ${item.sev === 'crit' ? 'CRÍTICO — Bloquea el sistema' : item.sev === 'high' ? 'ALTO — Degrada funcionalidad' : 'MEDIO — Mejora necesaria'}. Requiere atención ${item.sev === 'crit' ? 'inmediata' : 'prioritaria'}.</div>
+      </div>`;
+  });
+  document.getElementById('auditCount').textContent = `Mostrando ${items.length} de 20 issues`;
+}
+renderAudit(auditItems);
+
+// Filtros
+let currentSev = 'all';
+document.querySelectorAll('.audit-filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.audit-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSev = btn.dataset.sev;
+    applyAuditFilters();
+  });
+});
+document.getElementById('auditSearch').addEventListener('input', applyAuditFilters);
+
+function applyAuditFilters(){
+  const search = document.getElementById('auditSearch').value.toLowerCase();
+  let filtered = auditItems;
+  if(currentSev !== 'all') filtered = filtered.filter(i => i.sev === currentSev);
+  if(search) filtered = filtered.filter(i =>
+    i.loc.toLowerCase().includes(search) ||
+    i.prob.toLowerCase().includes(search) ||
+    i.impact.toLowerCase().includes(search)
+  );
+  renderAudit(filtered);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ESTADO — Renderizar grids
+// ═══════════════════════════════════════════════════════════════
+function renderStatusGrid(containerId, items, iconClass){
+  const el = document.getElementById(containerId);
+  el.innerHTML = items.map(item =>
+    `<div class="status-item"><div class="status-icon ${iconClass}"><i class="fas ${iconClass==='ok'?'fa-check':iconClass==='fail'?'fa-xmark':'fa-question'}"></i></div><span>${item}</span></div>`
+  ).join('');
+}
+renderStatusGrid('statusOk', statusOk, 'ok');
+renderStatusGrid('statusFail', statusFail, 'fail');
+renderStatusGrid('statusUnknown', statusUnknown, 'unknown');
+
+// ═══════════════════════════════════════════════════════════════
+// SCROLL — Progress bar, Nav activa, Reveal, Audit bars
+// ═══════════════════════════════════════════════════════════════
+const sections = ['hero','arch','auth','creation','audit','status'];
+const navLinks = document.querySelectorAll('#nav a');
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress').style.width = (scrollTop / docHeight * 100) + '%';
+
+  // Nav activa
+  let current = 'hero';
+  sections.forEach(id => {
+    const sec = document.getElementById(id);
+    if(sec && sec.offsetTop - 200 <= scrollTop) current = id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.dataset.sec === current);
+  });
+}, {passive: true});
+
+// IntersectionObserver — Reveal animations + Phase in-view + Audit bars
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      // Audit bars animation
+      if(entry.target.id === 'auditBars'){
+        entry.target.querySelectorAll('.audit-bar-fill').forEach(bar => {
+          setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, 200);
+        });
+      }
+    }
+  });
+}, {threshold: 0.15});
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Phase blocks — in-view
+const phaseObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) entry.target.classList.add('in-view');
+  });
+}, {threshold: 0.3});
+document.querySelectorAll('.phase-block').forEach(el => phaseObserver.observe(el));
+
+// Cerrar panel detalle al click fuera
+document.addEventListener('click', e => {
+  const panel = document.getElementById('nodeDetail');
+  if(panel.classList.contains('open') && !panel.contains(e.target) && e.target.id !== 'archCanvas'){
+    closeNodeDetail();
+  }
+});
+
+// Expandir primera fase por defecto
+setTimeout(() => {
+  const firstPhase = document.querySelector('.phase-block[data-phase="1"]');
+  if(firstPhase){ firstPhase.classList.add('expanded'); updatePhaseProgress(); }
+}, 1000);
+</script>
+</body>
+</html>

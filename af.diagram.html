@@ -1,0 +1,2814 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentForge ULTIMATE — Diagrama de Flujo + Reporte Completo del Sistema</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #22223a;
+            --border-color: #2a2a4a;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6a6a82;
+            --accent-blue: #3b82f6;
+            --accent-blue-light: #60a5fa;
+            --accent-green: #10b981;
+            --accent-green-light: #34d399;
+            --accent-red: #ef4444;
+            --accent-red-light: #f87171;
+            --accent-yellow: #f59e0b;
+            --accent-yellow-light: #fbbf24;
+            --accent-purple: #8b5cf6;
+            --accent-purple-light: #a78bfa;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --gradient-blue: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-green: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            --gradient-red: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+            --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.15);
+            --shadow-glow-green: 0 0 30px rgba(16, 185, 129, 0.15);
+            --shadow-glow-red: 0 0 30px rgba(239, 68, 68, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Background Grid Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 60px 40px 40px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-blue-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .header-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-blue-light) 50%, var(--accent-purple-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 24px;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .header-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .header-meta-item .icon {
+            font-size: 16px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 40px;
+            overflow-x: auto;
+        }
+
+        .nav-inner {
+            display: flex;
+            gap: 4px;
+            padding: 12px 0;
+            min-width: max-content;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--accent-blue-light);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Main Content */
+        .main {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 64px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-blue);
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-glow-blue);
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .emoji {
+            font-size: 22px;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-value.blue {
+            color: var(--accent-blue-light);
+        }
+
+        .stat-value.green {
+            color: var(--accent-green-light);
+        }
+
+        .stat-value.red {
+            color: var(--accent-red-light);
+        }
+
+        .stat-value.yellow {
+            color: var(--accent-yellow-light);
+        }
+
+        .stat-value.purple {
+            color: var(--accent-purple-light);
+        }
+
+        .stat-value.cyan {
+            color: var(--accent-cyan);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Flow Diagram Container */
+        .flow-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+
+        .flow-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .flow-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-label::before {
+            content: '';
+            width: 20px;
+            height: 2px;
+            background: var(--accent-blue);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .code-body {
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            overflow-x: auto;
+        }
+
+        .code-body .comment {
+            color: #8b949e;
+        }
+
+        .code-body .keyword {
+            color: #ff7b72;
+        }
+
+        .code-body .string {
+            color: #a5d6ff;
+        }
+
+        .code-body .function {
+            color: #d2a8ff;
+        }
+
+        .code-body .number {
+            color: #79c0ff;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: var(--bg-secondary);
+        }
+
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Severity Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-critical {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red-light);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-high {
+            background: rgba(249, 115, 22, 0.15);
+            color: var(--accent-orange);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .badge-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-yellow-light);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .badge-ok {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green-light);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-check {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue-light);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Tech Stack Icons */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .tech-item .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* List Styles */
+        .detail-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .detail-list li:last-child {
+            border-bottom: none;
+        }
+
+        .detail-list li::before {
+            content: '→';
+            color: var(--accent-blue);
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Step Process */
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            counter-increment: step;
+            padding: 16px 16px 16px 56px;
+            position: relative;
+            border-left: 2px solid var(--border-color);
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: -16px;
+            top: 14px;
+            width: 30px;
+            height: 30px;
+            background: var(--gradient-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .steps li:last-child {
+            border-left-color: transparent;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* File Tree */
+        .file-tree {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .file-tree .folder {
+            color: var(--accent-blue-light);
+        }
+
+        .file-tree .file {
+            color: var(--text-secondary);
+        }
+
+        .file-tree .py {
+            color: var(--accent-green-light);
+        }
+
+        .file-tree .ts {
+            color: var(--accent-cyan);
+        }
+
+        .file-tree .tsx {
+            color: var(--accent-purple-light);
+        }
+
+        .file-tree .json {
+            color: var(--accent-yellow-light);
+        }
+
+        .file-tree .yml {
+            color: var(--accent-orange);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 48px 0;
+        }
+
+        /* Mermaid overrides */
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .highlight-box.info {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue-light);
+        }
+
+        .highlight-box.warning {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: var(--accent-yellow-light);
+        }
+
+        .highlight-box.error {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--accent-red-light);
+        }
+
+        .highlight-box.success {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--accent-green-light);
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-badge">
+            <span class="dot"></span>
+            Documento de Auditoría Técnica
+        </div>
+        <h1>AgentForge ULTIMATE</h1>
+        <p class="subtitle">Diagrama de Flujo Completo + Reporte de Auditoría del Sistema<br><span
+                style="opacity:0.6;">Arquitectura, Stack Tecnológico, Lógica de Negocio y Puntos Críticos</span></p>
+        <div class="header-meta">
+            <div class="header-meta-item"><span class="icon">📅</span> 13 de Abril, 2026</div>
+            <div class="header-meta-item"><span class="icon">📁</span> 65+ archivos auditados</div>
+            <div class="header-meta-item"><span class="icon">🔧</span> 20 puntos críticos identificados</div>
+            <div class="header-meta-item"><span class="icon">️</span> 9 capas de arquitectura</div>
+            <div class="header-meta-item"><span class="icon">📊</span> Versión 1.0</div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#overview" class="nav-link active">1. Resumen Ejecutivo</a>
+            <a href="#architecture" class="nav-link">2. Arquitectura</a>
+            <a href="#tech-stack" class="nav-link">3. Stack Tecnológico</a>
+            <a href="#flow-auth" class="nav-link">4. Flujo Autenticación</a>
+            <a href="#flow-create" class="nav-link">5. Flujo Creación</a>
+            <a href="#flow-deploy" class="nav-link">6. Flujo Deploy</a>
+            <a href="#components" class="nav-link">7. Componentes</a>
+            <a href="#database" class="nav-link">8. Base de Datos</a>
+            <a href="#file-structure" class="nav-link">9. Estructura</a>
+            <a href="#api" class="nav-link">10. API Endpoints</a>
+            <a href="#celery" class="nav-link">11. Celery Workers</a>
+            <a href="#n8n" class="nav-link">12. n8n Integration</a>
+            <a href="#ai-layer" class="nav-link">13. Capa IA</a>
+            <a href="#frontend" class="nav-link">14. Frontend</a>
+            <a href="#critical" class="nav-link">15. Puntos Críticos</a>
+            <a href="#recommendations" class="nav-link">16. Recomendaciones</a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- ============================================ -->
+        <!-- SECTION 1: RESUMEN EJECUTIVO -->
+        <!-- ============================================ -->
+        <section id="overview" class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <div>
+                    <div class="section-title">Resumen Ejecutivo</div>
+                    <div class="section-subtitle">Visión general del sistema AgentForge ULTIMATE — Fábrica de Agentes IA
+                        Autónomos</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><span class="emoji">🎯</span> ¿Qué es AgentForge?</div>
+                <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.8;">
+                    AgentForge ULTIMATE es una plataforma de inteligencia artificial que permite a usuarios (técnicos y
+                    no técnicos)
+                    crear, desplegar y gestionar aplicaciones web, móviles, software y automatizaciones mediante una
+                    interfaz conversacional
+                    con un "Arquitecto IA". El sistema utiliza un enjambre (swarm) de agentes especializados que generan
+                    código,
+                    lo validan, lo despliegan en contenedores Docker y gestionan automatizaciones a través de n8n.
+                </p>
+            </div>
+
+            <div class="grid-4" style="margin-bottom: 32px;">
+                <div class="stat-card">
+                    <div class="stat-value blue">9</div>
+                    <div class="stat-label">Capas de Arquitectura</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value green">65+</div>
+                    <div class="stat-label">Archivos Auditados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value purple">8</div>
+                    <div class="stat-label">API Routers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value red">20</div>
+                    <div class="stat-label">Puntos Críticos</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="emoji">✅</span> Componentes que Funcionan</div>
+                    <ul class="detail-list">
+                        <li>Autenticación email/password con JWT</li>
+                        <li>Contexto de autenticación + persistencia localStorage</li>
+                        <li>FastAPI server (9 routers, middleware CORS, audit, rate-limit)</li>
+                        <li>Modelos PostgreSQL (User, Project, Task, Deployment, etc.)</li>
+                        <li>Celery worker con asyncio loop</li>
+                        <li>ConsultationService (interview 3-phase con fallback chain)</li>
+                        <li>Agent Factory (plan → code → deploy pipeline)</li>
+                        <li>Lyra optimizer (prompt optimization)</li>
+                        <li>NeuralBrain (clasificación heurística)</li>
+                        <li>Docker Orchestrator (build + run + health check)</li>
+                        <li>Quality Gate (ESLint + Pylint)</li>
+                        <li>SCA Scanner (vulnerability DB offline)</li>
+                        <li>n8n Orchestrator (workflow creation via REST)</li>
+                        <li>Projects CRUD, Marketplace, Security, Admin</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">⚠️</span> Componentes que Fallan</div>
+                    <ul class="detail-list">
+                        <li style="color: var(--accent-red-light);">Google Login (useGoogleLogin flow mismatch — code vs
+                            access_token)</li>
+                        <li style="color: var(--accent-red-light);">Pantalla negra del frontend (servidor no corre en
+                            puerto 3009)</li>
+                        <li style="color: var(--accent-orange);">n8n workflow NO se crea para tipos != "agent-creator"
+                        </li>
+                        <li style="color: var(--accent-orange);">n8n web admin UI/UX sin diseño profesional</li>
+                        <li style="color: var(--accent-orange);">Health check DNS container falla en Docker Desktop
+                            Windows</li>
+                        <li style="color: var(--accent-orange);">Se crean 2 contenedores por 1 proyecto (duplicación)
+                        </li>
+                        <li style="color: var(--accent-yellow-light);">Neural Brain RL model sin entrenamiento real</li>
+                        <li style="color: var(--accent-yellow-light);">WebContainer preview requiere HTTPS en producción
+                        </li>
+                        <li style="color: var(--accent-yellow-light);">Sandbox test usa node:18 pero proyecto usa
+                            node:20</li>
+                        <li style="color: var(--accent-yellow-light);">Docker build timeout 300s insuficiente para
+                            Next.js</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 2: ARQUITECTURA -->
+        <!-- ============================================ -->
+        <section id="architecture" class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <div>
+                    <div class="section-title">Arquitectura del Sistema</div>
+                    <div class="section-subtitle">Diagrama completo de todas las capas, componentes y conexiones</div>
+                </div>
+            </div>
+
+            <div class="flow-label">Diagrama de Arquitectura General — Todas las Capas</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    graph TB
+                    subgraph USER ["👤 USUARIO (Navegador Web)"]
+                    U1["Usuario no autenticado"]
+                    U2["Usuario autenticado"]
+                    end
+
+                    subgraph FE ["🖥️ FRONTEND — React + Vite (Puerto 3009)"]
+                    FE_ENTRY["main.tsx → App.tsx"]
+                    FE_ROUTES["Routes: / /projects /content /marketplace /connectors /analytics /admin /settings
+                    /automation/:id"]
+                    FE_AUTH["AuthContext + ModalContext + ProtectedRoute"]
+                    FE_LOGIN["LoginModal: Email/Password + Google OAuth"]
+                    FE_HOME["HomeView: Chat IA + NeuralArchitect + WebContainerPreview"]
+                    FE_PROJECTS["ProjectsView: Grid + Deploy/Stop/Start/Delete"]
+                    FE_API["api.ts: axios baseURL=/api/v1 + Bearer token"]
+                    end
+
+                    subgraph BE ["🔧 BACKEND — FastAPI + Uvicorn (Puerto 8000)"]
+                    BE_AUTH["auth.py: /register /login /me /google_sync /fix_admin"]
+                    BE_ORC["orchestrate.py: /consult /create /status /deploy /automation"]
+                    BE_DASH["dashboard.py: /stats /projects /metrics /versions /deploy"]
+                    BE_CONT["containers.py: /stop /start /delete"]
+                    BE_ADMIN["admin.py: /telemetry /services /command /oracle"]
+                    BE_MARK["marketplace.py: /list /clone /publish"]
+                    BE_INT["integrations.py: /catalog /generate /execute /flow"]
+                    BE_SEC["security.py: MFA /api-keys /teams"]
+                    end
+
+                    subgraph SVC ["⚙️ SERVICES — Lógica de Negocio"]
+                    SVC_CONS["consultation_service.py: 3-phase interview"]
+                    SVC_FACT["agent_factory.py: process_request → Lyra → NeuralBrain → plan → code → deploy"]
+                    SVC_DOCK["docker_orchestrator.py: parse → build → run → health_check"]
+                    SVC_NEURAL["neural_brain.py: classify intent"]
+                    SVC_NRL["neural_brain_rl.py: RL model VAE+GRU+SAC"]
+                    SVC_N8N["n8n_orchestrator.py: create n8n workflow via REST"]
+                    SVC_N8NW["n8n_web_admin_generator.py: generate HTML admin"]
+                    SVC_LYRA["lyra_optimizer.py: optimize prompts"]
+                    SVC_QG["quality_gate.py: ESLint + Pylint → score"]
+                    SVC_SCA["sca_scanner.py: vulnerability scan offline"]
+                    SVC_SANDBOX["sandbox_test.py: docker-based code test"]
+                    SVC_HC["health_checker.py: 8 health endpoints"]
+                    SVC_PORT["port_manager.py: dynamic port assignment"]
+                    end
+
+                    subgraph WORKERS ["🔄 CELERY WORKERS"]
+                    CEL["Celery App (Redis broker)"]
+                    TASK["tasks.py: generate_agent_task (asyncio loop)"]
+                    end
+
+                    subgraph DB ["💾 DATABASES"]
+                    PG["PostgreSQL :5445"]
+                    RED["Redis :6389 — Celery broker"]
+                    CHR["ChromaDB :8006 — Vector memory"]
+                    end
+
+                    subgraph AI ["🤖 EXTERNAL AI APIs"]
+                    GROQ["Groq: llama-3.3-70b"]
+                    GEM["Google Gemini: gemini-2.0-flash"]
+                    ANTH["Anthropic: claude-3-5-sonnet"]
+                    OPENR["OpenRouter"]
+                    LOCAL["Local AI: localhost:5001"]
+                    G_OAUTH["Google OAuth 2.0"]
+                    end
+
+                    subgraph N8N ["🎨 N8N SERVICE (Puerto 5678)"]
+                    N8N_API["n8n REST API"]
+                    N8N_WF["Workflow engine"]
+                    end
+
+                    subgraph CONT ["📦 DOCKER CONTAINERS (Puertos 8000-9000)"]
+                    C_USER["User app containers"]
+                    C_N8N["n8n container"]
+                    end
+
+                    %% CONNECTIONS
+                    U1 -->|"Click Login"| FE_LOGIN
+                    U2 -->|"Navigate routes"| FE_ROUTES
+                    FE_ENTRY --> FE_AUTH
+                    FE_AUTH --> FE_LOGIN
+                    FE_ROUTES --> FE_HOME
+                    FE_ROUTES --> FE_PROJECTS
+                    FE_HOME --> FE_API
+                    FE_PROJECTS --> FE_API
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_AUTH
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_ORC
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_DASH
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_CONT
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_ADMIN
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_MARK
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_INT
+                    FE_API -->|"HTTP /api/v1/... + Bearer"| BE_SEC
+                    BE_ORC --> SVC_CONS
+                    BE_ORC --> CEL
+                    BE_ORC --> SVC_DOCK
+                    BE_ORC --> SVC_N8N
+                    BE_DASH --> SVC_DOCK
+                    BE_ADMIN --> SVC_HC
+                    CEL --> TASK
+                    TASK --> SVC_FACT
+                    SVC_FACT --> SVC_LYRA
+                    SVC_FACT --> SVC_NEURAL
+                    SVC_FACT --> SVC_NRL
+                    SVC_FACT --> SVC_N8N
+                    SVC_FACT --> SVC_DOCK
+                    SVC_FACT --> SVC_QG
+                    SVC_FACT --> SVC_SCA
+                    SVC_FACT --> CHR
+                    SVC_CONS --> GROQ
+                    SVC_CONS --> GEM
+                    SVC_CONS --> ANTH
+                    SVC_CONS --> OPENR
+                    SVC_NEURAL --> LOCAL
+                    SVC_NEURAL --> GROQ
+                    SVC_NEURAL --> GEM
+                    BE_AUTH --> G_OAUTH
+                    SVC_DOCK --> C_USER
+                    SVC_N8N --> N8N_API
+                    N8N_API --> N8N_WF
+                    SVC_DOCK --> PG
+
+                    classDef user fill:#3b82f6,stroke:#1d4ed8,color:#fff
+                    classDef fe fill:#10b981,stroke:#059669,color:#fff
+                    classDef be fill:#8b5cf6,stroke:#7c3aed,color:#fff
+                    classDef svc fill:#f59e0b,stroke:#d97706,color:#fff
+                    classDef worker fill:#ec4899,stroke:#db2777,color:#fff
+                    classDef db fill:#06b6d4,stroke:#0891b2,color:#fff
+                    classDef ai fill:#ef4444,stroke:#dc2626,color:#fff
+                    classDef n8n fill:#ff6b35,stroke:#e85d2c,color:#fff
+                    classDef cont fill:#14b8a6,stroke:#0d9488,color:#fff
+
+                    class U1,U2 user
+                    class FE_ENTRY,FE_ROUTES,FE_AUTH,FE_LOGIN,FE_HOME,FE_PROJECTS,FE_API fe
+                    class BE_AUTH,BE_ORC,BE_DASH,BE_CONT,BE_ADMIN,BE_MARK,BE_INT,BE_SEC be
+                    class
+                    SVC_CONS,SVC_FACT,SVC_DOCK,SVC_NEURAL,SVC_NRL,SVC_N8N,SVC_N8NW,SVC_LYRA,SVC_QG,SVC_SCA,SVC_SANDBOX,SVC_HC,SVC_PORT
+                    svc
+                    class CEL,TASK worker
+                    class PG,RED,CHR db
+                    class GROQ,GEM,ANTH,OPENR,LOCAL,G_OAUTH ai
+                    class N8N_API,N8N_WF n8n
+                    class C_USER,C_N8N cont
+                </div>
+            </div>
+
+            <div class="highlight-box info">
+                <strong>📋 Resumen de Capas:</strong> El sistema tiene 9 capas: (1) Usuario → (2) Frontend React → (3)
+                Backend FastAPI → (4) Services → (5) Celery Workers → (6) Databases → (7) AI External APIs → (8) n8n
+                Service → (9) Docker Containers. Cada capa se comunica con la siguiente de forma síncrona (HTTP) o
+                asíncrona (Celery).
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 3: STACK TECNOLÓGICO -->
+        <!-- ============================================ -->
+        <section id="tech-stack" class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <div>
+                    <div class="section-title">Stack Tecnológico Completo</div>
+                    <div class="section-subtitle">Todas las tecnologías, frameworks, librerías y servicios utilizados
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🖥️</span> Frontend</div>
+                    <div class="tech-stack">
+                        <div class="tech-item"><span class="dot" style="background:#61dafb"></span> React 18</div>
+                        <div class="tech-item"><span class="dot" style="background:#3178c6"></span> TypeScript</div>
+                        <div class="tech-item"><span class="dot" style="background:#ffca28"></span> Vite</div>
+                        <div class="tech-item"><span class="dot" style="background:#06b6d4"></span> Tailwind CSS</div>
+                        <div class="tech-item"><span class="dot" style="background:#b794f4"></span> React Router DOM
+                        </div>
+                        <div class="tech-item"><span class="dot" style="background:#5a67d8"></span> Axios</div>
+                        <div class="tech-item"><span class="dot" style="background:#4285f4"></span> @react-oauth/google
+                        </div>
+                        <div class="tech-item"><span class="dot" style="background:#f97316"></span> lucide-react</div>
+                        <div class="tech-item"><span class="dot" style="background:#f7df1e"></span> @webcontainer/api
+                        </div>
+                        <div class="tech-item"><span class="dot" style="background:#7c3aed"></span> three.js</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🔧</span> Backend</div>
+                    <div class="tech-stack">
+                        <div class="tech-item"><span class="dot" style="background:#009688"></span> Python 3.11+</div>
+                        <div class="tech-item"><span class="dot" style="background:#009688"></span> FastAPI</div>
+                        <div class="tech-item"><span class="dot" style="background:#8bc34a"></span> Uvicorn</div>
+                        <div class="tech-item"><span class="dot" style="background:#4caf50"></span> SQLModel</div>
+                        <div class="tech-item"><span class="dot" style="background:#795548"></span> SQLAlchemy</div>
+                        <div class="tech-item"><span class="dot" style="background:#ff5722"></span> Pydantic v2</div>
+                        <div class="tech-item"><span class="dot" style="background:#e91e63"></span> python-jose (JWT)
+                        </div>
+                        <div class="tech-item"><span class="dot" style="background:#3f51b5"></span> passlib (bcrypt)
+                        </div>
+                        <div class="tech-item"><span class="dot" style="background:#ff9800"></span> python-multipart
+                        </div>
+                        <div class="tech-item"><span class="dot" style="background:#2196f3"></span> httpx</div>
+                        <div class="tech-item"><span class="dot" style="background:#9c27b0"></span> chromadb</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🔄</span> Workers & Async</div>
+                    <div class="tech-stack">
+                        <div class="tech-item"><span class="dot" style="background:#37814a"></span> Celery</div>
+                        <div class="tech-item"><span class="dot" style="background:#dc382d"></span> Redis</div>
+                        <div class="tech-item"><span class="dot" style="background:#795548"></span> nest_asyncio</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">💾</span> Databases</div>
+                    <div class="tech-stack">
+                        <div class="tech-item"><span class="dot" style="background:#336791"></span> PostgreSQL 15</div>
+                        <div class="tech-item"><span class="dot" style="background:#dc382d"></span> Redis 7</div>
+                        <div class="tech-item"><span class="dot" style="background:#9c27b0"></span> ChromaDB 0.5.3</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🤖</span> AI / ML</div>
+                    <div class="tech-stack">
+                        <div class="tech-item"><span class="dot" style="background:#ff6b35"></span> Groq (Llama-3.3-70b)
+                        </div>
+                        <div class="tech-item"><span class="dot" style="background:#4285f4"></span> Google Gemini 2.0
+                            Flash</div>
+                        <div class="tech-item"><span class="dot" style="background:#da7756"></span> Anthropic Claude 3.5
+                            Sonnet</div>
+                        <div class="tech-item"><span class="dot" style="background:#7c3aed"></span> OpenRouter</div>
+                        <div class="tech-item"><span class="dot" style="background:#10b981"></span> Local AI
+                            (localhost:5001)</div>
+                        <div class="tech-item"><span class="dot" style="background:#f59e0b"></span> google-generativeai
+                            (deprecated)</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🐳</span> Infraestructura</div>
+                    <div class="tech-stack">
+                        <div class="tech-item"><span class="dot" style="background:#2496ed"></span> Docker</div>
+                        <div class="tech-item"><span class="dot" style="background:#2496ed"></span> Docker Compose</div>
+                        <div class="tech-item"><span class="dot" style="background:#326ce5"></span> Docker SDK for
+                            Python</div>
+                        <div class="tech-item"><span class="dot" style="background:#ff6b35"></span> n8n (latest)</div>
+                        <div class="tech-item"><span class="dot" style="background:#009688"></span> nginx:alpine</div>
+                        <div class="tech-item"><span class="dot" style="background:#f7df1e"></span> node:20</div>
+                        <div class="tech-item"><span class="dot" style="background:#3776ab"></span> python:3.11-alpine
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 4: FLUJO AUTENTICACIÓN -->
+        <!-- ============================================ -->
+        <section id="flow-auth" class="section">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <div>
+                    <div class="section-title">Flujo de Autenticación — Detallado</div>
+                    <div class="section-subtitle">5 flujos completos: Email login, Google login, Session persistence,
+                        Protected routes, Token expiration</div>
+                </div>
+            </div>
+
+            <div class="flow-label">Flujo 1: Email/Password Login</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant U as 👤 Usuario
+                    participant FE as 🖥️ Frontend
+                    participant API as 🔧 Backend
+                    participant AUTH as 🔐 auth.py
+                    participant DB as 💾 PostgreSQL
+
+                    U->>FE: Click "Iniciar Sesión"
+                    FE->>FE: openModal() → LoginModal visible
+                    U->>FE: Ingresa email + password → Submit
+                    FE->>API: POST /api/v1/auth/login (form-data)
+                    API->>AUTH: login() endpoint
+                    AUTH->>DB: SELECT user WHERE email = ?
+                    alt Usuario NO existe
+                    AUTH-->>API: HTTP 401 "Incorrect email or password"
+                    API-->>FE: Error
+                    FE-->>U: "Email o contraseña incorrectos"
+                    else Password WRONG
+                    AUTH->>AUTH: bcrypt.verify() → False
+                    AUTH-->>API: HTTP 401
+                    API-->>FE: Error
+                    FE-->>U: "Email o contraseña incorrectos"
+                    else Login exitoso
+                    AUTH->>AUTH: create_access_token({sub: user.id}) → JWT
+                    AUTH-->>API: {access_token, token_type}
+                    API-->>FE: 200 OK + access_token
+                    FE->>API: GET /api/v1/auth/me (Bearer token)
+                    API->>AUTH: get_current_user() → decode JWT
+                    AUTH->>DB: SELECT user WHERE id = ?
+                    AUTH-->>API: User object
+                    API-->>FE: {id, email, name, picture, plan}
+                    FE->>FE: login(token, userData) → localStorage
+                    FE->>FE: closeModal()
+                    FE-->>U: Header muestra avatar + nombre
+                    end
+                </div>
+            </div>
+
+            <div class="flow-label">Flujo 2: Google OAuth Login</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant U as 👤 Usuario
+                    participant FE as 🖥️ Frontend
+                    participant API as 🔧 Backend
+                    participant AUTH as 🔐 auth.py
+                    participant DB as 💾 PostgreSQL
+                    participant G as 🌐 Google OAuth
+
+                    U->>FE: Click "Continuar con Google"
+                    FE->>G: useGoogleLogin() → Google OAuth popup
+                    G-->>FE: codeResponse {access_token, ...}
+                    FE->>API: POST /api/v1/auth/google_sync {token}
+                    API->>AUTH: google_auth() endpoint
+                    AUTH->>G: GET /oauth2/v3/userinfo (Bearer token)
+                    alt Token válido
+                    G-->>AUTH: {email, sub, name, picture}
+                    AUTH->>DB: SELECT user WHERE email = ?
+                    alt Usuario NO existe
+                    AUTH->>DB: INSERT User(google_id, email, name, picture)
+                    else Usuario YA existe
+                    AUTH->>DB: UPDATE User SET google_id, name, picture
+                    end
+                    AUTH->>AUTH: create_access_token({sub: user.id}) → JWT
+                    AUTH-->>API: {token, user}
+                    API-->>FE: 200 OK + token + user
+                    FE->>FE: login(token, userData) → localStorage
+                    FE->>FE: closeModal()
+                    FE-->>U: Header muestra avatar + nombre
+                    else Token inválido/expirado
+                    G-->>AUTH: HTTP 401
+                    AUTH-->>API: HTTP 401
+                    API-->>FE: Error
+                    FE-->>U: "Error al verificar con Google"
+                    end
+                </div>
+            </div>
+
+            <div class="highlight-box warning">
+                <strong>⚠️ BUG CONOCIDO:</strong> El flujo Google Login tiene un problema en <code>LoginModal.tsx</code>
+                línea 104: <code>useGoogleLogin</code> por defecto devuelve <code>code</code> (authorization code flow),
+                pero el código espera <code>access_token</code>. Se necesita agregar <code>flow: 'implicit'</code> al
+                hook para que funcione correctamente.
+            </div>
+
+            <div class="flow-label">Flujo 3: Session Persistence (al cargar la app)</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant FE as 🖥️ Frontend
+                    participant LS as 💾 localStorage
+
+                    Note over FE,LS: Al montar AuthContext
+                    FE->>LS: localStorage.getItem("token")
+                    FE->>LS: localStorage.getItem("user")
+                    alt Ambos existen
+                    LS-->>FE: token + user JSON
+                    FE->>FE: setToken(token)
+                    FE->>FE: setUser(JSON.parse(user))
+                    FE->>FE: setIsAuthenticated(true)
+                    else No hay sesión
+                    FE->>FE: isAuthenticated = false
+                    end
+                    FE->>FE: setLoading(false)
+                </div>
+            </div>
+
+            <div class="flow-label">Flujo 4: Protected Routes</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant U as 👤 Usuario
+                    participant FE as 🖥️ Frontend
+                    participant PR as 🔒 ProtectedRoute
+                    participant MODAL as 📦 ModalContext
+
+                    U->>FE: Navega a /projects
+                    FE->>PR: Render <ProtectedRoute>
+                        PR->>PR: check isAuthenticated
+                        alt NO autenticado
+                        PR->>MODAL: openModal() → LoginModal visible
+                        PR->>FE: Navigate to "/" (redirect)
+                        FE-->>U: Muestra LoginModal + redirige a home
+                        else Autenticado
+                        PR->>FE: Render
+                        <ProjectsView />
+                        FE-->>U: Muestra la vista protegida
+                        end
+                </div>
+            </div>
+
+            <div class="flow-label">Flujo 5: Token Expiration (401 Interceptor)</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant FE as 🖥️ Frontend
+                    participant API as 🔧 Backend API
+                    participant INT as 🔀 Axios Interceptor
+
+                    FE->>API: Any request with Bearer token
+                    alt API returns 401
+                    API-->>FE: HTTP 401
+                    FE->>INT: Interceptor catches 401
+                    INT->>INT: Check: URL includes '/auth/'?
+                    alt Sí (auth endpoint) OR isLoggingIn.current
+                    INT->>INT: SKIP logout (evitar recursión)
+                    else No es auth endpoint
+                    INT->>FE: logout() → clear localStorage + state
+                    FE->>FE: isAuthenticated = false
+                    FE->>FE: openModal() → LoginModal
+                    FE-->>U: Se abre modal de login automáticamente
+                    end
+                    end
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 5: FLUJO CREACIÓN DE PROYECTO -->
+        <!-- ============================================ -->
+        <section id="flow-create" class="section">
+            <div class="section-header">
+                <div class="section-number">5</div>
+                <div>
+                    <div class="section-title">Flujo de Creación de Proyecto — Detallado</div>
+                    <div class="section-subtitle">5 fases completas: Consultación → Blueprint → Celery → Quality Gate →
+                        Deploy</div>
+                </div>
+            </div>
+
+            <div class="flow-label">Fase 1: Consultación Interactiva (3-phase interview)</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant U as 👤 Usuario
+                    participant FE as 🖥️ HomeView.tsx
+                    participant API as 🔧 Backend
+                    participant ORC as 🎯 orchestrate.py
+                    participant CONSULT as 💬 ConsultationService
+                    participant LLM as 🤖 Groq/Gemini/Claude
+                    participant DB as 💾 PostgreSQL
+
+                    U->>FE: Escribe idea del proyecto en chat
+                    FE->>API: POST /api/v1/orchestrate/consult {message, session_id}
+                    API->>ORC: consult_architect()
+                    ORC->>DB: SELECT/CREATE ChatSession
+                    ORC->>CONSULT: generate_response(history_dicts)
+                    CONSULT->>CONSULT: System prompt: 3-phase flow
+                    CONSULT->>LLM: Try Groq first (llama-3.3-70b)
+                    alt Groq succeeds
+                    LLM-->>CONSULT: JSON {status, message, blueprint?}
+                    else Groq fails
+                    CONSULT->>LLM: Fallback → Gemini → Claude → OpenRouter
+                    LLM-->>CONSULT: JSON response
+                    end
+
+                    alt status == "ASKING"
+                    CONSULT-->>ORC: "¿Qué tipo de solución necesitas?"
+                    ORC->>DB: UPDATE ChatSession.messages
+                    ORC-->>API: Response
+                    API-->>FE: Muestra pregunta
+                    FE-->>U: Usuario responde con tipo + detalles
+                    loop Until status == "READY"
+                    FE->>API: POST /consult {answer}
+                    API->>CONSULT: generate_response(history)
+                    CONSULT->>LLM: Customization questions
+                    LLM-->>CONSULT: Questions
+                    CONSULT-->>ORC: Next question
+                    ORC-->>FE: Show question
+                    end
+                    end
+
+                    alt status == "READY"
+                    CONSULT-->>ORC: {status: "READY", blueprint: {agent_type, features, stack}}
+                    ORC-->>FE: Muestra blueprint completo
+                    FE-->>U: Usuario aprueba → Click "Crear Proyecto"
+                    end
+                </div>
+            </div>
+
+            <div class="flow-label">Fase 2: Creación Asíncrona (Celery)</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant FE as 🖥️ Frontend
+                    participant API as 🔧 Backend
+                    participant ORC as 🎯 orchestrate.py
+                    participant DB as 💾 PostgreSQL
+                    participant CEL as 🔄 Celery
+                    participant TASK as 🔄 generate_agent_task
+                    participant FACT as 🏭 agent_factory.py
+
+                    FE->>API: POST /api/v1/orchestrate/create {prompt, name, solution_type?}
+                    API->>ORC: create_solution()
+                    ORC->>DB: INSERT Task(status="PENDING", request=prompt)
+                    ORC->>CEL: generate_agent_task.apply_async(args=[prompt, user_id, solution_type])
+                    ORC-->>API: {status: "processing", task_id}
+                    API-->>FE: {status: "processing", task_id}
+                    FE->>FE: Start polling GET /status/{taskId} every 2s
+                    FE-->>U: Muestra "Generando agente..." + spinner
+
+                    CEL->>TASK: generate_agent_task(prompt, user_id, solution_type)
+                    TASK->>DB: UPDATE Task SET status="RUNNING"
+                    TASK->>FACT: process_request(prompt, user_id, solution_type)
+
+                    FACT->>FACT: Lyra.optimize(prompt) → enhanced_prompt
+
+                    alt solution_type provided by user
+                    FACT->>FACT: SKIP classification, use solution_type directly
+                    else NO solution_type
+                    FACT->>FACT: neural_brain.analyze_request(prompt)
+                    alt Matches automation keywords (whatsapp, telegram, n8n)
+                    FACT->>FACT: decision = {action: "agent-creator", confidence: 0.95}
+                    else
+                    FACT->>FACT: Try Local AI → Groq → Gemini → OpenRouter → Heuristic
+                    LLM-->>FACT: {action, confidence, reasoning}
+                    end
+                    end
+
+                    FACT->>FACT: generate_plan(prompt, context, agent_type)
+                    LLM-->>FACT: Plan JSON or text
+
+                    alt agent_type == "agent-creator"
+                    FACT->>FACT: n8n_orchestrator.create_flow_for_project()
+                    N8N->>N8NS: POST /api/v1/workflows
+                    N8NS-->>N8N: {id, active}
+                    N8N->>N8NS: PATCH /api/v1/workflows/{id} {active: true}
+                    N8N-->>FACT: {flow_id, editor_url, status}
+                    end
+
+                    FACT->>FACT: generate_code_from_plan(prompt, plan, agent_type)
+                    LLM-->>FACT: Markdown code blocks
+
+                    FACT->>FACT: apply_self_healing(code, plan) → audit → regenerate
+
+                    FACT->>FACT: quality_gate.run(code, agent_type, language)
+                    alt score >= 70%
+                    QG-->>FACT: passed=True
+                    else score < 70% QG-->>FACT: passed=False
+                        FACT-->>TASK: {status: "error", message: "Quality Gate failed"}
+                        TASK->>DB: UPDATE Task SET status="FAILURE"
+                        end
+
+                        FACT->>FACT: sca_scanner.scan(code)
+                        alt vulnerabilities found AND SCA_BLOCK_CRITICAL
+                        SCA-->>FACT: valid=false
+                        FACT-->>TASK: {status: "error"}
+                        TASK->>DB: UPDATE Task SET status="FAILURE"
+                        else No critical vulnerabilities
+                        SCA-->>FACT: valid=true
+                        end
+
+                        FACT->>FACT: docker_orchestrator.deploy_app(code, agent_type)
+
+                        alt Deploy SUCCESS
+                        DOCK-->>FACT: {status: "success", container_id, port, url}
+                        TASK->>DB: INSERT Project(name, code, agent_type, n8n_id, n8n_editor_url)
+                        TASK->>DB: INSERT Deployment(container_id, port, status="running")
+                        TASK->>DB: UPDATE Task SET status="SUCCESS", result_data={...}
+                        else Deploy FAILED
+                        DOCK-->>FACT: {status: "error", message, preview_url, logs}
+                        TASK->>DB: INSERT Project(...) [still saved]
+                        TASK->>DB: UPDATE Task SET status="FAILURE", result_data={error}
+                        end
+
+                        TASK-->>CEL: Result
+                        CEL-->>ORC: Task complete
+                </div>
+            </div>
+
+            <div class="flow-label">Fase 3: Frontend Polling + Display</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                    participant FE as 🖥️ Frontend
+                    participant API as 🔧 Backend
+                    participant ORC as 🎯 orchestrate.py
+                    participant DB as 💾 PostgreSQL
+
+                    loop Poll every 2 seconds
+                    FE->>API: GET /api/v1/orchestrate/status/{taskId}
+                    API->>ORC: get_task_status(taskId)
+                    ORC->>DB: SELECT Task WHERE id = ?
+                    DB-->>ORC: Task {status, result_data}
+                    ORC-->>API: {status, result}
+                    API-->>FE: Response
+
+                    alt status == "SUCCESS"
+                    FE-->>U: ✅ Show project + preview URL + WebContainerPreview
+                    FE->>FE: Show result.code in editor, result.url in preview
+                    FE->>FE: Fetch projects list to update grid
+                    else status == "FAILURE"
+                    FE-->>U: ❌ Show error message + suggestion
+                    else PENDING or RUNNING
+                    FE-->>U: ⏳ Still processing...
+                    end
+                    end
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 6: FLUJO DEPLOY -->
+        <!-- ============================================ -->
+        <section id="flow-deploy" class="section">
+            <div class="section-header">
+                <div class="section-number">6</div>
+                <div>
+                    <div class="section-title">Flujo de Deploy — Detallado</div>
+                    <div class="section-subtitle">Parse → Template → Syntax Check → Sandbox → Build → Run → Health Check
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-label">Deploy Pipeline Completo (docker_orchestrator.py)</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    flowchart TD
+                    A["📥 deploy_app(code, agent_type)"] --> B["parse_markdown_to_dir()"]
+                    B --> C{"¿Existe server.js o main.py válido?"}
+                    C -->|NO| D["_inject_base_template()"]
+                    C -->|SÍ| E["_pre_build_syntax_check()"]
+                    D --> E
+                    E --> F{"¿Syntax OK?"}
+                    F -->|NO| G["_create_emergency_server()"]
+                    F -->|SÍ| H["_run_sandbox_pre_build()"]
+                    G --> H
+                    H --> I{"¿Sandbox passed (score >= 50)?"}
+                    I -->|NO| J["_create_emergency_server()"]
+                    I -->|SÍ| K["docker images.build()"]
+                    J --> K
+                    K --> L{"Build exitoso? (3 intentos)"}
+                    L -->|NO| M["❌ Return error"]
+                    L -->|SÍ| N["port_manager._get_free_port()"]
+                    N --> O["docker containers.run()"]
+                    O --> P["Container starts (CMD: node server.js / python main.py)"]
+                    P --> Q{"Health Check Loop (10 retries)"}
+                    Q --> R["GET http://localhost:{port}/health"]
+                    R --> S{"HTTP 200/301/302/404?"}
+                    S -->|SÍ| T["✅ health_check_passed = True"]
+                    S -->|NO| U["Fallback: docker exec curl"]
+                    U --> V{"docker exec output OK?"}
+                    V -->|SÍ| T
+                    V -->|NO| W["Fallback: Check logs (listening/ready/started)"]
+                    W --> X{"Logs contain startup keywords?"}
+                    X -->|SÍ| T
+                    X -->|NO| Y["Wait (backoff: 5s→10s→15s→20s→30s)"]
+                    Y --> Q
+                    T --> Z["INSERT Deployment(container_id, port, status='running')"]
+                    Z --> AA["✅ Return {status: success, container_id, port, url}"]
+
+                    Q -->|After 10 attempts, still failed| BB["Capture container logs (tail=200)"]
+                    BB --> CC["Save logs to /tmp/agentforge-ctn-{id}-failed.log"]
+                    CC --> DD["DO NOT remove container (keep for debug)"]
+                    DD --> EE["❌ Return {status: error, preview_url, logs}"]
+
+                    classDef success fill:#10b981,stroke:#059669,color:#fff
+                    classDef error fill:#ef4444,stroke:#dc2626,color:#fff
+                    classDef process fill:#3b82f6,stroke:#1d4ed8,color:#fff
+                    classDef decision fill:#f59e0b,stroke:#d97706,color:#fff
+
+                    class A,B,D,E,H,K,N,O,P,R,U,W,Y,Z,AA,CC,DD,EE process
+                    class C,F,I,L,S,V,X decision
+                    class T,Z,AA success
+                    class M,EE error
+                </div>
+            </div>
+
+            <div class="highlight-box info">
+                <strong>📋 Nota importante:</strong> El health check intenta 10 URLs en orden de confiabilidad para
+                Docker Desktop Windows: <code>localhost:{port}/health</code> → <code>localhost:{port}/</code> →
+                <code>127.0.0.1:{port}/health</code> → <code>127.0.0.1:{port}/</code> →
+                <code>{container_name}:3000/health</code> → <code>{container_name}:3000/</code>. El fallback a docker
+                exec y análisis de logs son los últimos recursos.
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 7: COMPONENTES DETALLADOS -->
+        <!-- ============================================ -->
+        <section id="components" class="section">
+            <div class="section-header">
+                <div class="section-number">7</div>
+                <div>
+                    <div class="section-title">Componentes del Sistema — Análisis Detallado</div>
+                    <div class="section-subtitle">Cada componente, su responsabilidad, inputs, outputs y dependencias
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="emoji">📂</span> agent_factory.py</div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Core del sistema. Orquesta
+                        todo el proceso de creación.</p>
+                    <ul class="detail-list">
+                        <li><strong>Inputs:</strong> user_request, user_id, solution_type (optional)</li>
+                        <li><strong>Outputs:</strong> {type, data: {flow_id, editor_url, code, n8n_status, container_id,
+                            port, url}}</li>
+                        <li><strong>Dependencias:</strong> lyra_optimizer, neural_brain, neural_brain_rl,
+                            n8n_orchestrator, docker_orchestrator, quality_gate, sca_scanner, chromadb</li>
+                        <li><strong>Métodos clave:</strong> process_request(), generate_plan(),
+                            generate_code_from_plan(), apply_self_healing()</li>
+                        <li><strong>LLM Chain:</strong> Local AI → Groq → Gemini → OpenRouter → Heuristic</li>
+                        <li><strong>Agent Types:</strong> web-builder, app-builder, agent-creator, software-builder</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">📂</span> docker_orchestrator.py</div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Parsea código markdown, genera
+                        Dockerfiles, construye y ejecuta containers.</p>
+                    <ul class="detail-list">
+                        <li><strong>Inputs:</strong> markdown_code, agent_type</li>
+                        <li><strong>Outputs:</strong> {status, container_id, port, url, health_check}</li>
+                        <li><strong>Dependencias:</strong> Docker SDK, port_manager, sandbox_test, health_checker</li>
+                        <li><strong>Métodos clave:</strong> deploy_app(), parse_markdown_to_dir(),
+                            _inject_base_template(), _pre_build_syntax_check(), _run_sandbox_pre_build(),
+                            _capture_container_logs()</li>
+                        <li><strong>Stack Detection:</strong> Next.js, Python/FastAPI, Express/Node, static HTML (Nginx)
+                        </li>
+                        <li><strong>Health Check:</strong> 10 retries, exponential backoff, 3 fallback methods</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">📂</span> consultation_service.py</div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Servicio de entrevista
+                        conversacional con el usuario.</p>
+                    <ul class="detail-list">
+                        <li><strong>Inputs:</strong> conversation_history (list of {role, content})</li>
+                        <li><strong>Outputs:</strong> {status: "ASKING"|"READY", message, blueprint?, session_id}</li>
+                        <li><strong>Dependencias:</strong> Groq, Gemini, Anthropic, OpenRouter</li>
+                        <li><strong>Flujo:</strong> 3 fases: Tipo → Customización → Blueprint</li>
+                        <li><strong>Fallback chain:</strong> Groq → Gemini → Claude → OpenRouter</li>
+                        <li><strong>System prompt:</strong> Defines 3-phase interview flow strictly</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">📂</span> neural_brain.py</div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Clasificador de intención del
+                        usuario (qué tipo de solución necesita).</p>
+                    <ul class="detail-list">
+                        <li><strong>Inputs:</strong> request_text (string)</li>
+                        <li><strong>Outputs:</strong> {action, confidence, reasoning, source}</li>
+                        <li><strong>Dependencias:</strong> Local AI, Groq, Gemini, OpenRouter</li>
+                        <li><strong>Detección especial:</strong> Keywords de automatización (whatsapp, telegram, n8n,
+                            chatbot, etc.) → force agent-creator</li>
+                        <li><strong>Fallback chain:</strong> Local AI → Groq → Gemini → OpenRouter → Heuristic</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">📂</span> n8n_orchestrator.py</div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Crea workflows reales en n8n
+                        vía API REST.</p>
+                    <ul class="detail-list">
+                        <li><strong>Inputs:</strong> project_id, plan_text, name, system_prompt</li>
+                        <li><strong>Outputs:</strong> {flow_id, editor_url, status, message}</li>
+                        <li><strong>Dependencias:</strong> n8n REST API (/api/v1/workflows)</li>
+                        <li><strong>Métodos:</strong> create_flow_for_project(), _build_workflow_json(),
+                            _activate_workflow(), _detect_auth_required()</li>
+                        <li><strong>Trigger types:</strong> webhook (default), schedule, manual (eliminado)</li>
+                        <li><strong>Auth:</strong> Auto-detects if n8n requires API key or open mode</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">📂</span> quality_gate.py</div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Validación de calidad de
+                        código generado (linting).</p>
+                    <ul class="detail-list">
+                        <li><strong>Inputs:</strong> code_path, project_type, language</li>
+                        <li><strong>Outputs:</strong> (passed: bool, final_score: float, details: list)</li>
+                        <li><strong>Threshold:</strong> QUALITY_GATE_MIN_SCORE (default: 70%)</li>
+                        <li><strong>ESLint:</strong> Detects undefined variables (no-undef), cross-platform
+                            (where/which)</li>
+                        <li><strong>Pylint:</strong> Detects E0602 (undefined-variable), recursive scan</li>
+                        <li><strong>Score:</strong> Average of ESLint + Pylint scores</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 8: BASE DE DATOS -->
+        <!-- ============================================ -->
+        <section id="database" class="section">
+            <div class="section-header">
+                <div class="section-number">8</div>
+                <div>
+                    <div class="section-title">Base de Datos — Schema Completo</div>
+                    <div class="section-subtitle">8 tablas SQLModel con relaciones y campos detallados</div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabla</th>
+                            <th>Campos Principales</th>
+                            <th>Relaciones</th>
+                            <th>Propósito</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>User</strong></td>
+                            <td>id, google_id, email, name, picture, hashed_password, plan, credits</td>
+                            <td>→ Projects, → ChatSessions, → AuditLogs</td>
+                            <td>Usuarios del sistema con autenticación</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Project</strong></td>
+                            <td>id, name, generated_code, agent_type, llm_used, user_id, is_public, n8n_id,
+                                n8n_editor_url</td>
+                            <td>← User, → Deployments, → Versions</td>
+                            <td>Proyectos generados por agentes IA</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ChatSession</strong></td>
+                            <td>id, user_id, messages (JSON string), created_at, updated_at</td>
+                            <td>← User</td>
+                            <td>Sesiones de conversación con el arquitecto IA</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deployment</strong></td>
+                            <td>id, container_id, port, status, project_id</td>
+                            <td>← Project</td>
+                            <td>Registros de containers desplegados</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Task</strong></td>
+                            <td>id, request, type, status, result_data, project_id</td>
+                            <td>← Project (optional)</td>
+                            <td>Tareas de Celery (PENDING→RUNNING→SUCCESS/FAILURE)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ProjectVersion</strong></td>
+                            <td>id, project_id, version_number, generated_code, is_active, parent_version_id</td>
+                            <td>← Project</td>
+                            <td>Versiones de código de proyectos (rollback support)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AuditLog</strong></td>
+                            <td>id, project_id, user_id, action, action_type, code_hash, ai_model, status, ip_address
+                            </td>
+                            <td>← Project, ← User</td>
+                            <td>Registro de auditoría de todas las acciones</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 9: ESTRUCTURA DE ARCHIVOS -->
+        <!-- ============================================ -->
+        <section id="file-structure" class="section">
+            <div class="section-header">
+                <div class="section-number">9</div>
+                <div>
+                    <div class="section-title">Estructura Completa de Archivos</div>
+                    <div class="section-subtitle">Todos los archivos del frontend y backend con su propósito</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🖥️</span> Frontend (27 archivos)</div>
+                    <div class="file-tree">
+                        <span class="folder">frontend/src/</span>
+                        ├── <span class="tsx">main.tsx</span> <span style="color:var(--text-muted)">— Entry point,
+                            BrowserRouter + Providers</span>
+                        ├── <span class="tsx">App.tsx</span> <span style="color:var(--text-muted)">— Root component,
+                            Routes, Header, Sidebar</span>
+                        ├── <span class="tsx">Providers.tsx</span> <span style="color:var(--text-muted)">—
+                            GoogleOAuthProvider + AuthProvider + ModalProvider</span>
+                        ├── <span class="css">index.css</span> <span style="color:var(--text-muted)">— Tailwind
+                            directives + body styles</span>
+                        ├── <span class="folder">context/</span>
+                        │ ├── <span class="tsx">AuthContext.tsx</span> <span style="color:var(--text-muted)">—
+                            Token/user state, localStorage, 401 interceptor</span>
+                        │ └── <span class="tsx">ModalContext.tsx</span> <span style="color:var(--text-muted)">—
+                            LoginModal open/close state</span>
+                        ├── <span class="folder">utils/</span>
+                        │ └── <span class="ts">api.ts</span> <span style="color:var(--text-muted)">— axios instance,
+                            baseURL=/api/v1, Bearer token</span>
+                        ├── <span class="folder">components/</span>
+                        │ ├── <span class="tsx">LoginModal.tsx</span> <span style="color:var(--text-muted)">—
+                            Email/Password + Google OAuth login</span>
+                        │ ├── <span class="tsx">Sidebar.tsx</span> <span style="color:var(--text-muted)">— 8 nav items
+                            with icons and tooltips</span>
+                        │ ├── <span class="tsx">ProtectedRoute.tsx</span> <span style="color:var(--text-muted)">— Auth
+                            guard + redirect + modal open</span>
+                        │ ├── <span class="tsx">LogoGalaxy.tsx</span> <span style="color:var(--text-muted)">— Animated
+                            SVG galaxy logo</span>
+                        │ ├── <span class="tsx">AdminTerminal.tsx</span> <span style="color:var(--text-muted)">—
+                            Terminal UI for admin commands</span>
+                        │ ├── <span class="tsx">BillingComponents.tsx</span> <span style="color:var(--text-muted)">—
+                            Credit purchase, plans, subscription</span>
+                        │ ├── <span class="tsx">BillingDashboard.tsx</span> <span style="color:var(--text-muted)">—
+                            Billing overview + invoices</span>
+                        │ ├── <span class="tsx">MetricsDashboard.tsx</span> <span style="color:var(--text-muted)">—
+                            System metrics + error stats</span>
+                        │ ├── <span class="tsx">NeuralArchitect.tsx</span> <span style="color:var(--text-muted)">— 3D
+                            particle system background</span>
+                        │ ├── <span class="tsx">SecurityComponents.tsx</span> <span style="color:var(--text-muted)">—
+                            MFA, API keys, teams, audit log</span>
+                        │ └── <span class="tsx">WebContainerPreview.tsx</span> <span style="color:var(--text-muted)">—
+                            Code editor + preview + deploy</span>
+                        └── <span class="folder">views/</span>
+                        ├── <span class="tsx">HomeView.tsx</span> <span style="color:var(--text-muted)">— Chat IA +
+                            blueprint + WebContainerPreview</span>
+                        ├── <span class="tsx">ProjectsView.tsx</span> <span style="color:var(--text-muted)">— Project
+                            grid + CRUD actions</span>
+                        ├── <span class="tsx">MarketplaceView.tsx</span> <span style="color:var(--text-muted)">—
+                            Community marketplace + clone</span>
+                        ├── <span class="tsx">ConnectorsView.tsx</span> <span style="color:var(--text-muted)">—
+                            Integration catalog + automation generator</span>
+                        ├── <span class="tsx">AnalyticsView.tsx</span> <span style="color:var(--text-muted)">— 4 tabs:
+                            overview/metrics/security/terminal</span>
+                        ├── <span class="tsx">SettingsView.tsx</span> <span style="color:var(--text-muted)">— API keys
+                            config + system info</span>
+                        ├── <span class="tsx">ContentView.tsx</span> <span style="color:var(--text-muted)">— 6 content
+                            types (presentation, podcast, etc.)</span>
+                        ├── <span class="tsx">AdminDashboard.tsx</span> <span style="color:var(--text-muted)">— 3 tabs:
+                            overview/billing/security</span>
+                        └── <span class="tsx">AutomationAdminView.tsx</span> <span style="color:var(--text-muted)">— n8n
+                            workflow control panel</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🔧</span> Backend (38 archivos)</div>
+                    <div class="file-tree">
+                        <span class="folder">backend/app/</span>
+                        ├── <span class="py">main.py</span> <span style="color:var(--text-muted)">— FastAPI app, CORS,
+                            middleware, 9 routers</span>
+                        ├── <span class="folder">core/</span>
+                        │ ├── <span class="py">config.py</span> <span style="color:var(--text-muted)">— Pydantic
+                            Settings (env vars)</span>
+                        │ ├── <span class="py">database.py</span> <span style="color:var(--text-muted)">— SQLModel
+                            engine, create_db_and_tables()</span>
+                        │ └── <span class="py">celery_app.py</span> <span style="color:var(--text-muted)">— Celery app,
+                            Redis broker, auto-discover</span>
+                        ├── <span class="folder">api/</span>
+                        │ ├── <span class="py">deps.py</span> <span style="color:var(--text-muted)">—
+                            OAuth2PasswordBearer, get_current_user()</span>
+                        │ └── <span class="folder">endpoints/</span>
+                        │ ├── <span class="py">auth.py</span> <span style="color:var(--text-muted)">— /register /login
+                            /me /google_sync /fix_admin</span>
+                        │ ├── <span class="py">orchestrate.py</span> <span style="color:var(--text-muted)">— /consult
+                            /create /status /deploy /automation</span>
+                        │ ├── <span class="py">dashboard.py</span> <span style="color:var(--text-muted)">— /stats
+                            /projects /metrics /versions /deploy</span>
+                        │ ├── <span class="py">containers.py</span> <span style="color:var(--text-muted)">— /stop /start
+                            /delete</span>
+                        │ ├── <span class="py">admin.py</span> <span style="color:var(--text-muted)">— /telemetry
+                            /services /command /oracle</span>
+                        │ ├── <span class="py">marketplace.py</span> <span style="color:var(--text-muted)">— /list
+                            /clone /publish</span>
+                        │ ├── <span class="py">integrations.py</span> <span style="color:var(--text-muted)">— /catalog
+                            /generate /execute /flow</span>
+                        │ └── <span class="py">security.py</span> <span style="color:var(--text-muted)">— MFA /api-keys
+                            /teams</span>
+                        ├── <span class="folder">services/</span>
+                        │ ├── <span class="py">consultation_service.py</span> <span style="color:var(--text-muted)">—
+                            3-phase interview, AI chain</span>
+                        │ ├── <span class="py">agent_factory.py</span> <span style="color:var(--text-muted)">— Core:
+                            process_request → deploy</span>
+                        │ ├── <span class="py">docker_orchestrator.py</span> <span style="color:var(--text-muted)">—
+                            Parse, build, run, health check</span>
+                        │ ├── <span class="py">neural_brain.py</span> <span style="color:var(--text-muted)">— Intent
+                            classifier (LLM + heuristic)</span>
+                        │ ├── <span class="py">neural/neural_brain_rl.py</span> <span style="color:var(--text-muted)">—
+                            RL model (VAE+GRU+SAC)</span>
+                        │ ├── <span class="py">lyra_optimizer.py</span> <span style="color:var(--text-muted)">— Prompt
+                            optimization</span>
+                        │ ├── <span class="py">quality_gate.py</span> <span style="color:var(--text-muted)">— ESLint +
+                            Pylint scoring</span>
+                        │ ├── <span class="py">sca_scanner.py</span> <span style="color:var(--text-muted)">—
+                            Vulnerability scan (offline DB)</span>
+                        │ ├── <span class="py">sandbox_test.py</span> <span style="color:var(--text-muted)">—
+                            Docker-based code test</span>
+                        │ ├── <span class="py">n8n_orchestrator.py</span> <span style="color:var(--text-muted)">— Create
+                            n8n workflows via REST</span>
+                        │ ├── <span class="py">n8n_admin_orchestrator.py</span> <span style="color:var(--text-muted)">—
+                            n8n admin interface</span>
+                        │ ├── <span class="py">n8n_web_admin_generator.py</span> <span style="color:var(--text-muted)">—
+                            Generate HTML admin dashboard</span>
+                        │ ├── <span class="py">health_checker.py</span> <span style="color:var(--text-muted)">—
+                            Post-deploy health verification</span>
+                        │ ├── <span class="py">port_manager.py</span> <span style="color:var(--text-muted)">— Dynamic
+                            port assignment</span>
+                        │ ├── <span class="py">web_researcher.py</span> <span style="color:var(--text-muted)">— Scrape
+                            fmhy.net for AI context</span>
+                        │ ├── <span class="py">code_validator.py</span> <span style="color:var(--text-muted)">— Syntax
+                            validation</span>
+                        │ └── <span class="py">import_checker.py</span> <span style="color:var(--text-muted)">—
+                            Dependency verification</span>
+                        ├── <span class="folder">models/</span>
+                        │ └── <span class="py">models.py</span> <span style="color:var(--text-muted)">— 7 SQLModel
+                            tables (User, Project, etc.)</span>
+                        └── <span class="folder">workers/</span>
+                        ├── <span class="py">tasks.py</span> <span style="color:var(--text-muted)">— generate_agent_task
+                            Celery task</span>
+                        └── <span class="py">celery_app.py</span> <span style="color:var(--text-muted)">— Auto-discover
+                            tasks</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 10: API ENDPOINTS -->
+        <!-- ============================================ -->
+        <section id="api" class="section">
+            <div class="section-header">
+                <div class="section-number">10</div>
+                <div>
+                    <div class="section-title">API Endpoints — Todos los Routers</div>
+                    <div class="section-subtitle">9 routers con 50+ endpoints documentados</div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Router</th>
+                            <th>Endpoints</th>
+                            <th>Autenticación</th>
+                            <th>Propósito</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>auth.py</strong></td>
+                            <td>/register, /login, /me, /google_sync, /fix_admin</td>
+                            <td>/me requiere JWT</td>
+                            <td>Autenticación y gestión de usuarios</td>
+                        </tr>
+                        <tr>
+                            <td><strong>orchestrate.py</strong></td>
+                            <td>/consult, /history/{id}, /create, /status/{id}, /deploy, /automation/{id}, /toggle,
+                                /trigger</td>
+                            <td>Todos requieren JWT</td>
+                            <td>Consultación IA, creación de proyectos, deploy</td>
+                        </tr>
+                        <tr>
+                            <td><strong>dashboard.py</strong></td>
+                            <td>/stats, /projects, /projects/{id}/export, /projects/{id}/code, /projects/{id},
+                                /projects/{id}/deploy, /metrics, /metrics/quality, /metrics/validation, /metrics/health,
+                                /projects/{id}/versions (GET/POST), /projects/{id}/versions/{vid}/rollback</td>
+                            <td>La mayoría requiere JWT</td>
+                            <td>Dashboard de proyectos, métricas, versiones</td>
+                        </tr>
+                        <tr>
+                            <td><strong>containers.py</strong></td>
+                            <td>/{id}/stop, /{id}/start, /{id} DELETE</td>
+                            <td>Requiere JWT</td>
+                            <td>Gestión de containers Docker</td>
+                        </tr>
+                        <tr>
+                            <td><strong>admin.py</strong></td>
+                            <td>/telemetry, /services, /command, /oracle</td>
+                            <td>Requiere JWT</td>
+                            <td>Panel de administración, telemetría, comandos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>marketplace.py</strong></td>
+                            <td>/ (list), /{id}/clone, /{id}/publish</td>
+                            <td>Clone/publish requieren JWT</td>
+                            <td>Marketplace comunitario de proyectos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>integrations.py</strong></td>
+                            <td>/catalog, /generate, /execute, /flow/create</td>
+                            <td>Requiere JWT</td>
+                            <td>Catálogo de integraciones y generador de automatizaciones</td>
+                        </tr>
+                        <tr>
+                            <td><strong>security.py</strong></td>
+                            <td>/mfa/setup, /mfa/verify, /mfa/disable, /mfa/status, /mfa/backup-codes, /api-keys/create,
+                                /api-keys/revoke, /api-keys/list, /api-keys/usage, /teams/create, /teams/invite,
+                                /teams/accept, /teams/members, /teams/remove, /teams/update-role</td>
+                            <td>Todos requieren JWT</td>
+                            <td>MFA, API Keys, gestión de equipos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 11: CELERY WORKERS -->
+        <!-- ============================================ -->
+        <section id="celery" class="section">
+            <div class="section-header">
+                <div class="section-number">11</div>
+                <div>
+                    <div class="section-title">Celery Workers — Procesamiento Asíncrono</div>
+                    <div class="section-subtitle">Cómo se ejecutan las tareas de creación en background</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><span class="emoji">🔄</span> generate_agent_task</div>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+                    Tarea principal de Celery. Recibe el prompt del usuario y ejecuta todo el pipeline de creación de
+                    forma asíncrona.
+                </p>
+                <ul class="steps">
+                    <li>
+                        <div class="step-title">Recibir parámetros</div>
+                        <div class="step-desc">prompt (string), user_id (string), solution_type (optional string)</div>
+                    </li>
+                    <li>
+                        <div class="step-title">Actualizar Task a RUNNING</div>
+                        <div class="step-desc">UPDATE Task SET status="RUNNING" WHERE id = task_id</div>
+                    </li>
+                    <li>
+                        <div class="step-title">Crear asyncio event loop</div>
+                        <div class="step-desc">loop = asyncio.new_event_loop() + nest_asyncio.apply() para permitir
+                            asyncio en Celery</div>
+                    </li>
+                    <li>
+                        <div class="step-title">Ejecutar factory.process_request()</div>
+                        <div class="step-desc">loop.run_until_complete(factory.process_request(prompt, user_id,
+                            solution_type))</div>
+                    </li>
+                    <li>
+                        <div class="step-title">Serializar resultado</div>
+                        <div class="step-desc">CustomJSONEncoder para Enums, dataclasses, UUIDs, datetimes</div>
+                    </li>
+                    <li>
+                        <div class="step-title">Guardar en DB</div>
+                        <div class="step-desc">UPDATE Task SET status="SUCCESS"/"FAILURE", result_data=JSON,
+                            project_id=UUID</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="highlight-box info">
+                <strong>📋 Configuración Celery:</strong> Broker y backend = Redis (redis://redis:6389/0). Serialización
+                = JSON. Auto-discover tasks desde app.workers. Prefetch multiplier = 1 (optimizado para evitar
+                acaparamiento de tareas).
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 12: N8N INTEGRATION -->
+        <!-- ============================================ -->
+        <section id="n8n" class="section">
+            <div class="section-header">
+                <div class="section-number">12</div>
+                <div>
+                    <div class="section-title">n8n Integration — Automatizaciones</div>
+                    <div class="section-subtitle">Creación de workflows, admin web y ejecución</div>
+                </div>
+            </div>
+
+            <div class="flow-label">Flujo de Creación de Workflow n8n</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    flowchart LR
+                    A["AgentFactory: agent_type == 'agent-creator'"] --> B["n8n_orchestrator.create_flow_for_project()"]
+                    B --> C["_detect_auth_required()"]
+                    C --> D{"¿n8n requiere API key?"}
+                    D -->|Sí| E["Usar X-N8N-API-KEY header"]
+                    D -->|No (open mode)| F["Sin auth header"]
+                    E --> G["_build_workflow_json()"]
+                    F --> G
+                    G --> H["POST /api/v1/workflows"]
+                    H --> I{"HTTP 201?"}
+                    I -->|Sí| J["GET workflow.id"]
+                    I -->|401| K["Return auth_error + instructions"]
+                    J --> L["PATCH /api/v1/workflows/{id} {active: true}"]
+                    L --> M["Return {flow_id, editor_url, status: success}"]
+
+                    classDef success fill:#10b981,stroke:#059669,color:#fff
+                    classDef error fill:#ef4444,stroke:#dc2626,color:#fff
+                    classDef process fill:#3b82f6,stroke:#1d4ed8,color:#fff
+                    classDef decision fill:#f59e0b,stroke:#d97706,color:#fff
+
+                    class A,B,E,F,G,H,J,L,M process
+                    class D,I decision
+                    class M success
+                    class K error
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><span class="emoji">🎨</span> n8n_web_admin_generator.py</div>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+                    Genera una web admin completa (HTML+JS) para gestionar workflows n8n en tiempo real. Incluye
+                    Chart.js para métricas y Three.js para visualización 3D del flujo.
+                </p>
+                <ul class="detail-list">
+                    <li><strong>Genera 3 archivos:</strong> index.html, server.js, package.json</li>
+                    <li><strong>Dashboard:</strong> Estado del workflow, ejecuciones totales, tasa de éxito, chart de
+                        ejecuciones recientes</li>
+                    <li><strong>3D Visualization:</strong> Three.js con nodos esféricos animados que representan el
+                        flujo</li>
+                    <li><strong>Polling:</strong> Cada 5 segundos actualiza datos desde la API de n8n</li>
+                    <li><strong>Controles:</strong> Refresh, Toggle Active, lista de ejecuciones recientes</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 13: CAPA IA -->
+        <!-- ============================================ -->
+        <section id="ai-layer" class="section">
+            <div class="section-header">
+                <div class="section-number">13</div>
+                <div>
+                    <div class="section-title">Capa de Inteligencia Artificial</div>
+                    <div class="section-subtitle">Todos los modelos, providers y fallback chains</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🤖</span> Providers de IA (Cadena de Resiliencia)</div>
+                    <ul class="steps">
+                        <li>
+                            <div class="step-title">1. Local AI (Priority 0)</div>
+                            <div class="step-desc">http://host.docker.internal:5001/v1/ — Modelo local en localhost. Sin
+                                costo de API.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">2. Groq (Priority 1)</div>
+                            <div class="step-desc">llama-3.3-70b-versatile — Ultra rápido, primer fallback principal.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="step-title">3. Google Gemini (Priority 2)</div>
+                            <div class="step-desc">gemini-2.0-flash — Segundo fallback, modelo multimodal.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">4. Anthropic Claude (Priority 3)</div>
+                            <div class="step-desc">claude-3-5-sonnet-20240620 — Tercer fallback, alta calidad.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">5. OpenRouter (Priority 4)</div>
+                            <div class="step-desc">google/gemini-2.0-flash-lite:free — Último recurso, gratuito.</div>
+                        </li>
+                        <li>
+                            <div class="step-title">6. Heuristic Fallback (Priority 5)</div>
+                            <div class="step-desc">Si todos los LLM fallan, usa keyword matching para clasificación
+                                básica.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🧠</span> Neural Brain RL</div>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+                        Modelo de Reinforcement Learning para clasificación de tipo de agente.
+                    </p>
+                    <ul class="detail-list">
+                        <li><strong>Arquitectura:</strong> VAE (compresión de estado) + GRU (memoria temporal) + SAC
+                            (decisión)</li>
+                        <li><strong>Acciones:</strong> web-builder, app-builder, agent-creator, refine-code, audit-code,
+                            deploy</li>
+                        <li><strong>Estado:</strong> 128 dimensiones (keywords + longitud + contexto)</li>
+                        <li><strong>Latent space:</strong> 32 dimensiones comprimidas por VAE</li>
+                        <li><strong>Training:</strong> Prioritized Experience Replay buffer</li>
+                        <li><strong>Estado actual:</strong> ⚠️ Modelo NO entrenado con datos reales — decisiones
+                            potencialmente aleatorias</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 14: FRONTEND DETALLADO -->
+        <!-- ============================================ -->
+        <section id="frontend" class="section">
+            <div class="section-header">
+                <div class="section-number">14</div>
+                <div>
+                    <div class="section-title">Frontend — Análisis Detallado</div>
+                    <div class="section-subtitle">Componentes, vistas, routing y estados</div>
+                </div>
+            </div>
+
+            <div class="flow-label">Component Tree del Frontend</div>
+            <div class="flow-container">
+                <div class="mermaid">
+                    graph TD
+                    ROOT["main.tsx"] --> APP["App.tsx"]
+                    APP --> HEADER["Global Header: LogoGalaxy + Auth Status + Badges"]
+                    APP --> SIDEBAR["Sidebar: 8 nav items"]
+                    APP --> MAIN["Main ViewPort: Routes"]
+
+                    MAIN --> HOME["HomeView: Chat IA + NeuralArchitect + WebContainerPreview"]
+                    MAIN --> PROJECTS["ProjectsView: Grid + CodeModal + Actions"]
+                    MAIN --> CONTENT["ContentView: 6 content types"]
+                    MAIN --> MARKET["MarketplaceView: Clone projects"]
+                    MAIN --> CONNECT["ConnectorsView: Catalog + Automation"]
+                    MAIN --> ANALYTICS["AnalyticsView: 4 tabs + 5s polling"]
+                    MAIN --> ADMIN["AdminDashboard: 3 tabs"]
+                    MAIN --> SETTINGS["SettingsView: API keys config"]
+                    MAIN --> AUTO["AutomationAdminView: n8n workflow control"]
+
+                    HOME --> NEURAL["NeuralArchitect: 3D particles (idle/thinking/building/success)"]
+                    HOME --> CHAT["Chat: orchestrate/consult polling"]
+                    HOME --> BLUEPRINT["Blueprint approval workflow"]
+                    HOME --> WC["WebContainerPreview: Code editor + preview + deploy"]
+
+                    PROJECTS --> GRID["Project cards with status colors"]
+                    GRID --> ACTIONS["View / Start / Stop / Deploy / Download / Delete / Publish"]
+
+                    ANALYTICS --> TABS["Overview / Metrics / Security / Terminal"]
+                    ADMIN --> ATABS["Overview / Billing / Security"]
+
+                    classDef root fill:#3b82f6,stroke:#1d4ed8,color:#fff
+                    classDef view fill:#10b981,stroke:#059669,color:#fff
+                    classDef comp fill:#8b5cf6,stroke:#7c3aed,color:#fff
+
+                    class ROOT,APP,HEADER,SIDEBAR,MAIN root
+                    class HOME,PROJECTS,CONTENT,MARKET,CONNECT,ANALYTICS,ADMIN,SETTINGS,AUTO view
+                    class NEURAL,CHAT,BLUEPRINT,WC,GRID,ACTIONS,TABS,ATABS comp
+                </div>
+            </div>
+
+            <!-- Admin Dashboard Detail -->
+            <div class="card" style="margin-top: 32px;">
+                <div class="card-title"><span class="emoji">🛡️</span> /admin — Panel de Administración (Funciones
+                    Reales)</div>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+                    El <strong>AdminDashboard</strong> (<code>views/AdminDashboard.tsx</code>) es el panel de control
+                    administrativo del sistema. Se accede desde el sidebar con el icono de escudo. Requiere
+                    autenticación (ProtectedRoute).
+                </p>
+
+                <div class="grid-3" style="margin-bottom:24px;">
+                    <div class="stat-card">
+                        <div class="stat-value blue">3</div>
+                        <div class="stat-label">Tabs principales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value green">2</div>
+                        <div class="stat-label">API calls al cargar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value purple">4</div>
+                        <div class="stat-label">Sub-componentes embebidos</div>
+                    </div>
+                </div>
+
+                <ul class="detail-list">
+                    <li><strong>Tab Overview:</strong> Stats grid (usuarios totales, proyectos, agentes activos, salud
+                        del sistema), quick action cards (Billing, Seguridad, Base de Datos), y estado de servicios
+                        (Backend API, PostgreSQL, Redis, ChromaDB, n8n) con indicadores de latencia y status</li>
+                    <li><strong>Tab Billing:</strong> Integra <code>BillingDashboard</code> (overview de suscripción +
+                        facturas), <code>CreditPurchase</code> (compra de créditos), <code>PlansView</code> (planes
+                        mensuales/anuales), y <code>SubscriptionManagement</code> (gestión de suscripción actual)</li>
+                    <li><strong>Tab Seguridad:</strong> Embebe <code>SecurityDashboard</code> que contiene MFA setup,
+                        gestión de API Keys, gestión de equipos, y visor de audit logs</li>
+                    <li><strong>Endpoints que consume:</strong> <code>GET /api/v1/admin/telemetry</code>,
+                        <code>GET /api/v1/admin/services</code></li>
+                    <li><strong>Propósito real:</strong> No genera código ni deploya. Es un panel de <em>observación y
+                            gestión</em> — el admin puede ver métricas del sistema, gestionar billing de usuarios, y
+                        configurar seguridad (MFA, API keys, equipos)</li>
+                </ul>
+            </div>
+
+            <!-- Analytics View Detail -->
+            <div class="card" style="margin-top: 24px;">
+                <div class="card-title"><span class="emoji">📊</span> /analytics — Nexus Command Center (Funciones
+                    Reales)</div>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+                    El <strong>AnalyticsView</strong> (<code>views/AnalyticsView.tsx</code>) es el centro de comando de
+                    monitoreo en tiempo real del sistema. Se accede desde el sidebar con el icono de dashboard. Requiere
+                    autenticación.
+                </p>
+
+                <div class="highlight-box info" style="margin-bottom:16px;">
+                    <strong>📋 Dato clave:</strong> A diferencia del AdminDashboard (que es estático y se carga una
+                    vez), AnalyticsView hace <strong>polling cada 5 segundos</strong> a los endpoints de telemetría para
+                    mantener datos en tiempo real.
+                </div>
+
+                <ul class="detail-list">
+                    <li><strong>Tab Overview:</strong> 4 stat cards 3D (Agentes Activos, Proyectos Totales, Deployments
+                        Docker, Usuarios), estado de servicios con monitoreo en tiempo real (6 servicios con status
+                        colors: running=verde, stopped=rojo, starting=amarillo), barras de rendimiento 3D (CPU, Memory,
+                        Storage, Network), y mini stat cards para DB/API/Security</li>
+                    <li><strong>Tab Métricas:</strong> Embebe <code>MetricsDashboard</code> component que muestra error
+                        database stats, validation services health, success rates por tipo de proyecto, y errores más
+                        comunes. Endpoint: <code>GET /api/v1/dashboard/metrics</code></li>
+                    <li><strong>Tab Seguridad:</strong> Vulnerabilidades críticas detectadas, security score (0-100),
+                        alertas activas, auditorías completadas, estado de Firewall/WAF/DDoS Protection/Rate
+                        Limiting/Sentinel Agent, y últimos escaneos con timestamp</li>
+                    <li><strong>Tab Terminal:</strong> Embebe <code>AdminTerminal</code> — una terminal interactiva que
+                        envía comandos al endpoint <code>POST /api/v1/admin/command</code> y muestra la respuesta en
+                        tiempo real</li>
+                    <li><strong>Polling:</strong> <code>setInterval(fetchData, 5000)</code> — cada 5 segundos actualiza
+                        telemetría y servicios desde <code>/admin/telemetry</code> y <code>/admin/services</code></li>
+                    <li><strong>Propósito real:</strong> Monitoreo operativo en tiempo real. El admin puede ver el
+                        estado de salud del sistema, detectar problemas de rendimiento, revisar seguridad, y ejecutar
+                        comandos de administración directamente desde la terminal integrada</li>
+                </ul>
+            </div>
+
+            <!-- Black Screen Root Cause -->
+            <div class="card" style="margin-top: 24px; border-color: var(--accent-red);">
+                <div class="card-title"><span class="emoji">🖥️</span> Pantalla Negra Post-Deploy Fallido — Causa Raíz
+                </div>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+                    Cuando un deploy de automatización falla, la pantalla se queda negra porque <strong>HomeView.tsx no
+                        maneja correctamente el estado <code>result.type === 'error'</code></strong>.
+                </p>
+
+                <div class="highlight-box error" style="margin-bottom:16px;">
+                    <strong>🔴 Problema técnico:</strong> En <code>HomeView.tsx</code> línea 200,
+                    <code>isSidebarActive</code> solo evalúa a <code>true</code> para <code>'application'</code> o
+                    <code>'automation'</code>. Cuando el deploy falla, el backend retorna
+                    <code>{type: 'error', ...}</code> o <code>{status: 'error', ...}</code>, lo que hace
+                    <code>isSidebarActive = false</code>. El resultado es que el layout cambia a pantalla completa sin
+                    sidebar, pero el bloque de resultados no renderiza correctamente el error porque espera
+                    <code>result.data</code> con una estructura que no existe.
+                </div>
+
+                <ul class="detail-list">
+                    <li><strong>Línea problemática:</strong>
+                        <code>const isSidebarActive = result && (result.type === 'application' || result.type === 'automation');</code>
+                    </li>
+                    <li><strong>Efecto cascada:</strong> Cuando <code>result.type</code> es <code>'error'</code> →
+                        sidebar se oculta → el área principal intenta renderizar el bloque de resultados →
+                        <code>result.data?.audit</code> y <code>result.data?.telemetry</code> son undefined → se
+                        renderiza solo <code>result.message</code> que puede ser vacío → pantalla negra</li>
+                    <li><strong>Además:</strong> Si el resultado viene como <code>{status: 'error'}</code> en vez de
+                        <code>{type: 'error'}</code>, la verificación <code>result.type</code> es undefined y todo el
+                        renderizado se rompe</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 15: PUNTOS CRÍTICOS -->
+        <!-- ============================================ -->
+        <section id="critical" class="section">
+            <div class="section-header">
+                <div class="section-number">15</div>
+                <div>
+                    <div class="section-title">Puntos Críticos — Auditoría Completa</div>
+                    <div class="section-subtitle">20 problemas identificados, clasificados por severidad, con estado
+                        actual</div>
+                </div>
+            </div>
+
+            <div class="highlight-box error" style="margin-bottom:24px;">
+                <strong>🔴 CRÍTICO (Bloquean el sistema)</strong>
+            </div>
+
+            <div class="table-wrapper" style="margin-bottom:32px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ubicación</th>
+                            <th>Problema</th>
+                            <th>Impacto</th>
+                            <th>Severidad</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><code>LoginModal.tsx:104</code></td>
+                            <td><code>useGoogleLogin</code> devuelve <code>code</code>, código espera
+                                <code>access_token</code>. Falta <code>flow: 'implicit'</code></td>
+                            <td>Google login siempre falla</td>
+                            <td><span class="badge badge-critical">🔴 CRÍTICO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><code>agent_factory.py</code></td>
+                            <td><code>get_orchestrator</code> importado dentro de <code>try</code> block →
+                                <code>UnboundLocalError</code> en n8n admin deploy</td>
+                            <td>Deploy falla con "variable not associated"</td>
+                            <td><span class="badge badge-critical">🔴 CRÍTICO</span></td>
+                            <td><span class="badge badge-ok">✅ REVERTIDO</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><code>HomeView.tsx</code> / Servidor</td>
+                            <td>Pantalla negra = servidor frontend no corre en puerto 3009</td>
+                            <td>Sistema inaccesible</td>
+                            <td><span class="badge badge-critical">🔴 CRÍTICO</span></td>
+                            <td><span class="badge badge-check">❓ NECESITA VERIFICAR</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><code>docker_orchestrator.py</code></td>
+                            <td>Health check usa <code>http://{container_name}:3000</code> como primera URL → DNS de
+                                contenedor falla en Docker Desktop Windows</td>
+                            <td>Health check falla aunque container funciona</td>
+                            <td><span class="badge badge-critical">🔴 CRÍTICO</span></td>
+                            <td><span class="badge badge-medium">⚠️ PARCIALMENTE FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><code>docker_orchestrator.py</code></td>
+                            <td>Se crean 2 contenedores para 1 proyecto (web-builder + n8n admin) cuando solo debería
+                                ser 1</td>
+                            <td>Consumo doble de recursos, URLs incorrectas</td>
+                            <td><span class="badge badge-critical">🔴 CRÍTICO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td><code>n8n_orchestrator.py</code></td>
+                            <td>n8n workflow NO se crea cuando <code>agent_type != "agent-creator"</code></td>
+                            <td>Automatizaciones sin flujo n8n</td>
+                            <td><span class="badge badge-critical">🔴 CRÍTICO</span></td>
+                            <td><span class="badge badge-medium">⚠️ PARCIALMENTE FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td><code>n8n_web_admin_generator.py</code></td>
+                            <td>Genera HTML sin UI/UX usable (básico, sin estilo profesional)</td>
+                            <td>Admin web no funcional visualmente</td>
+                            <td><span class="badge badge-critical">🔴 CRÍTICO</span></td>
+                            <td><span class="badge badge-medium">⚠️ NECESITA MEJORA</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box warning" style="margin-bottom:24px;">
+                <strong>🟡 ALTO (Degradan funcionalidad)</strong>
+            </div>
+
+            <div class="table-wrapper" style="margin-bottom:32px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ubicación</th>
+                            <th>Problema</th>
+                            <th>Impacto</th>
+                            <th>Severidad</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>8</td>
+                            <td><code>neural_brain.py</code></td>
+                            <td>Keyword matching para automatizaciones es limitado (no cubre "cotización", "inventario",
+                                "descuento")</td>
+                            <td>Clasifica "app-builder" en vez de "agent-creator"</td>
+                            <td><span class="badge badge-high">🟡 ALTO</span></td>
+                            <td><span class="badge badge-medium">⚠️ PARCIALMENTE FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td><code>quality_gate.py</code></td>
+                            <td>ESLint con <code>--no-eslintrc</code> puede dar falsos positivos en código generado por
+                                IA</td>
+                            <td>Code válido bloqueado por linting</td>
+                            <td><span class="badge badge-high">🟡 ALTO</span></td>
+                            <td><span class="badge badge-medium">⚠️ PARCIALMENTE FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td><code>docker_orchestrator.py</code></td>
+                            <td>Docker build timeout 300s puede ser insuficiente para Next.js builds</td>
+                            <td>Builds fallan en proyectos grandes</td>
+                            <td><span class="badge badge-high">🟡 ALTO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td><code>agent_factory.py</code></td>
+                            <td><code>lyra_optimizer.py</code> importa pero el módulo puede no estar actualizado</td>
+                            <td>Prompt optimization puede fallar</td>
+                            <td><span class="badge badge-high">🟡 ALTO</span></td>
+                            <td><span class="badge badge-check">❓ NECESITA VERIFICAR</span></td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td><code>consultation_service.py</code></td>
+                            <td>LLM puede no seguir estrictamente el 3-phase flow (ASKING→READY)</td>
+                            <td>Blueprint se genera antes de tener contexto suficiente</td>
+                            <td><span class="badge badge-high">🟡 ALTO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td><code>sandbox_test.py</code></td>
+                            <td>Sandbox usa <code>node:18-alpine</code> pero proyecto usa <code>node:20</code></td>
+                            <td>Tests sandbox no reflejan realidad del container</td>
+                            <td><span class="badge badge-high">🟡 ALTO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box info" style="margin-bottom:24px;">
+                <strong>🟢 MEDIO (Mejoras necesarias)</strong>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ubicación</th>
+                            <th>Problema</th>
+                            <th>Impacto</th>
+                            <th>Severidad</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14</td>
+                            <td><code>AuthContext.tsx</code></td>
+                            <td>Interceptor 401 no distingue entre rutas protegidas y públicas</td>
+                            <td>Logout accidental en rutas públicas</td>
+                            <td><span class="badge badge-medium">🟢 MEDIO</span></td>
+                            <td><span class="badge badge-medium">⚠️ PARCIALMENTE FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td><code>ProtectedRoute.tsx</code></td>
+                            <td><code>useEffect</code> con <code>openModal()</code> puede crear loop si
+                                <code>isAuthenticated</code> cambia rápido</td>
+                            <td>Modal se abre/cierra erráticamente</td>
+                            <td><span class="badge badge-medium">🟢 MEDIO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td><code>api.ts</code></td>
+                            <td>No tiene timeout configurado</td>
+                            <td>Requests pueden colgarse indefinidamente</td>
+                            <td><span class="badge badge-medium">🟢 MEDIO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>17</td>
+                            <td><code>WebContainerPreview.tsx</code></td>
+                            <td>WebContainer API requiere HTTPS en producción, localhost HTTP puede fallar</td>
+                            <td>Preview no funciona en ciertos navegadores</td>
+                            <td><span class="badge badge-medium">🟢 MEDIO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>18</td>
+                            <td><code>ProjectsView.tsx</code></td>
+                            <td>No hay manejo de error cuando proyecto no tiene <code>generated_code</code></td>
+                            <td>Crash al renderizar proyectos n8n-only</td>
+                            <td><span class="badge badge-medium">🟢 MEDIO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>19</td>
+                            <td><code>port_manager.py</code></td>
+                            <td>No verifica si puerto está en uso por otro container antes de asignar</td>
+                            <td>Colisiones de puerto</td>
+                            <td><span class="badge badge-medium">🟢 MEDIO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                        <tr>
+                            <td>20</td>
+                            <td><code>neural_brain_rl.py</code></td>
+                            <td>Modelo RL no está entrenado con datos reales</td>
+                            <td>Clasificación inconsistente/aleatoria</td>
+                            <td><span class="badge badge-medium">🟢 MEDIO</span></td>
+                            <td><span class="badge badge-check">❌ SIN FIX</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- ============================================ -->
+        <!-- SECTION 16: RECOMENDACIONES -->
+        <!-- ============================================ -->
+        <section id="recommendations" class="section">
+            <div class="section-header">
+                <div class="section-number">16</div>
+                <div>
+                    <div class="section-title">Recomendaciones — Orden de Prioridad</div>
+                    <div class="section-subtitle">Acciones concretas para resolver los problemas identificados</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🔴</span> Prioridad 1 — Bloqueantes</div>
+                    <ul class="steps">
+                        <li>
+                            <div class="step-title">Fix Google Login</div>
+                            <div class="step-desc">Agregar <code>flow: 'implicit'</code> a <code>useGoogleLogin()</code>
+                                en LoginModal.tsx</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Verificar servidor frontend</div>
+                            <div class="step-desc">Ejecutar <code>npm run dev</code> en frontend y confirmar que corre
+                                en puerto 3009</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Fix health check Windows</div>
+                            <div class="step-desc">Poner <code>localhost:{port}</code> como primera URL,
+                                <code>container_name</code> como última</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Eliminar doble container</div>
+                            <div class="step-desc">Solo crear 1 container por proyecto, no 2 (web-builder + n8n admin)
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="emoji">🟡</span> Prioridad 2 — Degrada funcionalidad</div>
+                    <ul class="steps">
+                        <li>
+                            <div class="step-title">Expandir keywords de automatización</div>
+                            <div class="step-desc">Agregar "cotización", "inventario", "descuento", "pedido", "stock" a
+                                detección de agent-creator</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Ajustar ESLint rules</div>
+                            <div class="step-desc">Usar reglas más permisivas para código generado por IA</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Aumentar Docker build timeout</div>
+                            <div class="step-desc">Subir de 300s a 600s para Next.js builds grandes</div>
+                        </li>
+                        <li>
+                            <div class="step-title">Actualizar sandbox a node:20</div>
+                            <div class="step-desc">Cambiar de <code>node:18-alpine</code> a <code>node:20-alpine</code>
+                                en sandbox_test.py</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:24px;">
+                <div class="card-title"><span class="emoji">📊</span> Resumen de Estado</div>
+                <div class="grid-3" style="margin-top:16px;">
+                    <div class="stat-card">
+                        <div class="stat-value green">20</div>
+                        <div class="stat-label">Componentes funcionando</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value red">7</div>
+                        <div class="stat-label">Problemas críticos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value yellow">13</div>
+                        <div class="stat-label">Problemas menores</div>
+                    </div>
+                </div>
+                <div class="highlight-box success" style="margin-top:16px;">
+                    <strong>✅ Conclusión:</strong> El sistema tiene una arquitectura sólida con 20 componentes
+                    funcionando correctamente. Los 20 puntos críticos identificados son mayormente de configuración y no
+                    de diseño arquitectónico. Con los fixes de prioridad 1 aplicados, el sistema debería ser
+                    completamente funcional.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>AgentForge ULTIMATE — Diagrama de Flujo + Reporte Completo del Sistema</p>
+        <p style="margin-top:8px;">Generado el 13 de Abril, 2026 · 65+ archivos auditados · 9 capas de arquitectura · 20
+            puntos críticos identificados</p>
+        <p style="margin-top:8px;opacity:0.5;">Documento de Auditoría Técnica v1.0</p>
+    </footer>
+
+    <!-- MERMAID INIT -->
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#e8e8f0',
+                primaryBorderColor: '#60a5fa',
+                lineColor: '#4a4a6a',
+                secondaryColor: '#1a1a2e',
+                tertiaryColor: '#12121a',
+                background: '#0a0a0f',
+                mainBkg: '#1a1a2e',
+                nodeBorder: '#2a2a4a',
+                clusterBkg: '#12121a',
+                clusterBorder: '#2a2a4a',
+                edgeLabelBackground: '#1a1a2e',
+                fontFamily: 'Inter, -apple-system, sans-serif',
+                fontSize: '13px'
+            },
+            flowchart: {
+                curve: 'basis',
+                padding: 20,
+                nodeSpacing: 50,
+                rankSpacing: 60
+            },
+            sequence: {
+                actorMargin: 80,
+                width: 200,
+                height: 60,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35,
+                mirrorActors: false,
+                bottomMarginAdj: 1
+            }
+        });
+
+        // Active nav link highlighting
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Scroll spy
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
