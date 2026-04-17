@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ingeny Labs — Demo Agente WhatsApp + ERP</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --wa-bg: #0a1014;
+            --wa-header: #1f2c34;
+            --wa-chat: #0d1418;
+            --wa-input-bg: #1f2c34;
+            --wa-border: #2a3942;
+            --wa-bubble-in: #1f2c34;
+            --wa-bubble-out: #005c4b;
+            --wa-text: #e9edef;
+            --wa-text-muted: #8696a0;
+            --wa-green: #00a884;
+            --wa-green-light: #25d366;
+            --erp-bg: #111b21;
+            --erp-surface: #1f2c34;
+            --erp-border: #2a3942;
+            --erp-text: #e9edef;
+            --erp-muted: #8696a0;
+            --erp-card: #182028;
+            --erp-accent: #00a884;
+            --erp-accent-dim: #005c4b;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            background: #0a1014;
+            overflow: hidden
+        }
+
+        .top-banner {
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #182028;
+            font-size: 11px;
+            color: #8696a0;
+            border-bottom: 1px solid #2a3942;
+            padding: 0 16px
+        }
+
+        .top-banner a {
+            color: #00a884;
+            text-decoration: none
+        }
+
+        .app {
+            display: flex;
+            flex-direction: row;
+            height: calc(100vh - 30px);
+            overflow: hidden;
+            min-width: 800px
+        }
+
+        .chat-panel {
+            width: 400px;
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            background: var(--wa-bg);
+            border-right: 1px solid var(--wa-border);
+            flex-shrink: 0
+        }
+
+        .chat-header {
+            padding: 10px 16px;
+            background: var(--wa-header);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 62px;
+            flex-shrink: 0
+        }
+
+        .chat-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #2a3942;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .chat-header-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .chat-header-info p {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--wa-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .chat-header-info span {
+            font-size: 12px;
+            color: var(--wa-green-light)
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0
+        }
+
+        .chat-header-actions svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--wa-text-muted);
+            cursor: pointer
+        }
+
+        .chat-banner {
+            background: #1a2f38;
+            padding: 6px 14px;
+            font-size: 11px;
+            color: #8696a0;
+            text-align: center;
+            border-bottom: 1px solid var(--wa-border);
+            flex-shrink: 0
+        }
+
+        .chat-date {
+            text-align: center;
+            margin: 10px 0
+        }
+
+        .chat-date span {
+            background: #182028;
+            color: var(--wa-text-muted);
+            font-size: 11px;
+            padding: 5px 12px;
+            border-radius: 8px
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background: var(--wa-chat)
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #2a3942;
+            border-radius: 2px
+        }
+
+        .msg {
+            max-width: 80%;
+            padding: 8px 12px 20px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            word-break: break-word;
+            white-space: pre-wrap;
+            position: relative
+        }
+
+        .msg-agent {
+            background: var(--wa-bubble-in);
+            color: var(--wa-text);
+            border-radius: 0 8px 8px 8px;
+            align-self: flex-start
+        }
+
+        .msg-user {
+            background: var(--wa-bubble-out);
+            color: var(--wa-text);
+            border-radius: 8px 8px 0 8px;
+            align-self: flex-end
+        }
+
+        .msg-time {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 10px;
+            color: var(--wa-text-muted)
+        }
+
+        .msg-user .msg-time {
+            color: rgba(255, 255, 255, 0.55)
+        }
+
+        .typing {
+            background: var(--wa-bubble-in);
+            border-radius: 0 8px 8px 8px;
+            padding: 12px 16px;
+            align-self: flex-start;
+            display: flex;
+            gap: 5px;
+            align-items: center
+        }
+
+        .typing span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--wa-text-muted);
+            animation: blink 1.3s infinite
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: .2s
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: .4s
+        }
+
+        @keyframes blink {
+
+            0%,
+            60%,
+            100% {
+                opacity: .3
+            }
+
+            30% {
+                opacity: 1
+            }
+        }
+
+        .btn-opts {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px
+        }
+
+        .btn-cta-p {
+            background: var(--wa-green);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+            text-align: left;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .btn-cta-p:hover {
+            background: #00957a
+        }
+
+        .btn-cta-s {
+            background: transparent;
+            color: var(--wa-green-light);
+            border: 1px solid var(--wa-green);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .btn-cta-s:hover {
+            background: rgba(0, 168, 132, 0.1)
+        }
+
+        .cta-tagline {
+            font-size: 11px;
+            color: var(--wa-text-muted);
+            margin-top: 6px;
+            padding-left: 2px
+        }
+
+        .chat-input-area {
+            padding: 10px 14px;
+            background: var(--wa-input-bg);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-top: 1px solid var(--wa-border);
+            flex-shrink: 0
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--wa-chat);
+            border: none;
+            border-radius: 22px;
+            padding: 10px 16px;
+            font-size: 13.5px;
+            color: var(--wa-text);
+            outline: none;
+            min-width: 0
+        }
+
+        .chat-input::placeholder {
+            color: var(--wa-text-muted)
+        }
+
+        .chat-send {
+            background: var(--wa-green);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0
+        }
+
+        .chat-send:hover {
+            background: #00957a
+        }
+
+        .chat-send svg {
+            width: 18px;
+            height: 18px;
+            fill: #fff
+        }
+
+        .erp-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--erp-bg);
+            min-width: 0;
+            overflow: hidden
+        }
+
+        .erp-topbar {
+            padding: 0 20px;
+            background: var(--erp-surface);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 62px;
+            border-bottom: 1px solid var(--erp-border);
+            flex-shrink: 0
+        }
+
+        .erp-logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .erp-logo-wrap span {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--erp-text)
+        }
+
+        .erp-badge {
+            background: #182028;
+            border: 1px solid var(--erp-border);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            color: var(--erp-muted)
+        }
+
+        .erp-search {
+            background: var(--erp-card);
+            border: 1px solid var(--erp-border);
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 12px;
+            color: var(--erp-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 220px
+        }
+
+        .erp-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        .erp-user p {
+            font-size: 13px;
+            color: var(--erp-text);
+            font-weight: 500;
+            text-align: right
+        }
+
+        .erp-user span {
+            font-size: 11px;
+            color: var(--erp-muted)
+        }
+
+        .erp-header-inner {
+            padding: 16px 20px 0;
+            flex-shrink: 0
+        }
+
+        .erp-tabs {
+            display: flex;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--erp-border);
+            flex-shrink: 0
+        }
+
+        .erp-tab {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--erp-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all .15s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 7px
+        }
+
+        .erp-tab.active {
+            color: var(--erp-accent);
+            border-bottom-color: var(--erp-accent);
+            font-weight: 500
+        }
+
+        .erp-tab:hover:not(.active) {
+            color: var(--erp-text)
+        }
+
+        .tab-badge {
+            background: var(--erp-accent);
+            color: #fff;
+            border-radius: 10px;
+            padding: 2px 7px;
+            font-size: 10px
+        }
+
+        .erp-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px
+        }
+
+        .erp-body::-webkit-scrollbar {
+            width: 4px
+        }
+
+        .erp-body::-webkit-scrollbar-thumb {
+            background: var(--erp-border);
+            border-radius: 2px
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px
+        }
+
+        .metric-card {
+            background: var(--erp-card);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid var(--erp-border)
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--erp-muted);
+            margin-bottom: 8px
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--erp-text);
+            line-height: 1;
+            transition: all .3s
+        }
+
+        .metric-sub {
+            font-size: 11px;
+            color: var(--erp-muted);
+            margin-top: 5px
+        }
+
+        .metric-sub.green {
+            color: #25d366
+        }
+
+        .metric-sub.orange {
+            color: #f0a500
+        }
+
+        .metric-updated {
+            color: var(--erp-accent) !important;
+            animation: flash .5s
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: .4
+            }
+
+            50% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 1
+            }
+        }
+
+        .section-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+
+        .section-box {
+            background: var(--erp-card);
+            border-radius: 10px;
+            border: 1px solid var(--erp-border);
+            padding: 16px
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--erp-text);
+            margin-bottom: 4px
+        }
+
+        .section-sub {
+            font-size: 12px;
+            color: var(--erp-muted);
+            margin-bottom: 12px
+        }
+
+        .msg-list,
+        .stock-list,
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .msg-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: var(--erp-surface)
+        }
+
+        .msg-av {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--erp-accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--erp-accent);
+            flex-shrink: 0
+        }
+
+        .msg-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .msg-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--erp-text)
+        }
+
+        .msg-txt {
+            font-size: 11px;
+            color: var(--erp-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .msg-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            flex-shrink: 0
+        }
+
+        .msg-time-erp {
+            font-size: 10px;
+            color: var(--erp-muted)
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--erp-accent)
+        }
+
+        .stock-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: var(--erp-surface)
+        }
+
+        .stock-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--erp-text)
+        }
+
+        .stock-sku {
+            font-size: 10px;
+            color: var(--erp-muted);
+            margin-top: 2px
+        }
+
+        .sbadge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+            white-space: nowrap
+        }
+
+        .sbadge-red {
+            background: #3d1515;
+            color: #ff6b6b
+        }
+
+        .sbadge-orange {
+            background: #3d2a00;
+            color: #f0a500
+        }
+
+        .order-item {
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--erp-surface)
+        }
+
+        .order-num {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--erp-text)
+        }
+
+        .order-det {
+            font-size: 11px;
+            color: var(--erp-muted);
+            margin-top: 4px
+        }
+
+        .highlight-new {
+            border: 1px solid var(--erp-accent) !important;
+            animation: pulse-border .8s ease
+        }
+
+        @keyframes pulse-border {
+            0% {
+                border-color: transparent
+            }
+
+            50% {
+                border-color: var(--erp-accent)
+            }
+
+            100% {
+                border-color: var(--erp-accent)
+            }
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px
+        }
+
+        .cat-card {
+            background: var(--erp-surface);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid var(--erp-border)
+        }
+
+        .cat-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--erp-text)
+        }
+
+        .cat-price {
+            font-size: 14px;
+            color: var(--erp-accent);
+            font-weight: 500;
+            margin-top: 4px
+        }
+
+        .cat-stock-txt {
+            font-size: 11px;
+            color: var(--erp-muted);
+            margin-top: 3px
+        }
+
+        .new-pedido-btn {
+            background: var(--erp-accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 18px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap
+        }
+
+        .new-pedido-btn:hover {
+            background: #00957a
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-banner">
+        Simulación demostrativa de Ingeny Labs &nbsp;·&nbsp; No se procesan pagos ni datos reales &nbsp;·&nbsp; <a
+            href="https://www.ingenylabs.com" target="_blank">ingenylabs.com</a>
+    </div>
+    <div class="app">
+        <div class="chat-panel">
+            <div class="chat-header">
+                <div class="chat-avatar">
+                    <img src="https://www.ingenylabs.com/assets/favico.png" alt="Ingeny Labs"
+                        onerror="this.style.display='none';this.parentNode.innerHTML='<span style=\'font-size:14px;font-weight:500;color:#00a884\'>IL</span>'" />
+                </div>
+                <div class="chat-header-info">
+                    <p>Ingeny Labs</p>
+                    <span>● Business Account · Simulación</span>
+                </div>
+                <div class="chat-header-actions">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M15.9 14.3H15l-.3-.3c1-1.1 1.6-2.7 1.6-4.3C16.3 5.8 13.5 3 10 3S3.7 5.8 3.7 9.7s2.8 6.7 6.3 6.7c1.6 0 3-.6 4.1-1.6l.3.3v.8l5.1 5.1 1.5-1.5-5.1-5.2zm-5.9 0C7.2 14.3 5 12.1 5 9.5S7.2 4.7 9.8 4.7s4.8 2.2 4.8 4.8-2.1 4.8-4.7 4.8z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="5" r="1.5" />
+                        <circle cx="12" cy="12" r="1.5" />
+                        <circle cx="12" cy="19" r="1.5" />
+                    </svg>
+                </div>
+            </div>
+            <div class="chat-banner">Esta es una demostración de Ingeny Labs — no es una cuenta real de WhatsApp</div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-date"><span>Hoy</span></div>
+            </div>
+            <div class="chat-input-area">
+                <input class="chat-input" id="chat-input" placeholder="Escribe un mensaje..." autocomplete="off" />
+                <button class="chat-send" id="send-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="erp-panel">
+            <div class="erp-topbar">
+                <div class="erp-logo-wrap">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00a884" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                    <span>Ingeny ERP</span>
+                    <span class="erp-badge">v2.4</span>
+                </div>
+                <div class="erp-search">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8696a0" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    <span style="font-size:12px;color:#8696a0">Buscar pedidos, clientes...</span>
+                </div>
+                <div class="erp-topbar-right">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#8696a0">
+                        <path
+                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+                    </svg>
+                    <div class="erp-user">
+                        <p>Agente Soporte</p><span>Ventas</span>
+                    </div>
+                </div>
+            </div>
+            <div class="erp-header-inner">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:14px">
+                    <div>
+                        <div style="font-size:22px;font-weight:500;color:#e9edef">Panel de Control</div>
+                        <div style="font-size:13px;color:#8696a0;margin-top:3px">Monitorea ventas, stock y comunícate
+                            con clientes.</div>
+                    </div>
+                    <button class="new-pedido-btn">+ Nuevo Pedido</button>
+                </div>
+            </div>
+            <div class="erp-tabs">
+                <div class="erp-tab active" onclick="showTab('dashboard',this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                    </svg>Dashboard
+                </div>
+                <div class="erp-tab" onclick="showTab('whatsapp',this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z" />
+                    </svg>
+                    WhatsApp <span class="tab-badge" id="msg-badge">2</span>
+                </div>
+                <div class="erp-tab" onclick="showTab('pedidos',this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 4V2H5v2H3v16h18V4h-2V2h-2v2H7zm12 14H5V8h14v10z" />
+                    </svg>Pedidos
+                </div>
+                <div class="erp-tab" onclick="showTab('stock',this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 7H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-1 10H5V10h14v7zM4 3h16v2H4z" />
+                    </svg>Stock
+                </div>
+            </div>
+            <div class="erp-body">
+                <div id="tab-dashboard" style="display:flex;flex-direction:column;gap:16px">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Clientes en línea</div>
+                            <div class="metric-value" id="m-clientes">24</div>
+                            <div class="metric-sub" id="m-clientes-sub">+5 en la última hora</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Ventas del Día</div>
+                            <div class="metric-value" id="m-ventas-dia">$1,245</div>
+                            <div class="metric-sub green" id="m-ventas-dia-sub">+12% vs ayer</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Ventas del Mes</div>
+                            <div class="metric-value" id="m-ventas-mes">$34,500</div>
+                            <div class="metric-sub green" id="m-ventas-mes-sub">+8% vs mes anterior</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Mensajes Nuevos</div>
+                            <div class="metric-value" id="m-mensajes">2</div>
+                            <div class="metric-sub" id="m-mensajes-sub">Requieren atención</div>
+                        </div>
+                    </div>
+                    <div class="section-row">
+                        <div class="section-box">
+                            <div class="section-title">Mensajes Entrantes (WhatsApp)</div>
+                            <div class="section-sub">Últimas interacciones de clientes.</div>
+                            <div class="msg-list" id="msg-list">
+                                <div class="msg-item">
+                                    <div class="msg-av">JU</div>
+                                    <div class="msg-info">
+                                        <div class="msg-name">Juan Pérez</div>
+                                        <div class="msg-txt">hola, quiero comprar un iPhone</div>
+                                    </div>
+                                    <div class="msg-meta"><span class="msg-time-erp">08:27</span><span
+                                            class="online-dot"></span></div>
+                                </div>
+                                <div class="msg-item">
+                                    <div class="msg-av">MA</div>
+                                    <div class="msg-info">
+                                        <div class="msg-name">María García</div>
+                                        <div class="msg-txt">¿Tienen stock del iPhone 15?</div>
+                                    </div>
+                                    <div class="msg-meta"><span class="msg-time-erp">08:21</span><span
+                                            class="online-dot"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section-box">
+                            <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="#f0a500">
+                                    <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z" />
+                                </svg>
+                                <div class="section-title" style="margin-bottom:0">Alertas de Stock</div>
+                            </div>
+                            <div class="section-sub">Productos con inventario bajo o agotado.</div>
+                            <div class="stock-list">
+                                <div class="stock-item">
+                                    <div>
+                                        <div class="stock-name">AirPods Pro (2da Gen)</div>
+                                        <div class="stock-sku">SKU: AIR-PRO-2G</div>
+                                    </div><span class="sbadge sbadge-red">Agotado</span>
+                                </div>
+                                <div class="stock-item">
+                                    <div>
+                                        <div class="stock-name">iPhone 15 Pro Max 256GB</div>
+                                        <div class="stock-sku">SKU: IPH-15-PM-256</div>
+                                    </div><span class="sbadge sbadge-orange" id="iphone-badge">Quedan 3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-whatsapp" style="display:none;flex-direction:column;gap:16px">
+                    <div class="section-title">Conversaciones activas</div>
+                    <div class="msg-list" id="wa-list">
+                        <div class="msg-item">
+                            <div class="msg-av">JU</div>
+                            <div class="msg-info">
+                                <div class="msg-name">Juan Pérez</div>
+                                <div class="msg-txt">hola, quiero comprar un iPhone</div>
+                            </div>
+                            <div class="msg-meta"><span class="online-dot"></span></div>
+                        </div>
+                        <div class="msg-item">
+                            <div class="msg-av">MA</div>
+                            <div class="msg-info">
+                                <div class="msg-name">María García</div>
+                                <div class="msg-txt">¿Tienen stock del iPhone 15?</div>
+                            </div>
+                            <div class="msg-meta"><span class="online-dot"></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-pedidos" style="display:none;flex-direction:column;gap:16px">
+                    <div class="section-title">Pedidos recientes</div>
+                    <div class="orders-list" id="orders-list">
+                        <div class="order-item">
+                            <div class="order-num">#ORD-2026-0040 — Carlos Muñoz</div>
+                            <div class="order-det">MacBook Air M3 · $1,299 USD · Procesado ✓</div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-num">#ORD-2026-0039 — Ana Torres</div>
+                            <div class="order-det">iPad Pro 11" · $899 USD · Entregado ✓</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-stock" style="display:none;flex-direction:column;gap:16px">
+                    <div class="section-title">Inventario completo</div>
+                    <div class="catalog-grid" id="stock-catalog-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var WA_LINK = 'https://wa.me/56954679270?text=Hola%20Ingeny%20Labs%2C%20he%20probado%20tu%20demo%20y%20me%20interesa%20la%20sesi%C3%B3n%20de%20diagn%C3%B3stico%20de%20IA%20gratuita%20para%20mis%20operaciones.';
+        var WEB_LINK = 'https://www.ingenylabs.com';
+        var CATALOG = [
+            { id: 'iphone', name: 'iPhone 15 Pro Max 256GB', sku: 'IPH-15-PM-256', price: 1499, stock: 3, keywords: ['iphone 15', 'iphone15', '15 pro max', 'pro max 256', 'ip 15'], brand: 'apple' },
+            { id: 'macbook', name: 'MacBook Air M3', sku: 'MAC-AIR-M3', price: 1299, stock: 8, keywords: ['macbook', 'mac book', 'air m3', 'macbook air', 'laptop apple'], brand: 'apple' },
+            { id: 'airpods', name: 'AirPods Pro 2da Gen', sku: 'AIR-PRO-2G', price: 249, stock: 0, keywords: ['airpods', 'air pods', 'airpod', 'audífonos apple'], brand: 'apple' },
+            { id: 'ipad', name: 'iPad Pro 11"', sku: 'IPD-PRO-11', price: 899, stock: 5, keywords: ['ipad', 'ipad pro', 'tablet apple'], brand: 'apple' },
+            { id: 'watch', name: 'Apple Watch Series 10', sku: 'APW-S10', price: 399, stock: 12, keywords: ['apple watch', 'watch series', 'series 10', 'reloj apple'], brand: 'apple' },
+            { id: 'samsung', name: 'Samsung Galaxy S25', sku: 'SAM-S25', price: 1099, stock: 6, keywords: ['samsung', 'galaxy s25', 's25', 'samsung galaxy', 'galaxy s 25'], brand: 'samsung' }
+        ];
+        var BRAND_KW = { apple: ['apple', 'manzana'], samsung: ['samsung', 'galaxy'] };
+        var state = { stage: 'welcome', selectedProduct: null, userName: '' };
+        var erpState = { clientes: 24, ventasDia: 1245, ventasMes: 34500, mensajes: 2 };
+
+        function buildStockGrid() {
+            var g = document.getElementById('stock-catalog-grid'); if (!g) return; g.innerHTML = '';
+            CATALOG.forEach(function (p) {
+                var s = p.stock === 0 ? '<span style="color:#ff6b6b">Agotado</span>' : '<span style="color:#8696a0">Stock: ' + p.stock + ' unid.</span>';
+                var d = document.createElement('div'); d.className = 'cat-card';
+                d.innerHTML = '<div class="cat-name">' + p.name + '</div><div class="cat-price">$' + p.price.toLocaleString() + ' USD</div><div class="cat-stock-txt" id="gs-' + p.id + '">' + s + '</div>';
+                g.appendChild(d);
+            });
+        }
+        buildStockGrid();
+
+        function matchExact(t) { var best = null, sc = 0; CATALOG.forEach(function (p) { p.keywords.forEach(function (kw) { if (t.includes(kw) && kw.length > sc) { best = p; sc = kw.length; } }); }); return best; }
+        function matchBrand(t) { for (var b in BRAND_KW) { if (BRAND_KW[b].some(function (k) { return t.includes(k); })) return b; } return null; }
+        function catalogByBrand(brand) { return CATALOG.filter(function (p) { return p.brand === brand; }); }
+        function catalogList() { return CATALOG.map(function (p) { return (p.stock > 0 ? '✅' : '❌') + ' ' + p.name + ' — $' + p.price.toLocaleString() + ' USD | ' + (p.stock > 0 ? 'Stock: ' + p.stock + ' unid.' : 'Agotado'); }).join('\n'); }
+        function brandList(brand) { return catalogByBrand(brand).map(function (p) { return (p.stock > 0 ? '✅' : '❌') + ' ' + p.name + ' — $' + p.price.toLocaleString() + ' USD'; }).join('\n'); }
+
+        function showTab(tab, el) {
+            ['dashboard', 'whatsapp', 'pedidos', 'stock'].forEach(function (t) { var d = document.getElementById('tab-' + t); if (d) d.style.display = 'none'; });
+            document.querySelectorAll('.erp-tab').forEach(function (t) { t.classList.remove('active'); });
+            var target = document.getElementById('tab-' + tab);
+            if (target) { target.style.display = 'flex'; target.style.flexDirection = 'column'; target.style.gap = '16px'; }
+            if (el) el.classList.add('active');
+        }
+        function getTime() { var d = new Date(); return (d.getHours() + '').padStart(2, '0') + ':' + (d.getMinutes() + '').padStart(2, '0'); }
+        function addMsg(text, isAgent, html) {
+            var msgs = document.getElementById('chat-messages');
+            var div = document.createElement('div'); div.className = 'msg ' + (isAgent ? 'msg-agent' : 'msg-user');
+            if (html) div.innerHTML = text; else div.textContent = text;
+            var t = document.createElement('div'); t.className = 'msg-time'; t.textContent = getTime(); div.appendChild(t);
+            msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+        }
+        function showTyping() {
+            var msgs = document.getElementById('chat-messages');
+            var div = document.createElement('div'); div.className = 'typing'; div.id = 'typing-ind';
+            div.innerHTML = '<span></span><span></span><span></span>';
+            msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+        }
+        function removeTyping() { var t = document.getElementById('typing-ind'); if (t) t.remove(); }
+        function agentSay(text, delay) {
+            return new Promise(function (res) {
+                setTimeout(function () { showTyping(); setTimeout(function () { removeTyping(); addMsg(text, true); res(); }, 1000); }, delay || 400);
+            });
+        }
+        function updateMetric(id, val, subId, subText, subClass) {
+            var el = document.getElementById(id);
+            if (el) { el.textContent = val; el.classList.add('metric-updated'); setTimeout(function () { el.classList.remove('metric-updated'); }, 600); }
+            if (subId) { var s = document.getElementById(subId); if (s) { s.textContent = subText; if (subClass) s.className = 'metric-sub ' + subClass; } }
+        }
+        function addWaMsg(initials, name, text) {
+            erpState.mensajes++;
+            updateMetric('m-mensajes', erpState.mensajes, 'm-mensajes-sub', 'Requieren atención', '');
+            var badge = document.getElementById('msg-badge'); if (badge) badge.textContent = erpState.mensajes;
+            var item = '<div class="msg-item highlight-new"><div class="msg-av">' + initials + '</div><div class="msg-info"><div class="msg-name">' + name + '</div><div class="msg-txt">' + text + '</div></div><div class="msg-meta"><span class="msg-time-erp">' + getTime() + '</span><span class="online-dot"></span></div></div>';
+            var ml = document.getElementById('msg-list'); if (ml) ml.insertAdjacentHTML('afterbegin', item);
+            var wl = document.getElementById('wa-list'); if (wl) wl.insertAdjacentHTML('afterbegin', item);
+        }
+        function addOrder(name, product, price) {
+            var num = '#ORD-2026-00' + Math.floor(41 + Math.random() * 9); state.orderNum = num;
+            var ol = document.getElementById('orders-list');
+            if (ol) ol.insertAdjacentHTML('afterbegin', '<div class="order-item highlight-new"><div class="order-num">' + num + ' — ' + name + '</div><div class="order-det">' + product + ' · $' + price + ' USD · Procesado ✓</div></div>');
+            return num;
+        }
+        function updateStock(p) {
+            p.stock--;
+            if (p.id === 'iphone') { var b = document.getElementById('iphone-badge'); if (b) { b.textContent = 'Quedan ' + p.stock; b.className = 'sbadge ' + (p.stock <= 1 ? 'sbadge-red' : 'sbadge-orange'); } }
+            var gs = document.getElementById('gs-' + p.id);
+            if (gs) gs.innerHTML = p.stock === 0 ? '<span style="color:#ff6b6b">Agotado</span>' : '<span style="color:#8696a0">Stock: ' + p.stock + ' unid.</span>';
+        }
+        function ctaButtons() {
+            return '<div class="btn-opts">' +
+                '<button class="btn-cta-p" onclick="window.open(\'' + WA_LINK + '\',\'_blank\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>Agendar Consultoría Estratégica Gratuita</button>' +
+                '<button class="btn-cta-s" onclick="window.open(\'' + WEB_LINK + '\',\'_blank\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>Conocer más sobre Ingeny Labs</button>' +
+                '<div class="cta-tagline">Estamos listos cuando tú lo estés. 🚀</div>' +
+                '</div>';
+        }
+        async function showProductCard(p) {
+            state.selectedProduct = p;
+            showTab('stock', document.querySelectorAll('.erp-tab')[3]);
+            await agentSay('Consultando inventario en tiempo real...', 400);
+            if (p.stock === 0) {
+                await agentSay('❌ ' + p.name + ' está actualmente agotado.\n\n¿Quieres ver el catálogo completo o consultar otro producto?', 600);
+                state.stage = 'post_card_nostock';
+            } else {
+                await agentSay('📦 ' + p.name + '\nSKU: ' + p.sku + '\n💰 Precio: $' + p.price.toLocaleString() + ' USD\n🔢 Disponibles: ' + p.stock + ' unidades\n🚚 Envío disponible\n\n¿Qué quieres hacer?\n\n🛒  Comprar este producto\n📋  Ver el catálogo completo\n🔍  Consultar otro producto', 700);
+                state.stage = 'post_card';
+            }
+        }
+        async function flowCatalog() {
+            addWaMsg('US', 'Tú (Demo)', 'Ver el catálogo de productos');
+            await agentSay('¡Claro! 📦 Aquí tienes nuestro catálogo disponible hoy:\n\n' + catalogList(), 400);
+            showTab('stock', document.querySelectorAll('.erp-tab')[3]);
+            await agentSay('El inventario del panel se sincroniza en tiempo real — cada venta actualiza el stock automáticamente.\n\n¿Te interesa algún producto en particular?', 700);
+            state.stage = 'post_catalog';
+        }
+        async function flowDataRequest() {
+            await agentSay('¡Perfecto! 🙌 Para completar el pedido necesito algunos datos:\n\n👤 Tu nombre completo\n📧 Correo electrónico\n📍 Ciudad de entrega\n\nPuedes enviármelos en un solo mensaje separados por comas.', 400);
+            updateMetric('m-ventas-dia', 'En proceso...', 'm-ventas-dia-sub', 'procesando orden...', 'orange');
+            state.stage = 'awaiting_data';
+        }
+        async function flowProcessOrder(input) {
+            var p = state.selectedProduct;
+            var parts = input.split(/[\/,]+/).map(function (s) { return s.trim(); });
+            state.userName = parts[0] || 'Cliente Demo';
+            addWaMsg(state.userName.substring(0, 2).toUpperCase(), state.userName, input);
+            await agentSay('✅ Datos recibidos. Procesando pedido...\n\n⏳ Conectando con el sistema...\n⏳ Validando inventario...\n⏳ Generando orden de compra...', 400);
+            var num = addOrder(state.userName, p.name, p.price.toLocaleString());
+            updateStock(p);
+            erpState.ventasDia += p.price; erpState.ventasMes += p.price;
+            updateMetric('m-ventas-dia', '$' + erpState.ventasDia.toLocaleString(), 'm-ventas-dia-sub', '+$' + p.price.toLocaleString() + ' hoy', 'green');
+            updateMetric('m-ventas-mes', '$' + erpState.ventasMes.toLocaleString(), 'm-ventas-mes-sub', '+4.3% vs mes anterior', 'green');
+            showTab('pedidos', document.querySelectorAll('.erp-tab')[2]);
+            await agentSay('🎉 ¡Pedido confirmado!\n\n📋 Resumen:\nProducto: ' + p.name + '\nCliente: ' + state.userName + '\nTotal: $' + p.price.toLocaleString() + ' USD\nNº de orden: ' + num + '\nEstado: Procesado ✓\n\nTu orden ya está registrada en el sistema. Recibirás confirmación por correo.', 800);
+            state.stage = 'post_order';
+            await flowCTA();
+        }
+        async function flowCTA() {
+            await agentSay('Lo que acabas de ver no es magia — es lo que hacemos todos los días para empresas como la tuya. 🌎\n\nNuestro ecosistema de agentes se conecta a tu ERP, CRM, sistema legacy o stack de herramientas actuales. Sin migraciones. Sin fricción.\n\n💡 ¿Tienes curiosidad de cómo funcionaría esto en tu operación?\n\n📅 Agenda una Consultoría Estratégica Gratuita de 30 min con nuestro equipo — analizamos tu caso sin compromiso.\n\n👇 Elige cómo prefieres continuar:', 500);
+            var msgs = document.getElementById('chat-messages');
+            var div = document.createElement('div'); div.className = 'msg msg-agent';
+            div.innerHTML = ctaButtons();
+            var t = document.createElement('div'); t.className = 'msg-time'; t.textContent = getTime(); div.appendChild(t);
+            msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+            state.stage = 'done';
+        }
+        async function runWelcome() {
+            await agentSay('¡Hola! 👋 Soy Ingeny AI, el asistente virtual de demostración de Ingeny Labs.\n\nEstás viendo en vivo cómo nuestro ecosistema de agentes se integra directamente con un ERP real. Mientras conversamos aquí, el panel de la derecha actualiza automáticamente datos de mensajes, ventas y stock.\n\n💻 Esta demo funciona mejor en desktop o pantallas de computador.', 0);
+            updateMetric('m-clientes', 25, 'm-clientes-sub', '+6 en la última hora', '');
+            await agentSay('¿Qué te gustaría hacer hoy?\n\n1️⃣  Ver el catálogo de productos\n2️⃣  Consultar el stock de un producto\n3️⃣  Simular una compra completa', 500);
+            state.stage = 'menu';
+        }
+        function isBuyConfirm(t) { return /\b(comprar|compra|quiero comprarlo|me lo llevo|sí quiero|si quiero|lo quiero|proceder|completar|confirmar|confirmo|adelante con la compra)\b/.test(t); }
+        function isYes(t) { return /^(sí|si|yes|dale|ok|claro|perfecto|bueno|vamos|listo|exacto|correcto|de acuerdo)$/.test(t.trim()); }
+        function isCatalogReq(t) { return /\b(catálogo|catalogo|ver más|ver mas|ver todo|otras opciones|otros productos|listado|opciones|ver productos)\b/.test(t); }
+        function isOtherProd(t) { return /\b(otro|otra|diferente|cambiar|algo más|algo mas|otro producto)\b/.test(t); }
+        function parseInput(raw) {
+            var text = raw.trim(); var t = text.toLowerCase();
+            if (state.stage === 'awaiting_data') { flowProcessOrder(text); return; }
+            if (state.stage === 'post_card') {
+                if (isBuyConfirm(t) || isYes(t)) { flowDataRequest(); return; }
+                if (isCatalogReq(t)) { flowCatalog(); return; }
+                if (isOtherProd(t)) { agentSay('Claro 😊 ¿Qué producto te interesa?\n\n' + catalogList(), 400); state.stage = 'awaiting_product'; return; }
+                var pS = matchExact(t); if (pS) { showProductCard(pS); return; }
+                var bS = matchBrand(t); if (bS) { var bSP = catalogByBrand(bS); if (bSP.length === 1) showProductCard(bSP[0]); else { agentSay('Tenemos varios productos ' + bS.charAt(0).toUpperCase() + bS.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bS), 400); state.stage = 'awaiting_product'; } return; }
+                agentSay('¿Quieres comprar este producto, ver el catálogo completo o consultar otra opción?', 400); return;
+            }
+            if (state.stage === 'post_card_nostock') {
+                if (isCatalogReq(t) || isYes(t)) { flowCatalog(); return; }
+                var pA = matchExact(t); if (pA) { showProductCard(pA); return; }
+                agentSay('¿Quieres que te muestre el catálogo completo?', 400); return;
+            }
+            if (state.stage === 'awaiting_product') {
+                var pW = matchExact(t); if (pW) { showProductCard(pW); return; }
+                var bW = matchBrand(t); if (bW) { var bWP = catalogByBrand(bW); if (bWP.length === 1) showProductCard(bWP[0]); else agentSay('Tenemos varios de ' + bW.charAt(0).toUpperCase() + bW.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bW), 400); return; }
+                agentSay('No encontré "' + text + '" en nuestro catálogo.\n\nEstas son las opciones disponibles:\n\n' + catalogList() + '\n\n¿Cuál te interesa?', 400); return;
+            }
+            if (state.stage === 'done') {
+                var msgs = document.getElementById('chat-messages');
+                var div = document.createElement('div'); div.className = 'msg msg-agent';
+                div.innerHTML = '¡Gracias por explorar la demo! 🚀' + ctaButtons();
+                var tt = document.createElement('div'); tt.className = 'msg-time'; tt.textContent = getTime(); div.appendChild(tt);
+                msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight; return;
+            }
+            var isCat = /\b(1|catálogo|catalogo|ver|productos|listado|opciones|qué tienen|que tienen)\b/.test(t) && !/compra|stock/.test(t);
+            var isAct = /\b(2|3|stock|disponib|hay|tienen|quedan|inventario|comprar|compra|quiero|pedido|necesito|dame|me llevo|consultar)\b/.test(t);
+            if (isCat) { flowCatalog(); return; }
+            if (isAct) {
+                var pD = matchExact(t); if (pD) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(pD); return; }
+                var bD = matchBrand(t); if (bD) { var bDP = catalogByBrand(bD); if (bDP.length === 1) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(bDP[0]); } else { agentSay('Tenemos varios productos ' + bD.charAt(0).toUpperCase() + bD.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bD), 400); state.stage = 'awaiting_product'; } return; }
+                agentSay('¡Claro! ¿Qué producto te interesa?\n\n' + catalogList(), 400); state.stage = 'awaiting_product'; return;
+            }
+            var pM = matchExact(t); if (pM) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(pM); return; }
+            var bM = matchBrand(t); if (bM) { var bMP = catalogByBrand(bM); if (bMP.length === 1) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(bMP[0]); } else { agentSay('Tenemos varios productos ' + bM.charAt(0).toUpperCase() + bM.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bM), 400); state.stage = 'awaiting_product'; } return; }
+            if (t.length > 2) { agentSay('Entiendo, pero "' + text + '" no está en nuestro catálogo 😊\n\nPuedo ayudarte con:\n\n' + catalogList() + '\n\n¿Hay algo que te llame la atención?', 400); }
+            else { agentSay('Puedo ayudarte con:\n\n1️⃣  Ver el catálogo de productos\n2️⃣  Consultar el stock de un producto\n3️⃣  Simular una compra completa\n\n¿Qué prefieres?', 400); }
+        }
+        document.getElementById('send-btn').onclick = function () {
+            var input = document.getElementById('chat-input'); var text = input.value.trim(); if (!text) return;
+            addMsg(text, false); input.value = ''; parseInput(text);
+        };
+        document.getElementById('chat-input').addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('send-btn').click(); });
+        setTimeout(runWelcome, 700);
+    </script>
+</body>
+
+</html>
