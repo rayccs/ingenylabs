@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingeny Labs | Zero-Touch Onboarding Financiero</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ingeny-black': '#050505',
+                        'ingeny-card': '#111111',
+                        'ingeny-green': '#24BD58',
+                        'bank-bg': '#0B0F19',
+                        'bank-card': '#141A28',
+                        'bank-accent': '#2563EB'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .animate-fade {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse-border {
+            animation: pulseBorder 2s infinite;
+        }
+
+        @keyframes pulseBorder {
+            0% {
+                box-shadow: 0 0 0 0 rgba(36, 189, 88, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(36, 189, 88, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(36, 189, 88, 0);
+            }
+        }
+
+        /* Escaner visual */
+        .scanner-line {
+            width: 100%;
+            height: 2px;
+            background: #24BD58;
+            box-shadow: 0 0 10px 3px rgba(36, 189, 88, 0.8), 0 0 20px 5px rgba(36, 189, 88, 0.2);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            z-index: 20;
+        }
+
+        @keyframes scanDown {
+            0% {
+                top: 0%;
+                opacity: 1;
+            }
+
+            90% {
+                top: 100%;
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .animate-scan {
+            animation: scanDown 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .typing-terminal::after {
+            content: '█';
+            animation: blink 1s step-start infinite;
+            color: #24BD58;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .grid-pattern {
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white font-sans min-h-screen p-4 md:p-8 flex items-center justify-center">
+
+    <div class="max-w-7xl w-full mx-auto flex flex-col items-center">
+        <!-- Header -->
+        <div
+            class="text-center mb-10 w-full flex flex-col md:flex-row justify-between items-center bg-ingeny-black border border-white/10 p-6 rounded-2xl relative overflow-hidden">
+            <div class="absolute inset-0 grid-pattern pointer-events-none"></div>
+            <div class="text-left mb-6 md:mb-0 relative z-10">
+                <h1 class="text-3xl font-bold mb-2">Simulación: Onboarding Corporativo IA</h1>
+                <p class="text-gray-400">Compliance & Riesgo (Zero-Touch) para el sector financiero.</p>
+            </div>
+            <button id="btn-activate"
+                class="relative z-10 flex items-center justify-center gap-2 bg-ingeny-green text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-white transition-all shadow-[0_0_20px_rgba(36,189,88,0.3)] pulse-border w-full md:w-auto transform hover:scale-105">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                    </path>
+                </svg>
+                Procesar Documentos
+            </button>
+        </div>
+
+        <!-- UI Divider Container -->
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8 relative">
+
+            <!-- Decoration center line -->
+            <div
+                class="hidden md:block absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] bg-[#080B13] p-3 rounded-full border border-slate-800 z-10 shadow-2xl">
+                <svg class="w-8 h-8 text-gray-600" id="sync-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                </svg>
+            </div>
+
+            <!-- Left Column: Client Portal -->
+            <div class="bg-card rounded-2xl flex flex-col overflow-hidden shadow-2xl relative"
+                style="background:#0F1115; border: 1px solid #1E222A;">
+                <div class="bg-[#171A21] px-5 py-4 border-b border-[#2A2E39] flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-200 font-medium leading-none mb-1">Portal Seguros/Banca
+                                Empresas</div>
+                            <div class="text-xs text-gray-500 font-medium">Expediente de Carga Documental</div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] uppercase font-bold text-slate-500 bg-slate-800 px-2 py-1 rounded">SSL
+                        Seguro</div>
+                </div>
+
+                <div class="p-6 md:p-8 flex-grow flex flex-col">
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-white mb-2">Paso 2: Subida de Antecedentes</h3>
+                        <p class="text-sm text-gray-400">Los documentos del cliente han sido adjuntados al caso.</p>
+                    </div>
+
+                    <!-- Document 1 -->
+                    <div
+                        class="pdf-container relative bg-[#1A1D24] border border-[#2B303B] rounded-xl p-4 mb-4 flex items-center gap-4 overflow-hidden">
+                        <div class="scanner-line" id="scanner-1"></div>
+                        <div class="bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="text-sm font-bold text-white mb-1">E-RUT_CentralData_SpA.pdf</div>
+                            <div class="text-xs text-gray-500">245 KB • Origen: SII Chile</div>
+                        </div>
+                        <!-- Estado PDF 1 -->
+                        <div
+                            class="status-pdf hidden bg-green-500/20 text-green-500 text-xs px-2 py-1 rounded-full border border-green-500/30 flex items-center gap-1 font-bold">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> IA Leído
+                        </div>
+                    </div>
+
+                    <!-- Document 2 -->
+                    <div
+                        class="pdf-container relative bg-[#1A1D24] border border-[#2B303B] rounded-xl p-4 flex items-center gap-4 overflow-hidden">
+                        <div class="scanner-line" id="scanner-2"></div>
+                        <div class="bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="text-sm font-bold text-white mb-1">Escritura_Rep_Legal_2023.pdf</div>
+                            <div class="text-xs text-gray-500">1.2 MB • Acta Constitutiva Notarial</div>
+                        </div>
+                        <!-- Estado PDF 2 -->
+                        <div
+                            class="status-pdf hidden bg-green-500/20 text-green-500 text-xs px-2 py-1 rounded-full border border-green-500/30 flex items-center gap-1 font-bold">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> IA Leído
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Compliance Dashboard -->
+            <div
+                class="bg-bank-bg rounded-2xl flex flex-col overflow-hidden shadow-2xl relative font-sans border border-[#1E293B]">
+                <!-- Bank Toolbar -->
+                <div class="bg-[#0D1322] px-5 py-4 border-b border-[#1E293B] flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 bg-indigo-600 rounded flex items-center justify-center text-white">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div
+                                class="text-[11px] text-indigo-400 font-bold uppercase tracking-widest leading-none mb-1">
+                                Motor Compliance Interno</div>
+                            <div class="text-sm text-slate-200 font-medium leading-none">KYB - Análisis de Riesgo
+                                Corporativo</div>
+                        </div>
+                    </div>
+                    <!-- Status -->
+                    <div id="comp-status"
+                        class="bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[10px] px-2 py-1.5 rounded uppercase font-bold tracking-wider flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div> Revisor: Pendiente
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-8 flex-grow flex flex-col gap-6">
+
+                    <!-- Terminal Console -->
+                    <div
+                        class="bg-[#05080F] rounded-xl border border-slate-800 p-4 font-mono text-xs overflow-hidden flex flex-col h-36 relative shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+                        <div
+                            class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent">
+                        </div>
+                        <div class="text-slate-500 mb-2">// Ingeny Labs Vision Engine v2.4 initialized</div>
+                        <div id="terminal-feed"
+                            class="flex flex-col gap-1 text-slate-300 leading-relaxed max-h-full overflow-y-auto">
+                            <div class="opacity-50">> Esperando ingesta documental...</div>
+                        </div>
+                        <div id="terminal-cursor" class="mt-1 hidden">
+                            <span class="text-ingeny-green font-bold typing-terminal">> </span>
+                        </div>
+                    </div>
+
+                    <!-- Structured Data Output -->
+                    <div class="flex-grow flex flex-col mt-2">
+                        <div
+                            class="text-xs text-slate-400 font-bold uppercase tracking-widest border-b border-slate-800 pb-2 mb-4 flex justify-between">
+                            <span>Extracción Estructurada Automática</span>
+                            <span id="db-status" class="text-slate-600 flex items-center gap-1">
+                                <div class="w-1.5 h-1.5 bg-slate-600 rounded-full"></div> DB Inactiva
+                            </span>
+                        </div>
+
+                        <!-- Form overlay / Blurred state -->
+                        <div id="data-board"
+                            class="bg-bank-card border border-slate-800 rounded-xl p-5 relative transition-all duration-700 h-full flex flex-col justify-center">
+                            <!-- Content -->
+                            <div class="grid grid-cols-2 gap-y-6 gap-x-6 relative z-0">
+                                <div>
+                                    <div class="text-[10px] uppercase text-slate-500 font-bold mb-1">Razón Social
+                                        Jurídica</div>
+                                    <div id="out-ent" class="text-sm text-slate-700 font-medium">---</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] uppercase text-slate-500 font-bold mb-1">RUT Tributario
+                                    </div>
+                                    <div id="out-rut" class="text-sm text-slate-700 font-medium font-mono">---</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] uppercase text-slate-500 font-bold mb-1">Rep. Legal
+                                        Confirmado</div>
+                                    <div id="out-rep" class="text-sm text-slate-700 font-medium">---</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] uppercase text-slate-500 font-bold mb-1">API Lavado Activos
+                                        (UAF)</div>
+                                    <div id="out-uaf" class="text-sm text-slate-700 font-medium">---</div>
+                                </div>
+                            </div>
+
+                            <!-- Scan Overlay -->
+                            <div id="board-overlay"
+                                class="absolute inset-0 bg-bank-card/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center transition-opacity duration-500 border border-slate-800/80 rounded-xl">
+                                <div
+                                    class="text-slate-500 text-xs font-mono border border-slate-700 px-3 py-1 rounded bg-slate-900/50">
+                                    Esperando extracción</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btn-activate').addEventListener('click', function () {
+            // Bloquear boton
+            const btn = this;
+            btn.disabled = true;
+            btn.classList.remove('pulse-border');
+            btn.innerHTML = `<svg class="w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Arquitectura Cognitiva Activa`;
+            btn.classList.replace('bg-ingeny-green', 'bg-slate-800');
+            btn.classList.replace('text-black', 'text-white');
+
+            // Paso 1: Activar escáner visual en los PDFs
+            setTimeout(() => {
+                document.getElementById('scanner-1').classList.add('animate-scan');
+
+                // Iniciar log en terminal
+                const feed = document.getElementById('terminal-feed');
+                const cursor = document.getElementById('terminal-cursor');
+                feed.innerHTML = ''; // Limpiar
+                cursor.classList.remove('hidden');
+
+                writeTerminal("> Leyendo E-RUT_CentralData_SpA.pdf a través de OCR-Vision...", 0);
+
+                setTimeout(() => {
+                    writeTerminal("> <span class='text-ingeny-green'>[CAPTURA VISUAL OK]</span> RUT extraído desde PDF: 76.543.210-K", 1400);
+                    document.querySelectorAll('.status-pdf')[0].classList.remove('hidden');
+
+                    // Activar scanner 2
+                    document.getElementById('scanner-2').classList.add('animate-scan');
+                    writeTerminal("> Analizando Escritura_Rep_Legal_2023.pdf...", 2200);
+                }, 1800);
+
+                setTimeout(() => {
+                    writeTerminal("> <span class='text-ingeny-green'>[ANÁLISIS LEGAL OK]</span> Nombres extraídos y validados.", 800);
+                    document.querySelectorAll('.status-pdf')[1].classList.remove('hidden');
+
+                    // Activar sync central
+                    const sync = document.getElementById('sync-icon');
+                    sync.classList.replace('text-gray-600', 'text-ingeny-green');
+                    sync.classList.add('animate-spin');
+
+                    writeTerminal("> Conectando a APIs Riesgo (Equifax, UAF, Interpol)...", 1800);
+
+                    // Paso 2: Actualizar Dashboard Financiero
+                    setTimeout(() => triggerDashboard(), 3000);
+
+                }, 4200);
+
+            }, 400);
+
+            function writeTerminal(text, delay) {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.innerHTML = text;
+                    const feed = document.getElementById('terminal-feed');
+                    feed.appendChild(line);
+                    feed.scrollTop = feed.scrollHeight; // auto escrol
+
+                    // Efecto glitch color rapido
+                    line.style.color = '#fff';
+                    setTimeout(() => line.style.color = '', 100);
+                }, delay);
+            }
+
+            function triggerDashboard() {
+                writeTerminal("> <span class='text-ingeny-green'>[COMPLIANCE]</span> Listas PEP y Riesgo: NEGATIVO. Entidad Aprobada.", 500);
+                writeTerminal("> Inyectando datos json directamente al Core Bancario...", 1800);
+
+                setTimeout(() => {
+                    // Remover overlay
+                    document.getElementById('board-overlay').classList.add('opacity-0', 'pointer-events-none');
+                    document.getElementById('db-status').innerHTML = '<span class="text-ingeny-green flex items-center gap-1 font-bold"><div class="w-1.5 h-1.5 bg-ingeny-green rounded-full animate-pulse"></div> Base Datos Up</span>';
+
+                    // Llenar datos secuencialmente
+                    setTimeout(() => {
+                        document.getElementById('out-ent').innerHTML = 'Central Data Operaciones SpA';
+                        document.getElementById('out-ent').classList.replace('text-slate-700', 'text-white');
+                        document.getElementById('out-ent').classList.add('animate-fade');
+                    }, 200);
+
+                    setTimeout(() => {
+                        document.getElementById('out-rut').innerHTML = '76.543.210-K';
+                        document.getElementById('out-rut').classList.replace('text-slate-700', 'text-green-400');
+                        document.getElementById('out-rut').classList.add('animate-fade');
+                    }, 600);
+
+                    setTimeout(() => {
+                        document.getElementById('out-rep').innerHTML = 'Roberto Sánchez Valenzuela';
+                        document.getElementById('out-rep').classList.replace('text-slate-700', 'text-white');
+                        document.getElementById('out-rep').classList.add('animate-fade');
+                    }, 1000);
+
+                    setTimeout(() => {
+                        document.getElementById('out-uaf').innerHTML = '<span class="text-green-900 font-bold bg-green-400 px-2.5 py-0.5 rounded shadow-[0_0_10px_rgba(74,222,128,0.3)] animate-fade">APROBADO</span>';
+                    }, 1400);
+
+                    // Final state
+                    setTimeout(() => {
+                        // Update main status
+                        const status = document.getElementById('comp-status');
+                        status.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> APROBADO (Riesgo Cero)`;
+                        status.classList.replace('bg-amber-500/10', 'bg-green-500/10');
+                        status.classList.replace('border-amber-500/30', 'border-green-500/30');
+                        status.classList.replace('text-amber-500', 'text-green-400');
+
+                        writeTerminal("> <span class='text-white font-bold tracking-widest'>PROCESO FINANCIERO CERRADO.</span> (T.Total: 4.2s)", 800);
+
+                        document.getElementById('sync-icon').classList.remove('animate-spin');
+                        document.getElementById('terminal-cursor').classList.add('hidden');
+
+                        const btn = document.getElementById('btn-activate');
+                        btn.innerHTML = `<svg class="w-5 h-5 mr-2 text-ingeny-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> Onboarding 100% Automático`;
+                        btn.classList.add('border', 'border-ingeny-green');
+
+                    }, 2800);
+
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -69,6 +69,78 @@
             font-style: bold;
             font-display: swap;
         } */
+
+        /* Animaciones para el Hero */
+        @keyframes fade-in-up {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fade-in-right {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scale-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-fade-in-right {
+            animation: fade-in-right 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-scale-in {
+            animation: scale-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-100 {
+            animation-delay: 100ms;
+        }
+
+        .delay-200 {
+            animation-delay: 200ms;
+        }
+
+        .delay-300 {
+            animation-delay: 300ms;
+        }
+
+        .delay-400 {
+            animation-delay: 400ms;
+        }
+
+        .delay-500 {
+            animation-delay: 500ms;
+        }
     </style>
 </head>
 
@@ -122,28 +194,55 @@
     </div>
 
     <section
-        class="hero-bg text-ingeny-black py-28 px-6 text-center flex flex-col items-center justify-center min-h-[75vh] relative overflow-hidden">
-        <div class="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
+        class="py-28 px-6 text-center flex flex-col items-center justify-center min-h-[85vh] relative overflow-hidden bg-black">
+        <!-- Background Video -->
+        <video autoplay loop muted playsinline
+            class="gsap-hero-video absolute inset-0 w-full h-full object-cover mix-blend-screen">
+            <source
+                src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-lines-background-2846-large.mp4"
+                type="video/mp4">
+        </video>
+        <!-- Gradients for depth -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-ingeny-black z-0"></div>
+        <div class="absolute inset-0 bg-ingeny-green/10 mix-blend-overlay z-0 pointer-events-none"></div>
+
+        <div
+            class="relative z-10 max-w-5xl mx-auto flex flex-col items-center backdrop-blur-md bg-black/40 p-8 md:p-16 rounded-[3rem] border border-white/10 shadow-2xl shadow-ingeny-green/20 gsap-hero-container">
+            <div
+                class="gsap-hero-elem inline-block px-5 py-2 bg-ingeny-green/10 border border-ingeny-green/50 text-ingeny-green rounded-full text-sm font-bold uppercase tracking-widest mb-6 backdrop-blur-sm">
+                Ecosistema Autónomo
+            </div>
             <h1
-                class="text-[3.5rem] leading-[1] sm:text-7xl md:text-8xl lg:text-[7rem] font-title font-bold mb-8 tracking-tight md:leading-[1.05]">
-                Tu operación en <br>piloto automático.
+                class="gsap-hero-elem text-[3.5rem] leading-[1.1] sm:text-7xl md:text-8xl lg:text-[6.5rem] font-title font-bold mb-8 tracking-tight text-white drop-shadow-2xl">
+                Tu operación en <br><span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-white to-ingeny-green animate-pulse">piloto
+                    automático.</span>
             </h1>
-            <p class="text-xl md:text-2xl font-medium max-w-4xl mb-12 leading-relaxed">
-                <span class="font-bold">Ecosistema de Arquitectura Cognitiva e integración continua con tus procesos,
-                    eliminando la fricción operativa para potenciar el talento de tu equipo y
-                    transformar el esfuerzo manual en rentabilidad.</span>
+            <p class="gsap-hero-elem text-xl md:text-2xl font-medium max-w-4xl mb-12 leading-relaxed text-white/90">
+                Ecosistema de Arquitectura Cognitiva e integración continua con tus procesos,
+                eliminando la fricción operativa para potenciar el talento de tu equipo y
+                transformar el esfuerzo manual en rentabilidad.
             </p>
             <a href="https://www.ingenylabs.com/demo.erp.html" target="_blank"
-                class="flex z-10 text-center items-center justify-center gap-2 px-6 sm:px-10 py-4 sm:py-5 bg-ingeny-lightgreen text-black text-lg sm:text-xl font-black rounded-full hover:bg-white transition-colors shadow-2xl w-full sm:w-auto">
-                <!-- <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
-                </svg> -->
-                <span class="sm:hidden">Ver demo en vivo →</span>
-                <span class="hidden sm:inline">Ver demo en vivo →</span>
+                class="gsap-hero-elem group flex text-center items-center justify-center gap-3 px-8 sm:px-12 py-4 sm:py-5 bg-ingeny-green text-black text-lg sm:text-xl font-bold rounded-full hover:bg-white transition-all shadow-[0_0_40px_rgba(36,189,88,0.4)] hover:shadow-[0_0_60px_rgba(255,255,255,0.6)] hover:scale-105 w-full sm:w-auto">
+                <span>Ver demo en vivo</span>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                    </path>
+                </svg>
             </a>
         </div>
     </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tl = gsap.timeline();
+            tl.fromTo(".gsap-hero-video", { opacity: 0 }, { opacity: 0.6, duration: 1.5 })
+                .fromTo(".gsap-hero-container", { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, "-=1")
+                .fromTo(".gsap-hero-elem", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.2 }, "-=0.4");
+        });
+    </script>
 
     <section class="py-16 border-b border-white/10 bg-ingeny-black">
         <div class="max-w-[90rem] mx-auto px-4 lg:px-6 text-center">
@@ -324,77 +423,6 @@
         </div>
     </section>
 
-    <!-- Nueva Sección: Casos de Uso en Acción (Video Demos) -->
-    <section id="casos-uso" class="pt-16 pb-16 bg-ingeny-black border-t border-white/5 section">
-        <div class="max-w-[70rem] mx-auto px-6 text-center">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 font-title">Ecosistema<br>en Acción</h2>
-            <p class="text-white max-w-3xl mx-auto mb-16 text-lg sm:text-xl font-normal">
-                Mira cómo nuestra Arquitectura Cognitiva transforma operaciones en tiempo real. Selecciona un caso de
-                uso para ver la demostración interactiva.
-            </p>
-
-            <div class="flex flex-col gap-8 md:gap-10 items-center text-left w-full max-w-7xl mx-auto">
-                <!-- TABS CONTAINER -->
-                <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6" id="video-tabs">
-                    <button onclick="changeVideo(this, 0)"
-                        class="tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-ingeny-green bg-ingeny-card focus:outline-none">
-                        <h4 class="text-xl sm:text-2xl font-bold font-title mb-2 text-white">Logística "Zero-Touch"</h4>
-                        <p class="text-white/80 text-sm sm:text-base font-normal">
-                            Ingeny Labs lee correos B2B desordenados, extrae SKUs implícitos e inyecta las Órdenes de
-                            Compra directamente a tu <strong>ERP corporativo</strong>, rebajando inventario sin
-                            intervención humana.
-                        </p>
-                    </button>
-
-                    <button onclick="changeVideo(this, 1)"
-                        class="tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-transparent hover:border-ingeny-green/50 bg-[#121212] focus:outline-none group">
-                        <h4
-                            class="text-xl sm:text-2xl font-bold font-title mb-2 text-white/50 group-hover:text-white transition-colors">
-                            Compliance Financiero
-                        </h4>
-                        <p
-                            class="text-white/40 group-hover:text-white/80 transition-colors text-sm sm:text-base font-normal">
-                            Onboarding corporativo inteligente. Visión artificial escanea actas notariales en PDF, cruza
-                            datos con listas de riesgo gubernamentales y aprueba expedientes automáticamente en el
-                            <strong>Dashboard de Riesgo</strong>.
-                        </p>
-                    </button>
-
-                    <button onclick="changeVideo(this, 2)"
-                        class="tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-transparent hover:border-ingeny-green/50 bg-[#121212] focus:outline-none group">
-                        <h4
-                            class="text-xl sm:text-2xl font-bold font-title mb-2 text-white/50 group-hover:text-white transition-colors">
-                            Soporte Interno Inteligente
-                        </h4>
-                        <p
-                            class="text-white/40 group-hover:text-white/80 transition-colors text-sm sm:text-base font-normal">
-                            Análisis de multi-intención en Slack/Teams. Un empleado pide vacaciones (la IA resuelve
-                            entregando la política) y reporta un fallo de VPN, donde la IA <strong>crea y escala un
-                                ticket en Jira</strong> simultáneamente.
-                        </p>
-                    </button>
-                </div>
-
-                <!-- VIDEO PLAYER -->
-                <div
-                    class="w-full bg-ingeny-card rounded-2xl overflow-hidden border border-white/10 relative shadow-[0_0_40px_rgba(36,189,88,0.15)]">
-                    <video id="demo-video-player" class="w-full h-auto transition-opacity duration-500" autoplay loop
-                        muted playsinline>
-                        <source src="./demo/demo3.mp4" type="video/mp4">
-                        Tu navegador no soporta el elemento de video.
-                    </video>
-                    <!-- Overlay loader -->
-                    <div id="video-loader"
-                        class="absolute inset-0 bg-ingeny-card/90 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-                        <div
-                            class="w-12 h-12 border-4 border-ingeny-green border-t-transparent rounded-full animate-spin">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section id="metodologia" class="pt-16 pb-16 bg-ingeny-black border-t border-white/5 section">
         <div class="max-w-5xl mx-auto px-6 text-center">
             <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 font-title">Nuestra Metodología:
@@ -550,68 +578,29 @@
         }, observerOptions);
 
         sections.forEach(sec => observer.observe(sec));
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.set(".gsap-hero-elem", { y: 50, opacity: 0 });
+            gsap.set(".gsap-hero-video", { scale: 1.1, opacity: 0 });
+            gsap.set(".gsap-hero-container", { scale: 0.95, opacity: 0 });
 
-        // Lógica de Tabs Multimedia Casos de Uso
-        const videos = [
-            "./demo/demo3.mp4",
-            "./demo/demo1.mp4",
-            "./demo/demo2.mp4"
-        ];
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-        const videoPlayer = document.getElementById('demo-video-player');
-        const videoLoader = document.getElementById('video-loader');
-        const tabBtns = document.querySelectorAll('.tab-btn');
+            tl.to(".gsap-hero-video", { duration: 1.5, scale: 1, opacity: 0.6 })
+                .to(".gsap-hero-container", { duration: 1, scale: 1, opacity: 1 }, "-=1")
+                .to(".gsap-hero-elem", { duration: 1, y: 0, opacity: 1, stagger: 0.15 }, "-=0.5");
 
-        let currentTabIndex = 0;
-        let tabInterval;
-
-        function startTabInterval() {
-            clearInterval(tabInterval);
-            tabInterval = setInterval(() => {
-                currentTabIndex = (currentTabIndex + 1) % tabBtns.length;
-                changeVideo(tabBtns[currentTabIndex], currentTabIndex, true);
-            }, 15000);
-        }
-
-        function changeVideo(element, index, isAuto = false) {
-            currentTabIndex = index;
-            if (!isAuto) {
-                startTabInterval(); // Reiniciar si fue click manual
-            }
-            // Regresar todos los tabs a estado inactivo
-            tabBtns.forEach(btn => {
-                btn.className = "tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-transparent hover:border-ingeny-green/50 bg-[#121212] focus:outline-none group";
-                btn.querySelector('h4').className = "text-xl sm:text-2xl font-bold font-title mb-2 text-white/50 group-hover:text-white transition-colors";
-                btn.querySelector('p').className = "text-white/40 group-hover:text-white/80 transition-colors text-sm sm:text-base font-normal";
+            // Parallax mouse effect
+            const heroWrap = document.querySelector('section');
+            heroWrap.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                gsap.to(".gsap-hero-container", { duration: 1, x: x, y: y, ease: "power1.out" });
+                gsap.to(".gsap-hero-video", { duration: 1, x: -x * 2, y: -y * 2, ease: "power1.out" });
             });
-
-            // Dar estilo de activo al tab clickeado
-            element.className = "tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-ingeny-green bg-ingeny-card focus:outline-none";
-            element.querySelector('h4').className = "text-xl sm:text-2xl font-bold font-title mb-2 text-white";
-            element.querySelector('p').className = "text-white/80 text-sm sm:text-base font-normal";
-
-            // Cambiar el video y agregar feedback visual
-            if (videoPlayer && videoPlayer.src !== videos[index]) {
-                videoLoader.classList.remove('opacity-0');
-                videoPlayer.classList.add('opacity-0');
-
-                setTimeout(() => {
-                    videoPlayer.src = videos[index];
-                    videoPlayer.load();
-                    videoPlayer.play().then(() => {
-                        videoLoader.classList.add('opacity-0');
-                        videoPlayer.classList.remove('opacity-0');
-                    }).catch(e => {
-                        console.log("Auto-play prevenido o error", e);
-                        videoLoader.classList.add('opacity-0');
-                        videoPlayer.classList.remove('opacity-0');
-                    });
-                }, 300);
-            }
-        }
-
-        // Iniciar rotación automática al cargar
-        startTabInterval();
+        });
     </script>
 </body>
 

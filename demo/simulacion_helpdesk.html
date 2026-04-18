@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingeny Labs | Human-Centered AI HelpDesk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ingeny-black': '#050505',
+                        'ingeny-green': '#24BD58',
+                        'slack-bg': '#1A1D21',
+                        'slack-nav': '#12151A',
+                        'jira-bg': '#0F1115',
+                        'jira-nav': '#161A21',
+                        'jira-card': '#222733',
+                        'jira-blue': '#4C9AFF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-pop {
+            animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pop {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .pulse-glow {
+            box-shadow: 0 0 15px rgba(36, 189, 88, 0.3);
+        }
+
+        .dot-typing {
+            animation: dotPulse 1.5s infinite ease-in-out;
+        }
+
+        .dot-typing:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot-typing:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: translateY(-4px);
+                opacity: 1;
+            }
+        }
+
+        /* Efecto resaltado intención */
+        .intent-highlight {
+            background-color: rgba(36, 189, 88, 0.2);
+            border-bottom: 2px solid #24BD58;
+            padding: 0 2px;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .intent-highlight-blue {
+            background-color: rgba(76, 154, 255, 0.2);
+            border-bottom: 2px solid #4C9AFF;
+            padding: 0 2px;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white font-sans min-h-screen p-4 md:p-8 flex items-center justify-center">
+
+    <div class="max-w-7xl w-full mx-auto flex flex-col items-center">
+
+        <!-- Header -->
+        <div
+            class="text-center mb-8 w-full flex flex-col md:flex-row justify-between items-center bg-ingeny-black border border-white/10 p-6 rounded-2xl relative overflow-hidden">
+            <div class="text-left mb-6 md:mb-0 relative z-10">
+                <h1 class="text-3xl font-bold mb-2">Simulación: HelpDesk Human-Centered AI</h1>
+                <p class="text-gray-400">Reconocimiento multi-intención y resolución Zero-Touch simultánea.</p>
+            </div>
+            <button id="btn-activate"
+                class="relative z-10 flex items-center justify-center gap-2 bg-ingeny-green text-black px-8 py-3.5 rounded-full font-bold text-lg hover:bg-white transition-all shadow-[0_0_20px_rgba(36,189,88,0.3)] w-full md:w-auto transform hover:scale-105">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                    </path>
+                </svg>
+                Simular Petición de Empleado
+            </button>
+        </div>
+
+        <!-- UI Divider Container -->
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 relative">
+
+            <!-- Decoration center sync -->
+            <div
+                class="hidden lg:block absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] bg-[#111] p-2.5 rounded-full border border-slate-700 z-10 shadow-2xl">
+                <svg class="w-6 h-6 text-gray-500" id="sync-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+
+            <!-- Left Column: Slack / Teams Chat -->
+            <div
+                class="bg-slack-bg rounded-2xl flex flex-col overflow-hidden shadow-2xl border border-[#2B2D31] h-[550px]">
+                <!-- ToolBar -->
+                <div class="bg-slack-nav px-4 py-3 border-b border-[#2B2D31] flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-6 h-6 rounded bg-purple-600 flex items-center justify-center text-xs font-bold font-mono">
+                            T</div>
+                        <div class="text-sm text-gray-200 font-bold">Chat Interno (Teams/Slack)</div>
+                    </div>
+                    <div class="text-xs text-gray-400">Canal: #soporte-corp</div>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="flex-grow p-5 flex flex-col gap-5 overflow-y-auto" id="chat-container">
+                    <!-- Mensajes Simples (History) -->
+                    <div class="flex gap-3 opacity-50">
+                        <div class="w-8 h-8 rounded bg-gray-600 flex-shrink-0"></div>
+                        <div>
+                            <div class="flex items-baseline gap-2"><span class="font-bold text-sm">Carla M.</span><span
+                                    class="text-xs text-gray-500">09:15 AM</span></div>
+                            <div class="text-sm text-gray-300">¿Alguien sabe si el viernes es feriado?</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 opacity-50">
+                        <div class="w-8 h-8 rounded bg-ingeny-green flex-shrink-0 flex items-center justify-center"><svg
+                                class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg></div>
+                        <div>
+                            <div class="flex items-baseline gap-2"><span class="font-bold text-sm">Ingeny Labs <span
+                                        class="bg-blue-500/20 text-blue-400 text-[10px] px-1 rounded uppercase">Bot</span></span><span
+                                    class="text-xs text-gray-500">09:15 AM</span></div>
+                            <div class="text-sm text-gray-300">Hola Carla, correcto. Este viernes es feriado oficial
+                                (Día de las Iglesias Evangélicas).</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="p-4 border-t border-[#2B2D31] bg-slack-nav mt-auto">
+                    <div
+                        class="bg-[#222529] border border-[#383A40] rounded-lg p-3 text-sm text-gray-500 flex justify-between items-center cursor-not-allowed">
+                        <span>Escribe tu mensaje a #soporte-corp...</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Jira / Zendesk Dashboard -->
+            <div
+                class="bg-jira-bg rounded-2xl flex flex-col overflow-hidden shadow-2xl border border-slate-800 h-[550px] font-sans">
+                <!-- Jira Toolbar -->
+                <div class="bg-jira-nav px-5 py-3 border-b border-slate-800 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-6 h-6 bg-jira-blue rounded flex items-center justify-center text-white">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M11.9 2h.2c5.5 0 10 4.5 10 10s-4.5 10-10 10h-.2l-5.6 1.4c-.8.2-1.5-.5-1.3-1.3L6.4 16.5C3.3 14.3 2.1 10.3 3.8 6.9 5.3 4 8.5 2 11.9 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-sm text-slate-200 font-bold mb-0.5">IT Service Management</div>
+                            <div class="text-[10px] text-slate-400 font-medium">Panel Soporte Nivel 1</div>
+                        </div>
+                    </div>
+                    <!-- Controls -->
+                    <div class="flex gap-2">
+                        <div class="bg-slate-800 text-xs px-2 py-1 rounded text-slate-300">To Do (12)</div>
+                    </div>
+                </div>
+
+                <!-- Jira Board -->
+                <div class="flex-grow p-5 bg-[#090A0C] overflow-hidden flex gap-4">
+
+                    <!-- Column: To Do -->
+                    <div class="bg-[#101216] rounded-xl flex-1 flex flex-col border border-slate-800/50">
+                        <div
+                            class="uppercase text-[11px] font-bold text-slate-400 p-3 border-b border-slate-800/50 bg-[#16181D] rounded-t-xl sticky top-0">
+                            PENDIENTES
+                        </div>
+                        <div class="p-2 flex flex-col gap-2 overflow-y-auto" id="jira-board">
+
+                            <!-- Ticket Antiguo -->
+                            <div class="bg-jira-card p-3 rounded-lg border border-slate-700/50 shadow-sm opacity-60">
+                                <div class="text-xs text-slate-400 mb-1 w-full flex justify-between">
+                                    <span>ITS-842</span> <span
+                                        class="bg-gray-600/30 text-gray-400 px-1 rounded text-[9px]">BAJA</span>
+                                </div>
+                                <div class="text-sm font-medium text-slate-200 mb-2 leading-tight">Solicitud de licencia
+                                    Adobe Creative Cloud</div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="bg-purple-900/30 text-purple-400 px-2 py-0.5 rounded">Software</span>
+                                    <div
+                                        class="w-5 h-5 rounded-full bg-orange-600 flex items-center justify-center text-[10px]">
+                                        LM</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Column: In Progress (Decorative) -->
+                    <div class="bg-[#101216] rounded-xl flex-1 flex flex-col border border-slate-800/50 opacity-40">
+                        <div
+                            class="uppercase text-[11px] font-bold text-slate-400 p-3 border-b border-slate-800/50 bg-[#16181D] rounded-t-xl">
+                            EN CURSO
+                        </div>
+                        <div class="p-2 flex flex-col gap-2">
+                            <div class="bg-jira-card p-3 rounded-lg border border-slate-700/50">
+                                <div class="text-xs text-slate-400 mb-1 flex justify-between"><span>ITS-841</span></div>
+                                <div class="text-sm font-medium text-slate-200 mb-2">Error login SSO</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btn-activate').addEventListener('click', function () {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Ejecutando Escenario...`;
+            btn.classList.replace('bg-ingeny-green', 'bg-slate-800');
+            btn.classList.replace('text-black', 'text-white');
+
+            const chat = document.getElementById('chat-container');
+
+            // 1. Empleado envía mensaje complejo
+            setTimeout(() => {
+                const userMsg = document.createElement('div');
+                userMsg.className = "flex gap-3 w-full animate-slide-up";
+                userMsg.innerHTML = `
+                <div class="w-8 h-8 rounded bg-blue-600 flex-shrink-0 flex items-center justify-center font-bold text-sm">J</div>
+                <div class="w-full">
+                    <div class="flex items-baseline gap-2"><span class="font-bold text-sm text-white">José D.</span><span class="text-xs text-gray-500">Ahora mismo</span></div>
+                    <div class="text-sm text-gray-200 mt-1 bg-[#26292F] p-3 rounded-r-xl rounded-bl-xl inline-block" id="msg-text">
+                        No me <span id="int-1" class="transition-colors duration-500 delay-1000">funciona el acceso a la VPN</span> desde ayer, y necesito <span class="transition-colors duration-500 delay-[1500ms]" id="int-2">pedir mis vacaciones</span> para noviembre.
+                    </div>
+                </div>
+            `;
+                chat.appendChild(userMsg);
+                chat.scrollTop = chat.scrollHeight;
+
+                // 2. IA Empieza a analizar (reconocimiento intenciones)
+                setTimeout(() => {
+                    document.getElementById('int-1').classList.add('intent-highlight-blue'); // Falla IT
+                    document.getElementById('int-2').classList.add('intent-highlight'); // RRHH Local
+
+                    // Activa animacion centro
+                    const sync = document.getElementById('sync-icon');
+                    sync.classList.replace('text-gray-500', 'text-ingeny-green');
+                    sync.classList.add('pulse-glow', 'text-ingeny-green');
+
+                    const typing = document.createElement('div');
+                    typing.id = "typing-indic";
+                    typing.className = "flex gap-3 animate-fade-in";
+                    typing.innerHTML = `
+                    <div class="w-8 h-8 rounded bg-ingeny-green flex-shrink-0 flex items-center justify-center"><svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                    <div class="bg-[#26292F] p-3 rounded-r-xl rounded-bl-xl flex gap-1 items-center h-[36px]">
+                        <div class="w-2 h-2 bg-ingeny-green rounded-full dot-typing"></div>
+                        <div class="w-2 h-2 bg-ingeny-green rounded-full dot-typing"></div>
+                        <div class="w-2 h-2 bg-ingeny-green rounded-full dot-typing"></div>
+                    </div>
+                `;
+                    chat.appendChild(typing);
+                    chat.scrollTop = chat.scrollHeight;
+
+                    // 3. IA Responde a la intención 1 (Vacaciones - Resolución Directa)
+                    setTimeout(() => {
+                        document.getElementById('typing-indic').remove();
+
+                        const botMsg1 = document.createElement('div');
+                        botMsg1.className = "flex gap-3 animate-slide-up w-full";
+                        botMsg1.innerHTML = `
+                        <div class="w-8 h-8 rounded bg-ingeny-green flex-shrink-0 flex items-center justify-center"><svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                        <div class="w-full">
+                            <div class="flex items-baseline gap-2"><span class="font-bold text-sm">Ingeny Labs <span class="bg-blue-500/20 text-blue-400 text-[10px] px-1 rounded uppercase">Bot</span></span><span class="text-xs text-gray-500">Ahora</span></div>
+                            <div class="text-sm text-gray-200 mt-1 bg-[#26292F] p-3 rounded-r-xl rounded-bl-xl border border-ingeny-green/20 relative">
+                                <div class="absolute -left-[5px] top-4 w-1 h-8 bg-ingeny-green rounded-r"></div>
+                                <strong class="text-ingeny-green block mb-1">▶ Gestión RRHH (Resuelto)</strong>
+                                Tienes <strong>15 días hábiles</strong> de vacaciones disponibles en tu saldo. Puedes solicitar tu licencia de noviembre directamente en el Portal People:<br>
+                                <a href="#" class="text-blue-400 hover:underline mt-2 inline-flex items-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg> Solicitar Vacaciones (Intranet)</a>
+                            </div>
+                        </div>
+                    `;
+                        chat.appendChild(botMsg1);
+                        chat.scrollTop = chat.scrollHeight;
+
+                        // 4. IA reanuda typing para la 2da intención
+                        chat.appendChild(typing);
+                        chat.scrollTop = chat.scrollHeight;
+
+                        // 5. IA emite ticket en JIRA e informa
+                        setTimeout(() => {
+                            document.getElementById('typing-indic').remove();
+
+                            const botMsg2 = document.createElement('div');
+                            botMsg2.className = "flex gap-3 animate-slide-up w-full";
+                            botMsg2.innerHTML = `
+                            <div class="w-8 h-8 opacity-0"></div> <!-- spacing -->
+                            <div class="w-full">
+                                <div class="text-sm text-gray-200 bg-[#26292F] p-3 rounded-r-xl rounded-bl-xl rounded-tl-xl border border-jira-blue/30 relative">
+                                    <div class="absolute -left-[5px] top-4 w-1 h-8 bg-jira-blue rounded-r"></div>
+                                    <strong class="text-jira-blue block mb-1">▶ Soporte IT (Escalado)</strong>
+                                    He analizado los logs de red y noté el fallo. Acabo de generar el ticket automático para el equipo de redes IT.<br>
+                                    <div class="mt-2 bg-[#1A1D21] p-2 rounded border border-[#383A40] inline-flex items-center gap-2">
+                                        <span class="bg-jira-blue text-white text-[10px] px-1 rounded font-bold">ITS-843</span> 
+                                        <span class="text-xs">Fallo acceso VPN IPSec</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                            chat.appendChild(botMsg2);
+                            chat.scrollTop = chat.scrollHeight;
+
+                            // Pop en JIRA Dashboard paralelo
+                            const board = document.getElementById('jira-board');
+                            const ticket = document.createElement('div');
+                            ticket.className = "bg-jira-card p-3 rounded-lg border border-jira-blue/50 shadow-[0_0_15px_rgba(76,154,255,0.2)] animate-pop relative overflow-hidden";
+                            ticket.innerHTML = `
+                            <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                            <div class="text-xs text-slate-400 mb-1 w-full flex justify-between ml-1">
+                                <span class="text-jira-blue font-bold">ITS-843 <span class="bg-green-500/20 text-green-400 text-[9px] px-1 rounded ml-1">IA</span></span> 
+                                <span class="bg-red-500/20 text-red-400 font-bold px-1 rounded text-[9px] flex items-center gap-1"><div class="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></div> ALTA</span>
+                            </div>
+                            <div class="text-sm font-bold text-white mb-1 leading-tight ml-1">Fallo de acceso VPN IPSec (José D.)</div>
+                            <div class="text-[10px] text-slate-400 mb-2 ml-1 line-clamp-2">"No me funciona el acceso a la VPN desde ayer" [Contexto autogenerado: VPN Client v.4 timeout].</div>
+                            <div class="flex justify-between items-center text-xs ml-1">
+                                <span class="bg-blue-900/40 text-blue-400 border border-blue-800 px-2 py-0.5 rounded">Redes</span>
+                                <div class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] border border-dashed border-slate-500">+</div>
+                            </div>
+                        `;
+                            board.prepend(ticket);
+
+                            sync.classList.remove('pulse-glow');
+                            btn.innerHTML = `<svg class="w-5 h-5 mr-2 text-ingeny-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> Multi-Agente Completado`;
+                            btn.classList.add('border', 'border-ingeny-green');
+
+                        }, 2500);
+
+                    }, 2000);
+
+                }, 1000);
+
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>
