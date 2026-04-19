@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingeny Labs - Visual Builder</title>
+
+    <!-- GrapesJS Core -->
+    <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+    <script src="https://unpkg.com/grapesjs"></script>
+
+    <!-- Tailwind preset for GrapesJS -->
+    <script src="https://unpkg.com/grapesjs-tailwind"></script>
+
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #2b2b2b;
+        }
+
+        #gjs {
+            height: calc(100vh - 50px);
+            /* Leave space for custom topbar */
+        }
+
+        /* Top Console */
+        .admin-topbar {
+            height: 50px;
+            background: #1e1e1e;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-family: sans-serif;
+            border-bottom: 2px solid #24BD58;
+        }
+
+        .admin-logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #24BD58;
+        }
+
+        .save-btn {
+            background-color: #24BD58;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .save-btn:hover {
+            background-color: #fff;
+        }
+
+        .gjs-cv-canvas {
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="admin-topbar">
+        <div class="admin-logo">Ingeny Labs | Admin Editor</div>
+        <div>
+            <button class="save-btn" onclick="saveDesign()">Guardar Cambios</button>
+        </div>
+    </div>
+
+    <div id="gjs"></div>
+
+    <script>
+        const editor = grapesjs.init({
+            container: '#gjs',
+            height: '100%',
+            fromElement: true,
+            storageManager: false, // We will manually manage saving/loading
+            plugins: ['grapesjs-tailwind'],
+            pluginsOpts: {
+                'grapesjs-tailwind': {}
+            },
+            assetManager: {
+                // Since this is a simple local tool, we let them input image URLs manually. 
+                // However, they can type relative paths like ./assets/logo.svg directly.
+            },
+            canvas: {
+                styles: [
+                    "https://cdn.tailwindcss.com",
+                    "https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap"
+                ],
+                scripts: ["https://cdn.tailwindcss.com"]
+            }
+        });
+
+        // Add tailwind configuration to the canvas iframe
+        editor.on('load', () => {
+            const iframe = editor.Canvas.getFrameEl();
+            const tailwindScript = document.createElement('script');
+            tailwindScript.innerHTML = `
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            colors: {
+                                'ingeny-black': '#000000',
+                                'ingeny-green': '#24BD58',
+                                'ingeny-glass': '#0a0a0a',
+                                'ingeny-lightgreen': '#CCFFD3',
+                                'ingeny-card': '#1C1C1C',
+                                'ingeny-gray': '#121212'
+                            },
+                            fontFamily: {
+                                sans: ['Manrope', 'sans-serif'],
+                                title: ['Cal Sans', 'system-ui', 'sans-serif'],
+                            }
+                        }
+                    }
+                }
+            `;
+            const doc = iframe.contentDocument;
+            doc.head.appendChild(tailwindScript);
+        });
+
+        // Load existing index.html from server
+        fetch('/api/load-html')
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    // Filter out doctype and wrapping tags, grapes handles head inside canvas automatically
+                    // We just give it the full HTML. GrapesJS is smart enough.
+                    editor.setComponents(data.html);
+
+                    // We might need to ensure the body attributes are preserved if they matter
+                } else {
+                    alert('Error cargando el archivo index.html');
+                }
+            }).catch(e => {
+                console.error(e);
+                alert('No se pudo cargar el sitio. ¿Está el server corriendo?');
+            });
+
+
+        // Save functionality
+        function saveDesign() {
+            // Get full HTML including doctype and head modified by tailwind
+            // GrapesJS `getHtml()` returns only body content. 
+            // In our case we want the complete HTML so that it replaces index.html correctly.
+
+            const btn = document.querySelector('.save-btn');
+            btn.innerText = 'Guardando...';
+            btn.disabled = true;
+
+            const html = editor.getHtml(); // This gets the body HTML
+            const css = editor.getCss();   // Any custom css applied by users from grapes
+
+            // Reconstruct the full HTML to save
+            // We just fetch the original, replace the body content, and save.
+            fetch('/api/load-html')
+                .then(res => res.json())
+                .then(data => {
+                    const originalHtml = data.html;
+
+                    // A simple regex approach to replace everything inside <body>...</body>
+                    const bodyRegex = /<body[^>]*>([\s\S]*)<\/body>/i;
+
+                    // Also we need to inject the custom CSS right before </head> if they added inline rules
+                    let newHtml = originalHtml.replace(bodyRegex, (match, bodyContent, offset, fullString) => {
+                        const bodyOpenMatch = match.match(/<body[^>]*>/i);
+                        const bodyOpen = bodyOpenMatch ? bodyOpenMatch[0] : '<body class="antialiased">';
+                        return `${bodyOpen}\n${html}\n</body>`;
+                    });
+
+                    if (css && css.trim().length > 0) {
+                        // Insert css inside a <style id="admin-custom-css">
+                        const cssTag = `<style id="admin-custom-css">${css}</style>`;
+                        if (newHtml.includes('<style id="admin-custom-css">')) {
+                            // Replace old
+                            newHtml = newHtml.replace(/<style id="admin-custom-css">[\s\S]*?<\/style>/i, cssTag);
+                        } else {
+                            // Append before </head>
+                            newHtml = newHtml.replace('</head>', `    ${cssTag}\n</head>`);
+                        }
+                    }
+
+                    return fetch('/api/save-html', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ html: newHtml })
+                    });
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        alert('¡Sitio guardado con éxito! Ve al navegador y recarga la página principal.');
+                    } else {
+                        alert('Error al guardar: ' + res.error);
+                    }
+                })
+                .catch(e => {
+                    alert('Error de red al guardar.');
+                    console.error(e);
+                })
+                .finally(() => {
+                    btn.innerText = 'Guardar Cambios';
+                    btn.disabled = false;
+                });
+        }
+    </script>
+</body>
+
+</html>

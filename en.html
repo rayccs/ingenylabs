@@ -9,7 +9,17 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+    <!-- Optimización Cal Sans: Evitar Synthetic/Faux Bold en navegadores limitando los pesos -->
+    <style>
+        @font-face {
+            font-family: 'Cal Sans';
+            font-style: normal;
+            font-weight: 100 900;
+            /* Mapea todos los pesos al mismo archivo base evitando engrosamiento artificial */
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/calsans/v2/fdN99sWUv3gWqXxqqSBb.ttf) format('truetype');
+        }
+    </style>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
