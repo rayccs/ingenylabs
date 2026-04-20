@@ -773,65 +773,9 @@
             background: #00957a
         }
     </style>
-    #app-initial-loader {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: #0a1014;
-    z-index: 99999;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.8s ease, visibility 0.8s;
-    }
-    .loader-spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid rgba(0, 168, 132, 0.2);
-    border-top-color: #00a884;
-    border-radius: 50%;
-    animation: app-spin 1s linear infinite;
-    margin-bottom: 24px;
-    }
-    .loader-text {
-    color: #e9edef;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    }
-    .loader-subtext {
-    color: #8696a0;
-    font-size: 13px;
-    margin-top: 8px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    }
-    @keyframes app-spin {
-    to { transform: rotate(360deg); }
-    }
-    </style>
 </head>
 
 <body>
-    <!-- Initial 10s Loader -->
-    <div id="app-initial-loader">
-        <div class="loader-spinner"></div>
-        <div class="loader-text">Ingeny Labs Cognition Engine</div>
-        <div class="loader-subtext">Estableciendo conexión y preparando entorno de simulación...</div>
-    </div>
-
-    <script>
-        // Remover el loader después de 10 segundos
-        document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
-                const loader = document.getElementById('app-initial-loader');
-                if (loader) {
-                    loader.style.opacity = '0';
-                    loader.style.visibility = 'hidden';
-                    setTimeout(() => loader.remove(), 800);
-                }
-            }, 10000);
-        });
-    </script>
     <div class="top-banner">
         Simulación demostrativa de Ingeny Labs &nbsp;·&nbsp; No se procesan pagos ni datos reales &nbsp;·&nbsp; <a
             href="https://www.ingenylabs.com" target="_blank">ingenylabs.com</a>
@@ -1185,7 +1129,7 @@
             await flowCTA();
         }
         async function flowCTA() {
-            await agentSay('Lo que acabas de ver no es magia — es lo que hacemos todos los días para empresas como la tuya. 🌎\n\nNuestro ecosistema de agentes se conecta a tu ERP, CRM, sistema legacy o stack de herramientas actuales. Sin fricción.\n\n💡 ¿Tienes curiosidad de cómo funcionaría esto en tu operación?\n\n📅 Agenda una Consultoría Estratégica Gratuita de 30 min con nuestro equipo — analizamos tu caso sin compromiso.\n\n👇 Elige cómo prefieres continuar:', 500);
+            await agentSay('Lo que acabas de ver no es magia — es lo que hacemos todos los días para empresas como la tuya. 🌎\n\nNuestro ecosistema de agentes se conecta a tu ERP, CRM, sistema legacy o stack de herramientas actuales. Sin migraciones. Sin fricción.\n\n💡 ¿Tienes curiosidad de cómo funcionaría esto en tu operación?\n\n📅 Agenda una Consultoría Estratégica Gratuita de 30 min con nuestro equipo — analizamos tu caso sin compromiso.\n\n👇 Elige cómo prefieres continuar:', 500);
             var msgs = document.getElementById('chat-messages');
             var div = document.createElement('div'); div.className = 'msg msg-agent';
             div.innerHTML = ctaButtons();
