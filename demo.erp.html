@@ -5,7 +5,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-
+    <style>
+        #app-initial-loader,
+        #app-loader,
+        [id*="loader"],
+        [class*="initial-loader"],
+        [class*="app-loader"] {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            z-index: -9999 !important;
+            height: 0 !important;
+            width: 0 !important
+        }
+    </style>
     <title>Ingeny Labs — Demo Agente WhatsApp + ERP</title>
     <style>
         * {
@@ -766,6 +780,22 @@
             color: var(--erp-muted);
             margin-top: 3px
         }
+
+        .new-pedido-btn {
+            background: var(--erp-accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 18px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap
+        }
+
+        .new-pedido-btn:hover {
+            background: #00957a
+        }
     </style>
 </head>
 
@@ -1017,7 +1047,33 @@
         }
         buildStockGrid();
 
+        function matchExact(t) { var best = null, sc = 0; CATALOG.forEach(function (p) { p.keywords.forEach(function (kw) { if (t.includes(kw) && kw.length > sc) { best = p; sc = kw.length; } }); }); return best; }
+        function matchBrand(t) { for (var b in BRAND_KW) { if (BRAND_KW[b].some(function (k) { return t.includes(k); })) return b; } return null; }
+        function catalogByBrand(brand) { return CATALOG.filter(function (p) { return p.brand === brand; }); }
+        function catalogList() { return CATALOG.map(function (p) { return (p.stock > 0 ? '✅' : '❌') + ' ' + p.name + ' — $' + p.price.toLocaleString() + ' USD | ' + (p.stock > 0 ? 'Stock: ' + p.stock + ' unid.' : 'Agotado'); }).join('\n'); }
+        function brandList(brand) { return catalogByBrand(brand).map(function (p) { return (p.stock > 0 ? '✅' : '❌') + ' ' + p.name + ' — $' + p.price.toLocaleString() + ' USD'; }).join('\n'); }
 
+        function showTab(tab, el) {
+            ['dashboard', 'whatsapp', 'pedidos', 'stock'].forEach(function (t) { var d = document.getElementById('tab-' + t); if (d) d.style.display = 'none'; });
+            document.querySelectorAll('.erp-tab').forEach(function (t) { t.classList.remove('active'); });
+            var target = document.getElementById('tab-' + tab);
+            if (target) { target.style.display = 'flex'; target.style.flexDirection = 'column'; target.style.gap = '16px'; }
+            if (el) el.classList.add('active');
+        }
+        function getTime() { var d = new Date(); return (d.getHours() + '').padStart(2, '0') + ':' + (d.getMinutes() + '').padStart(2, '0'); }
+        function addMsg(text, isAgent, html) {
+            var msgs = document.getElementById('chat-messages');
+            var div = document.createElement('div'); div.className = 'msg ' + (isAgent ? 'msg-agent' : 'msg-user');
+            if (html) div.innerHTML = text; else div.textContent = text;
+            var t = document.createElement('div'); t.className = 'msg-time'; t.textContent = getTime(); div.appendChild(t);
+            msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+        }
+        function showTyping() {
+            var msgs = document.getElementById('chat-messages');
+            var div = document.createElement('div'); div.className = 'typing'; div.id = 'typing-ind';
+            div.innerHTML = '<span></span><span></span><span></span>';
+            msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+        }
         function removeTyping() { var t = document.getElementById('typing-ind'); if (t) t.remove(); }
         function agentSay(text, delay) {
             return new Promise(function (res) {
@@ -1111,8 +1167,74 @@
             await agentSay('¿Qué te gustaría hacer hoy?\n\n1️⃣  Ver el catálogo de productos\n2️⃣  Consultar el stock de un producto\n3️⃣  Simular una compra completa', 500);
             state.stage = 'menu';
         }
+        function isBuyConfirm(t) { return /\b(comprar|compra|quiero comprarlo|me lo llevo|sí quiero|si quiero|lo quiero|proceder|completar|confirmar|confirmo|adelante con la compra)\b/.test(t); }
+        function isYes(t) { return /^(sí|si|yes|dale|ok|claro|perfecto|bueno|vamos|listo|exacto|correcto|de acuerdo)$/.test(t.trim()); }
+        function isCatalogReq(t) { return /\b(catálogo|catalogo|ver más|ver mas|ver todo|otras opciones|otros productos|listado|opciones|ver productos)\b/.test(t); }
+        function isOtherProd(t) { return /\b(otro|otra|diferente|cambiar|algo más|algo mas|otro producto)\b/.test(t); }
+        function parseInput(raw) {
+            var text = raw.trim(); var t = text.toLowerCase();
+            if (state.stage === 'awaiting_data') { flowProcessOrder(text); return; }
+            if (state.stage === 'post_card') {
+                if (isBuyConfirm(t) || isYes(t)) { flowDataRequest(); return; }
+                if (isCatalogReq(t)) { flowCatalog(); return; }
+                if (isOtherProd(t)) { agentSay('Claro 😊 ¿Qué producto te interesa?\n\n' + catalogList(), 400); state.stage = 'awaiting_product'; return; }
+                var pS = matchExact(t); if (pS) { showProductCard(pS); return; }
+                var bS = matchBrand(t); if (bS) { var bSP = catalogByBrand(bS); if (bSP.length === 1) showProductCard(bSP[0]); else { agentSay('Tenemos varios productos ' + bS.charAt(0).toUpperCase() + bS.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bS), 400); state.stage = 'awaiting_product'; } return; }
+                agentSay('¿Quieres comprar este producto, ver el catálogo completo o consultar otra opción?', 400); return;
+            }
+            if (state.stage === 'post_card_nostock') {
+                if (isCatalogReq(t) || isYes(t)) { flowCatalog(); return; }
+                var pA = matchExact(t); if (pA) { showProductCard(pA); return; }
+                agentSay('¿Quieres que te muestre el catálogo completo?', 400); return;
+            }
+            if (state.stage === 'awaiting_product') {
+                var pW = matchExact(t); if (pW) { showProductCard(pW); return; }
+                var bW = matchBrand(t); if (bW) { var bWP = catalogByBrand(bW); if (bWP.length === 1) showProductCard(bWP[0]); else agentSay('Tenemos varios de ' + bW.charAt(0).toUpperCase() + bW.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bW), 400); return; }
+                agentSay('No encontré "' + text + '" en nuestro catálogo.\n\nEstas son las opciones disponibles:\n\n' + catalogList() + '\n\n¿Cuál te interesa?', 400); return;
+            }
+            if (state.stage === 'done') {
+                var msgs = document.getElementById('chat-messages');
+                var div = document.createElement('div'); div.className = 'msg msg-agent';
+                div.innerHTML = '¡Gracias por explorar la demo! 🚀' + ctaButtons();
+                var tt = document.createElement('div'); tt.className = 'msg-time'; tt.textContent = getTime(); div.appendChild(tt);
+                msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight; return;
+            }
+            var isCat = /\b(1|catálogo|catalogo|ver|productos|listado|opciones|qué tienen|que tienen)\b/.test(t) && !/compra|stock/.test(t);
+            var isAct = /\b(2|3|stock|disponib|hay|tienen|quedan|inventario|comprar|compra|quiero|pedido|necesito|dame|me llevo|consultar)\b/.test(t);
+            if (isCat) { flowCatalog(); return; }
+            if (isAct) {
+                var pD = matchExact(t); if (pD) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(pD); return; }
+                var bD = matchBrand(t); if (bD) { var bDP = catalogByBrand(bD); if (bDP.length === 1) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(bDP[0]); } else { agentSay('Tenemos varios productos ' + bD.charAt(0).toUpperCase() + bD.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bD), 400); state.stage = 'awaiting_product'; } return; }
+                agentSay('¡Claro! ¿Qué producto te interesa?\n\n' + catalogList(), 400); state.stage = 'awaiting_product'; return;
+            }
+            var pM = matchExact(t); if (pM) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(pM); return; }
+            var bM = matchBrand(t); if (bM) { var bMP = catalogByBrand(bM); if (bMP.length === 1) { addWaMsg('US', 'Tú (Demo)', text); showProductCard(bMP[0]); } else { agentSay('Tenemos varios productos ' + bM.charAt(0).toUpperCase() + bM.slice(1) + '. ¿Cuál en específico?\n\n' + brandList(bM), 400); state.stage = 'awaiting_product'; } return; }
+            if (t.length > 2) { agentSay('Entiendo, pero "' + text + '" no está en nuestro catálogo 😊\n\nPuedo ayudarte con:\n\n' + catalogList() + '\n\n¿Hay algo que te llame la atención?', 400); }
+            else { agentSay('Puedo ayudarte con:\n\n1️⃣  Ver el catálogo de productos\n2️⃣  Consultar el stock de un producto\n3️⃣  Simular una compra completa\n\n¿Qué prefieres?', 400); }
+        }
+        document.getElementById('send-btn').onclick = function () {
+            var input = document.getElementById('chat-input'); var text = input.value.trim(); if (!text) return;
+            addMsg(text, false); input.value = ''; parseInput(text);
+        };
+        document.getElementById('chat-input').addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('send-btn').click(); });
+        setTimeout(runWelcome, 700);
     </script>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function killLoader(el) { if (!el) return; el.style.cssText = "display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;z-index:-9999!important;height:0!important;width:0!important"; }
+            killLoader(document.getElementById("app-initial-loader"));
+            killLoader(document.getElementById("app-loader"));
+            var obs = new MutationObserver(function (ms) {
+                ms.forEach(function (m) {
+                    m.addedNodes.forEach(function (n) {
+                        if (n.nodeType !== 1) return;
+                        var id = n.id || ""; var cls = (typeof n.className === "string") ? n.className : "";
+                        if (id.includes("loader") || cls.includes("loader") || cls.includes("initial")) { killLoader(n); }
+                    });
+                });
+            });
+            obs.observe(document.body, { childList: true, subtree: true });
+        });
     </script>
 </body>
 
