@@ -6,409 +6,1259 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingeny Labs | Ecosistema de Arquitectura Cognitiva</title>
     <link rel="icon" type="image/png" href="./assets/favico.png">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Optimización Cal Sans: Evitar Synthetic/Faux Bold en navegadores limitando los pesos -->
     <style>
         @font-face {
             font-family: 'Cal Sans';
             font-style: normal;
             font-weight: 100 900;
-            /* Mapea todos los pesos al mismo archivo base evitando engrosamiento artificial */
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/calsans/v2/fdN99sWUv3gWqXxqqSBb.ttf) format('truetype');
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'ingeny-black': '#000000',
-                        'ingeny-green': '#24BD58',
-                        'ingeny-glass': '#0a0a0a',
-                        'ingeny-lightgreen': '#CCFFD3',
-                        'ingeny-card': '#1C1C1C',
-                        'ingeny-gray': '#121212'
-                    },
-                    fontFamily: {
-                        sans: ['Manrope', 'sans-serif'],
-                        title: ['Cal Sans', 'system-ui', 'sans-serif'], /* Agregado fallback seguro */
-                    }
-                }
-            }
-        }
-    </script>
     <style>
+        /* ═══ TOKENS ═══ */
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #0d0d16;
+            --card: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.07);
+            --card-hover: rgba(255, 255, 255, 0.055);
+            --green: #24BD58;
+            --mint: #CCFFD3;
+            --dk-green: #002608;
+            --muted: rgba(255, 255, 255, 0.55);
+            --sep: rgba(255, 255, 255, 0.05);
+            --glow: 0 0 80px rgba(36, 189, 88, 0.12);
+            --rad: 18px;
+            --rad-sm: 10px;
+        }
+
+        [data-dir="B"] {
+            --bg: #080808;
+            --bg2: #0c0c0c;
+            --card: #101010;
+            --card-border: #1c1c1c;
+            --card-hover: #141414;
+            --glow: none;
+            --rad: 8px;
+            --rad-sm: 4px;
+        }
+
+        /* ═══ RESET / BASE ═══ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background-color: theme('colors.ingeny-black');
-            color: #ffffff;
-            font-family: theme('fontFamily.sans');
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
         }
 
         h1,
         h2,
         h3,
-        h4,
-        .font-title {
-            font-family: theme('fontFamily.title');
+        h4 {
+            font-family: 'Cal Sans', system-ui, sans-serif;
         }
 
-        .active-link {
-            color: theme('colors.ingeny-green');
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        .hero-bg {
-            background: linear-gradient(135deg, rgba(36, 189, 88, 0.8) 0%, rgba(0, 0, 0, 1) 100%);
-            background-image: url('./assets/hero.png');
-            background-size: cover;
-            background-position: center;
+        img {
+            display: block;
+            max-width: 100%;
         }
 
-        /* CORRECCIÓN TIPOGRAFÍA:
-           Lo ideal es descargar el archivo CalSans-SemiBold.woff2 y guardarlo 
-           en tu carpeta de assets (ej: ./assets/fonts/CalSans-SemiBold.woff2).
-           Esto evitará que los navegadores lo bloqueen por seguridad (CORS).
-        */
-        /* @font-face { */
-        /* font-family: 'Cal Sans';
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .4;
+                transform: scale(.7)
+            }
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(0)
+            }
+
+            to {
+                transform: translateX(-50%)
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-12px)
+            }
+        }
+
+        /* ═══ NAV ═══ */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(10, 10, 15, 0.82);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--sep);
+            transition: border-color 0.5s;
+        }
+
+        [data-dir="B"] .nav {
+            background: rgba(8, 8, 8, 0.94);
+            border-bottom-color: rgba(204, 255, 211, 0.08);
+        }
+
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-links {
+            display: none;
+            gap: 36px;
+        }
+
+        .nav-link {
+            font-size: .875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .6);
+            letter-spacing: .02em;
+            transition: color .2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--mint);
+        }
+
+        [data-dir="B"] .nav-link:hover,
+        [data-dir="B"] .nav-link.active {
+            color: var(--mint);
+        }
+
+        .nav-cta {
+            display: none;
+            align-items: center;
+            gap: 20px;
+        }
+
+        @media(min-width:900px) {
+            .nav-links {
+                display: flex;
+            }
+
+            .nav-cta {
+                display: flex;
+            }
+
+            #mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        /* ═══ BUTTONS ═══ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: all .25s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--mint);
+            color: var(--dk-green);
+            padding: 15px 34px;
+            border-radius: 100px;
+            box-shadow: 0 0 40px rgba(204, 255, 211, .12);
+            font-size: .95rem;
+        }
+
+        .btn-primary:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(204, 255, 211, .22);
+        }
+
+        [data-dir="B"] .btn-primary {
+            border-radius: var(--rad-sm);
+            box-shadow: none;
+            letter-spacing: .03em;
+        }
+
+        [data-dir="B"] .btn-primary:hover {
+            transform: none;
+            outline: 2px solid var(--mint);
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--mint);
+            padding: 14px 32px;
+            border-radius: 100px;
+            border: 1.5px solid rgba(204, 255, 211, .35);
+            font-size: .95rem;
+        }
+
+        .btn-outline:hover {
+            background: var(--mint);
+            color: var(--dk-green);
+            border-color: var(--mint);
+        }
+
+        [data-dir="B"] .btn-outline {
+            border-radius: var(--rad-sm);
+            border-width: 1px;
+        }
+
+        /* ═══ HERO ═══ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero-geo {
+            position: absolute;
+            inset: 0;
+            display: none;
+            overflow: hidden;
+        }
+
+        [data-dir="B"] #hero-canvas {
+            opacity: 0;
+        }
+
+        [data-dir="B"] .hero-geo {
+            display: block;
+        }
+
+        .hero-fade-b {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 240px;
+            background: linear-gradient(to bottom, transparent, var(--bg));
+            pointer-events: none;
+        }
+
+        .hero-glow-a {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(36, 189, 88, .055) 0%, transparent 65%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        [data-dir="B"] .hero-glow-a {
+            display: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 1000px;
+            padding: 120px 28px 100px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 6px 18px;
+            border-radius: 100px;
+            border: 1px solid rgba(36, 189, 88, .28);
+            background: rgba(36, 189, 88, .07);
+            color: var(--mint);
+            font-size: .72rem;
             font-weight: 700;
-            font-style: bold;
-            font-display: swap;
-        } */
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            margin-bottom: 36px;
+        }
+
+        [data-dir="B"] .eyebrow {
+            border-radius: 0;
+            border-color: rgba(204, 255, 211, .4);
+            background: transparent;
+            letter-spacing: .22em;
+        }
+
+        .eyebrow-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse-dot 2.2s infinite;
+        }
+
+        .hero-h1 {
+            font-size: clamp(2.8rem, 7.5vw, 6.5rem);
+            line-height: 1.03;
+            letter-spacing: -.03em;
+            color: #fff;
+            margin-bottom: 28px;
+            text-wrap: pretty;
+        }
+
+        [data-dir="B"] .hero-h1 {
+            letter-spacing: -.035em;
+        }
+
+        .hero-h1 em {
+            font-style: normal;
+            color: var(--mint);
+        }
+
+        [data-dir="B"] .hero-h1 em {
+            color: var(--green);
+        }
+
+        .hero-sub {
+            font-size: clamp(.95rem, 1.8vw, 1.15rem);
+            line-height: 1.75;
+            color: rgba(255, 255, 255, .6);
+            max-width: 680px;
+            margin: 0 auto 44px;
+        }
+
+        .hero-sub strong {
+            color: rgba(255, 255, 255, .88);
+            font-weight: 600;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ═══ SECTION UTILS ═══ */
+        .wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 36px;
+        }
+
+        .wrap-md {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 36px;
+        }
+
+        .section-sep {
+            border-top: 1px solid var(--sep);
+        }
+
+        .stag {
+            display: block;
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 18px;
+        }
+
+        [data-dir="B"] .stag {
+            color: var(--mint);
+            letter-spacing: .28em;
+        }
+
+        .sh2 {
+            font-size: clamp(2rem, 4.5vw, 3.6rem);
+            line-height: 1.08;
+            letter-spacing: -.025em;
+            color: #fff;
+            margin-bottom: 20px;
+            text-wrap: pretty;
+        }
+
+        [data-dir="B"] .sh2 {
+            letter-spacing: -.035em;
+        }
+
+        .slead {
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: var(--muted);
+            max-width: 580px;
+        }
+
+        /* ═══ LOGO STRIP ═══ */
+        .logo-strip {
+            padding: 52px 0;
+            overflow: hidden;
+        }
+
+        .logo-label {
+            text-align: center;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 36px;
+        }
+
+        [data-dir="B"] .logo-label {
+            color: rgba(204, 255, 211, .22);
+        }
+
+        .marquee-track {
+            overflow: hidden;
+        }
+
+        .marquee-inner {
+            display: flex;
+            gap: 72px;
+            align-items: center;
+            width: max-content;
+            animation: marquee 28s linear infinite;
+        }
+
+        .marquee-inner img {
+            height: 34px;
+            object-fit: contain;
+            opacity: .38;
+            filter: brightness(0) invert(1);
+            transition: opacity .3s;
+            flex-shrink: 0;
+        }
+
+        .marquee-inner img:hover {
+            opacity: .8;
+        }
+
+        /* ═══ CARDS ═══ */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--rad);
+            overflow: hidden;
+            transition: background .3s, border-color .3s, box-shadow .3s;
+        }
+
+        .card:hover {
+            background: var(--card-hover);
+            border-color: rgba(36, 189, 88, .18);
+            box-shadow: var(--glow);
+        }
+
+        [data-dir="B"] .card {
+            border-top: 2px solid transparent;
+        }
+
+        [data-dir="B"] .card:hover {
+            border-top-color: var(--mint);
+            box-shadow: none;
+        }
+
+        .card-img {
+            height: 230px;
+            overflow: hidden;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .6s ease;
+        }
+
+        .card:hover .card-img img {
+            transform: scale(1.04);
+        }
+
+        .card-body {
+            padding: 34px;
+        }
+
+        .card-h3 {
+            font-family: 'Cal Sans', system-ui, sans-serif;
+            font-size: 1.65rem;
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .card-p {
+            font-size: .93rem;
+            line-height: 1.75;
+            color: var(--muted);
+        }
+
+        .card-p span {
+            color: var(--mint);
+            font-weight: 600;
+        }
+
+        /* ═══ GRID 3 ═══ */
+        .grid3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 22px;
+        }
+
+        /* ═══ VIDEO SECTION ═══ */
+        .tab-btn {
+            width: 100%;
+            text-align: left;
+            padding: 24px 26px;
+            border-radius: var(--rad);
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, .02);
+            transition: all .3s;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, .04);
+            border-color: rgba(36, 189, 88, .2);
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, .04);
+            border-color: var(--green);
+        }
+
+        [data-dir="B"] .tab-btn {
+            border-radius: 0;
+        }
+
+        [data-dir="B"] .tab-btn.active {
+            border: none;
+            border-left: 2px solid var(--mint);
+            background: rgba(204, 255, 211, .035);
+            padding-left: 24px;
+        }
+
+        .tab-h {
+            font-family: 'Cal Sans', system-ui, sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            transition: color .3s;
+        }
+
+        .tab-p {
+            font-size: .83rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, .38);
+            transition: color .3s;
+        }
+
+        .tab-btn.active .tab-h {
+            color: #fff;
+        }
+
+        .tab-btn.active .tab-p {
+            color: rgba(255, 255, 255, .6);
+        }
+
+        .tab-btn:not(.active) .tab-h {
+            color: rgba(255, 255, 255, .45);
+        }
+
+        .video-wrap {
+            border-radius: var(--rad);
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 0 60px rgba(36, 189, 88, .07);
+            position: relative;
+            background: var(--card);
+        }
+
+        [data-dir="B"] .video-wrap {
+            border-radius: var(--rad-sm);
+            box-shadow: none;
+            border-color: #1e1e1e;
+        }
+
+        /* ═══ METHODOLOGY ═══ */
+        .mstep {
+            display: flex;
+            gap: 36px;
+            align-items: flex-start;
+            padding: 40px 44px;
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid var(--sep);
+            border-radius: 22px;
+            transition: all .3s;
+        }
+
+        .mstep:hover {
+            background: rgba(255, 255, 255, .04);
+            border-color: rgba(36, 189, 88, .15);
+        }
+
+        [data-dir="B"] .mstep {
+            border-radius: var(--rad-sm);
+            border-color: #181818;
+            gap: 44px;
+        }
+
+        [data-dir="B"] .mstep:hover {
+            border-color: #252525;
+        }
+
+        .mnum {
+            font-family: 'Cal Sans', system-ui, sans-serif;
+            font-size: 3.2rem;
+            line-height: 1;
+            color: rgba(36, 189, 88, .18);
+            flex-shrink: 0;
+            transition: color .3s;
+            min-width: 60px;
+        }
+
+        [data-dir="B"] .mnum {
+            font-family: 'Manrope', sans-serif;
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .14em;
+            color: var(--mint);
+            background: rgba(204, 255, 211, .07);
+            border: 1px solid rgba(204, 255, 211, .18);
+            padding: 7px 12px;
+            border-radius: 4px;
+            min-width: auto;
+            margin-top: 6px;
+        }
+
+        .mstep:hover .mnum {
+            color: var(--green);
+        }
+
+        [data-dir="B"] .mstep:hover .mnum {
+            color: var(--mint);
+        }
+
+        .mstep-icon {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .mstep-icon img {
+            width: 30px;
+            height: 30px;
+            opacity: .65;
+        }
+
+        .mstep h4 {
+            font-family: 'Cal Sans', system-ui, sans-serif;
+            font-size: 1.35rem;
+            color: #fff;
+        }
+
+        .mstep p {
+            font-size: .98rem;
+            line-height: 1.75;
+            color: var(--muted);
+        }
+
+        /* ═══ VISION ═══ */
+        .vision {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vision-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) brightness(110%);
+            opacity: .12;
+        }
+
+        .vision-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--bg) 0%, transparent 50%, var(--bg) 100%);
+        }
+
+        .vision-fade {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, var(--bg) 0%, transparent 18%, transparent 82%, var(--bg) 100%);
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            background: var(--green);
+            color: var(--dk-green);
+            padding: 28px 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* ═══ MOBILE MENU ═══ */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        .mobile-menu.open {
+            display: flex;
+        }
+
+        .mobile-link {
+            font-family: 'Cal Sans', system-ui, sans-serif;
+            font-size: 2.2rem;
+            color: #fff;
+            transition: color .2s;
+        }
+
+        .mobile-link:hover {
+            color: var(--mint);
+        }
+
+        /* ═══ TWEAKS PANEL ═══ */
+        #tweaks-panel {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 200;
+            width: 288px;
+            background: #0e0e18;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, .7);
+            backdrop-filter: blur(24px);
+            display: none;
+        }
+
+        #tweaks-panel.open {
+            display: block;
+        }
+
+        .tw-title {
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .35);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tw-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, .35);
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .tw-label {
+            font-size: .78rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .65);
+            margin-bottom: 9px;
+            display: block;
+        }
+
+        .tw-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .dir-btn {
+            flex: 1;
+            padding: 10px 0;
+            font-family: 'Manrope', sans-serif;
+            font-size: .78rem;
+            font-weight: 700;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, .1);
+            background: transparent;
+            color: rgba(255, 255, 255, .45);
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .dir-btn.active {
+            background: var(--green);
+            color: #000;
+            border-color: var(--green);
+        }
+
+        .tw-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, .06);
+            margin: 4px 0 18px;
+        }
+
+        .tw-desc {
+            font-size: .7rem;
+            color: rgba(255, 255, 255, .25);
+            line-height: 1.5;
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--green);
+            cursor: pointer;
+        }
+
+        /* ═══ FADE-UP ═══ */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        .fade-up.vis {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media(max-width:768px) {
+
+            .wrap,
+            .wrap-md {
+                padding: 0 20px;
+            }
+
+            .mstep {
+                padding: 28px 22px;
+                gap: 18px;
+            }
+
+            .nav-inner {
+                padding: 16px 20px;
+            }
+
+            .footer {
+                padding: 24px 24px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            #tweaks-panel {
+                bottom: 16px;
+                right: 16px;
+                width: calc(100vw - 32px);
+            }
+
+            .hero-content {
+                padding: 100px 20px 80px;
+            }
+        }
     </style>
 </head>
 
-<body class="antialiased">
+<body data-dir="A">
 
-    <header
-        class="w-full bg-ingeny-black/95 backdrop-blur-md py-5 px-8 md:px-16 flex justify-between items-center sticky top-0 z-50 border-b border-white/5 transition-all duration-300"
-        id="header">
-        <a href="#" class="flex items-center">
-            <img src="./assets/logo.svg" alt="Ingeny Labs Logo" class="h-14 md:h-16 object-contain">
-        </a>
+    <!-- ═══════════════ NAV ═══════════════ -->
+    <header class="nav" id="header">
+        <div class="nav-inner">
+            <a href="#"><img src="./assets/logo.svg" alt="Ingeny Labs" style="height:46px;object-fit:contain;"></a>
 
-        <nav class="hidden md:flex gap-10 text-base font-normal">
-            <a href="#nosotros" class="nav-link hover:text-ingeny-green transition-colors">Nosotros</a>
-            <a href="#servicios" class="nav-link hover:text-ingeny-green transition-colors">Servicios</a>
-            <a href="#casos-uso" class="nav-link hover:text-ingeny-green transition-colors">Casos de Uso</a>
-            <a href="#metodologia" class="nav-link hover:text-ingeny-green transition-colors">Metodología</a>
-            <a href="#contacto" class="nav-link hover:text-ingeny-green transition-colors">Contacto</a>
-        </nav>
+            <nav class="nav-links">
+                <a href="#nosotros" class="nav-link">Nosotros</a>
+                <a href="#servicios" class="nav-link">Servicios</a>
+                <a href="#casos-uso" class="nav-link">Casos de Uso</a>
+                <a href="#metodologia" class="nav-link">Metodología</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+            </nav>
 
-        <div class="hidden md:flex items-center gap-6">
-            <a href="https://www.linkedin.com/company/ingeny-labs" target="_blank"
-                class="text-white hover:text-ingeny-green transition-colors" aria-label="LinkedIn">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+            <div class="nav-cta">
+                <a href="https://www.linkedin.com/company/ingeny-labs" target="_blank" aria-label="LinkedIn"
+                    style="color:rgba(255,255,255,.5);transition:color .2s;" onmouseover="this.style.color='#CCFFD3'"
+                    onmouseout="this.style.color='rgba(255,255,255,.5)'">
+                    <svg style="width:20px;height:20px;" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                    </svg>
+                </a>
+                <a href="https://wa.me/56954679270?text=Hola%20Ingeny%20Labs.%20Estoy%20interesado%20en%20conocer%20los%20servicios"
+                    target="_blank" class="btn btn-primary" style="padding:11px 26px;font-size:.875rem;">
+                    <svg style="width:16px;height:16px;" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
+                    </svg>
+                    Agenda una auditoría
+                </a>
+            </div>
+
+            <button id="mobile-menu-btn" style="background:none;border:none;color:#fff;cursor:pointer;padding:6px;">
+                <svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-            </a>
-            <!-- Selector de Idioma (Desktop) -->
-            <!-- <div
-                class="flex gap-1 sm:gap-2 text-xs sm:text-sm font-bold bg-white/5 rounded-full p-1 border border-white/10 shrink-0">
-                <a href="index.html"
-                    class="px-2 sm:px-3 py-1 bg-ingeny-green text-black rounded-full text-center min-w-[32px]">ES</a>
-                <a href="en.html"
-                    class="px-2 sm:px-3 py-1 text-white hover:text-ingeny-green transition-colors rounded-full text-center min-w-[32px]">EN</a>
-            </div> -->
-
-            <a href="https://wa.me/56954679270?text=Hola%20Ingeny%20Labs.%20Estoy%20interesado%20en%20conocer%20los%20servicios"
-                target="_blank"
-                class="flex items-center gap-2 px-6 py-3 bg-ingeny-lightgreen text-black hover:bg-white transition-colors text-base font-bold rounded-full">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
-                </svg>
-                Agenda una auditoría
-            </a>
+            </button>
         </div>
-
-        <button id="mobile-menu-btn" class="md:hidden text-white hover:text-ingeny-green">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
-                </path>
-            </svg>
-        </button>
     </header>
 
-    <div id="mobile-menu"
-        class="fixed inset-0 bg-ingeny-black z-40 hidden flex-col items-center justify-center gap-8 text-2xl font-normal">
-        <button id="close-menu-btn" class="absolute top-6 right-6 text-white hover:text-ingeny-green">
-            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button id="close-menu-btn"
+            style="position:absolute;top:22px;right:22px;background:none;border:none;color:#fff;cursor:pointer;">
+            <svg style="width:32px;height:32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
-
-        <!-- Selector de Idioma (Mobile) -->
-        <!-- <div
-            class="flex gap-1 sm:gap-2 text-base font-bold bg-white/5 rounded-full p-1.5 border border-white/10 shrink-0 mt-4">
-            <a href="index.html"
-                class="px-4 py-2 bg-ingeny-green text-black rounded-full text-center min-w-[40px]">ES</a>
-            <a href="en.html"
-                class="px-4 py-2 text-white hover:text-ingeny-green transition-colors rounded-full text-center min-w-[40px]">EN</a>
-        </div> -->
-
-        <a href="https://www.linkedin.com/company/ingeny-labs" target="_blank"
-            class="text-white hover:text-ingeny-green transition-colors mt-6" aria-label="LinkedIn">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+        <a href="#nosotros" class="mobile-link">Nosotros</a>
+        <a href="#servicios" class="mobile-link">Servicios</a>
+        <a href="#casos-uso" class="mobile-link">Casos de Uso</a>
+        <a href="#metodologia" class="mobile-link">Metodología</a>
+        <a href="#contacto" class="mobile-link">Contacto</a>
+        <a href="https://wa.me/56954679270?text=Hola%20Ingeny%20Labs.%20Estoy%20interesado%20en%20conocer%20los%20servicios"
+            target="_blank" class="btn btn-primary" style="margin-top:12px;">Agenda una auditoría</a>
+        <a href="https://www.linkedin.com/company/ingeny-labs" target="_blank" aria-label="LinkedIn"
+            style="display:inline-flex;align-items:center;gap:10px;color:rgba(255,255,255,.45);font-size:.82rem;font-weight:600;letter-spacing:.06em;transition:color .2s;margin-top:4px;"
+            onmouseover="this.style.color='#CCFFD3'" onmouseout="this.style.color='rgba(255,255,255,.45)'">
+            <svg style="width:18px;height:18px;" fill="currentColor" viewBox="0 0 24 24">
                 <path
                     d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
             </svg>
+            LinkedIn
         </a>
-
-        <a href="#nosotros" class="mobile-link hover:text-ingeny-green transition-colors">Nosotros</a>
-        <a href="#servicios" class="mobile-link hover:text-ingeny-green transition-colors">Servicios</a>
-        <a href="#casos-uso" class="mobile-link hover:text-ingeny-green transition-colors">Casos de Uso</a>
-        <a href="#metodologia" class="mobile-link hover:text-ingeny-green transition-colors">Metodología</a>
-        <a href="#contacto" class="mobile-link hover:text-ingeny-green transition-colors">Contacto</a>
     </div>
 
-    <section
-        class="hero-bg text-ingeny-black py-28 px-6 text-center flex flex-col items-center justify-center min-h-[75vh] relative overflow-hidden">
-        <div class="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
-            <h1
-                class="text-[3.5rem] leading-[1] sm:text-7xl md:text-8xl lg:text-[7rem] font-title font-bold mb-8 tracking-tight md:leading-[1.05]">
-                El cerebro de tu operación,<br>en piloto automático.
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section class="hero" style="background:var(--bg);">
+
+        <!-- Direction A: Neural canvas -->
+        <canvas id="hero-canvas"></canvas>
+
+        <!-- Direction B: Geometric grid -->
+        <div class="hero-geo">
+            <svg style="position:absolute;inset:0;width:100%;height:100%;" preserveAspectRatio="xMidYMid slice"
+                viewBox="0 0 1440 900">
+                <defs>
+                    <pattern id="grid-pat" x="0" y="0" width="72" height="72" patternUnits="userSpaceOnUse">
+                        <path d="M72 0L0 0 0 72" fill="none" stroke="#24BD58" stroke-width=".6" />
+                    </pattern>
+                    <radialGradient id="grid-fade" cx="50%" cy="48%" r="55%">
+                        <stop offset="0%" stop-color="white" stop-opacity="1" />
+                        <stop offset="100%" stop-color="white" stop-opacity="0" />
+                    </radialGradient>
+                    <mask id="gm">
+                        <rect width="1440" height="900" fill="url(#grid-fade)" />
+                    </mask>
+                </defs>
+                <rect width="1440" height="900" fill="url(#grid-pat)" mask="url(#gm)" opacity=".14" />
+                <line x1="0" y1="900" x2="720" y2="0" stroke="#CCFFD3" stroke-width=".6" opacity=".25" />
+                <line x1="720" y1="0" x2="1440" y2="900" stroke="#CCFFD3" stroke-width=".6" opacity=".25" />
+                <circle cx="720" cy="450" r="220" fill="none" stroke="#24BD58" stroke-width=".7" opacity=".35" />
+                <circle cx="720" cy="450" r="400" fill="none" stroke="#24BD58" stroke-width=".4" opacity=".18" />
+                <circle cx="720" cy="450" r="580" fill="none" stroke="#24BD58" stroke-width=".3" opacity=".1" />
+            </svg>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:700px;height:700px;
+      background:radial-gradient(circle,rgba(36,189,88,.055) 0%,transparent 68%);
+      border-radius:50%;pointer-events:none;"></div>
+        </div>
+
+        <div class="hero-glow-a"></div>
+        <div class="hero-fade-b"></div>
+
+        <div class="hero-content">
+            <div class="eyebrow fade-up">
+                <span class="eyebrow-dot"></span>
+                Arquitectura Cognitiva · Human-Centered AI
+            </div>
+
+            <h1 class="hero-h1 fade-up" style="transition-delay:.1s;">
+                El cerebro de tu operación,<br><em>en piloto automático.</em>
             </h1>
-            <p class="text-xl md:text-2xl font-medium max-w-4xl mb-12 leading-relaxed">
-                <span class="font-bold">El mercado está lleno de herramientas de IA. Nosotros construimos algo distinto:
-                    Un ecosistema de Arquitectura Cognitiva que se integra a tus procesos, elimina la fricción operativa
-                    y convierte el esfuerzo manual en rentabilidad real.</span>
-            </p>
-            <a href="./demo.erp.html" target="_blank"
-                class="flex z-10 text-center items-center justify-center gap-2 px-6 sm:px-10 py-4 sm:py-5 bg-ingeny-lightgreen text-black text-lg sm:text-xl font-black rounded-full hover:bg-white transition-colors shadow-2xl w-full sm:w-auto">
-                <span class="sm:hidden">Ver demo en vivo →</span>
-                <span class="hidden sm:inline">Ver demostración en vivo →</span>
-            </a>
-        </div>
-    </section>
 
-    <section class="py-16 border-b border-white/10 bg-ingeny-black">
-        <div class="max-w-[90rem] mx-auto px-4 lg:px-6 text-center">
-            <p class="text-[1.1rem] md:text-[1.4rem] font-bold font-title tracking-[0.03em] text-white uppercase mb-12">
-                NUESTRO
-                EQUIPO HA LIDERADO PROYECTOS EN</p>
-            <div
-                class="flex flex-wrap lg:flex-nowrap justify-center items-center gap-6 md:gap-10 lg:gap-12 xl:gap-16 w-full">
-                <img src="./assets/logos/chilecompra.png" alt="ChileCompra"
-                    class="h-9 md:h-12 lg:h-[3rem] xl:h-[3.5rem] object-contain hover:scale-105 transition-transform">
-                <img src="./assets/logos/falla.png" alt="Banco Falabella"
-                    class="h-10 md:h-14 lg:h-[3.5rem] xl:h-[4rem] object-contain hover:scale-105 transition-transform">
-                <img src="./assets/logos/volvo.png" alt="Volvo"
-                    class="h-10 md:h-14 lg:h-[3.5rem] xl:h-[4rem] object-contain hover:scale-105 transition-transform">
-                <img src="./assets/logos/mercedes.png" alt="mercedes benz"
-                    class="h-10 md:h-14 lg:h-[3.5rem] xl:h-[4rem] object-contain hover:scale-105 transition-transform">
-                <img src="./assets/logos/open.png" alt="Open English"
-                    class="h-12 md:h-16 lg:h-[4rem] xl:h-[4.5rem] object-contain hover:scale-105 transition-transform">
-                <img src="./assets/logos/shell.png" alt="Shell"
-                    class="h-12 md:h-16 lg:h-[4rem] xl:h-[4.5rem] object-contain hover:scale-105 transition-transform">
+            <p class="hero-sub fade-up" style="transition-delay:.2s;">
+                El mercado está lleno de herramientas de IA. Nosotros construimos algo distinto:
+                <strong>Un Ecosistema de Arquitectura Cognitiva</strong> que se integra a tus procesos,
+                elimina la fricción operativa y convierte el esfuerzo manual en rentabilidad real.
+            </p>
+
+            <div class="hero-btns fade-up" style="transition-delay:.32s;">
+                <a href="./demo.erp.html" target="_blank" class="btn btn-primary"
+                    style="font-size:1.05rem;padding:17px 40px;">
+                    Ver demostración en vivo →
+                </a>
+
             </div>
         </div>
     </section>
 
-    <section id="nosotros" class="pt-20 pb-10 bg-ingeny-black section">
-        <div class="max-w-7xl mx-auto px-6 text-center -mt-[60px]">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold font-title mb-6">Human-Centered AI.<br>Humana, ética y
-                eficiente.
-            </h2>
-            <p class="text-white mb-20 text-xl font-normal">
-                Automatización inteligente que amplifica tus operaciones, reduce costos y libera a tu equipo
-                para lo que realmente importa.
-            </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-                <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-ingeny-green/50 transition-colors">
-                    <img src="./assets/human-centered/human2.png" alt="Continuidad Operativa"
-                        class="w-full h-64 object-cover">
-                    <div class="p-10 flex-grow">
-                        <h3 class="text-3xl font-bold font-title mb-6">Continuidad<br>operativa<br>inteligente</h3>
-                        <p class="text-base text-white leading-relaxed font-normal">
-                            Agentes autónomos que gestionan tus procesos críticos sin supervisión constante. Desde
-                            aprobaciones y reportes hasta flujos entre sistemas, <span
-                                class="text-ingeny-lightgreen font-bold">tu operación no se detiene aunque tu equipo no
-                                esté.</span>
-                        </p>
+    <!-- ═══════════════ LOGO STRIP ═══════════════ -->
+    <div class="logo-strip section-sep">
+        <p class="logo-label" style="opacity: 1">Nuestro equipo ha liderado proyectos en</p>
+        <div class="marquee-track">
+            <div class="marquee-inner">
+                <img src="./assets/logos/chilecompra.png" alt="ChileCompra">
+                <img src="./assets/logos/falla.png" alt="Banco Falabella">
+                <img src="./assets/logos/volvo.png" alt="Volvo">
+                <img src="./assets/logos/mercedes.png" alt="Mercedes Benz">
+                <img src="./assets/logos/open.png" alt="Open English">
+                <img src="./assets/logos/shell.png" alt="Shell">
+                <img src="./assets/logos/chilecompra.png" alt="ChileCompra">
+                <img src="./assets/logos/falla.png" alt="Banco Falabella">
+                <img src="./assets/logos/volvo.png" alt="Volvo">
+                <img src="./assets/logos/mercedes.png" alt="Mercedes Benz">
+                <img src="./assets/logos/open.png" alt="Open English">
+                <img src="./assets/logos/shell.png" alt="Shell">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════ NOSOTROS ═══════════════ -->
+    <section id="nosotros" class="section" style="padding:120px 0;">
+        <div class="wrap">
+            <div style="text-align:center;margin-bottom:64px;" class="fade-up">
+                <h2 class="sh2">Human-Centered AI.<br>Humana, ética y eficiente.</h2>
+                <p class="slead" style="margin:0 auto;text-align:center;">Automatización inteligente que amplifica tus
+                    operaciones, reduce costos y libera a tu equipo para lo que realmente importa.</p>
+            </div>
+
+            <div class="grid3" style="margin-bottom:52px;">
+                <div class="card fade-up" style="transition-delay:.1s;">
+                    <div class="card-img"><img src="./assets/human-centered/human2.png" alt="Continuidad Operativa">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-h3">Continuidad<br>operativa inteligente</h3>
+                        <p class="card-p">Agentes autónomos que gestionan tus procesos críticos sin supervisión
+                            constante. Desde aprobaciones y reportes hasta flujos entre sistemas, <span>tu operación no
+                                se detiene aunque tu equipo no esté.</span></p>
                     </div>
                 </div>
-                <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-ingeny-green/50 transition-colors">
-                    <img src="./assets/human-centered/human3.png" alt="Sin complicaciones, fácil adopción"
-                        class="w-full h-64 object-cover">
-                    <div class="p-10 flex-grow">
-                        <h3 class="text-3xl font-bold font-title mb-6">Sin complicaciones,<br>fácil adopción</h3>
-                        <p class="text-base text-white leading-relaxed font-normal">
-                            Conectamos nuestros agentes directamente a tu ERP, CRM y sistemas actuales. Sin fricción,
-                            sin proyectos interminables. <span class="text-ingeny-lightgreen font-bold">Plug & play con
-                                tu stack, listo para operar
-                                desde el primer día.</span>
-                        </p>
+
+                <div class="card fade-up" style="transition-delay:.2s;">
+                    <div class="card-img"><img src="./assets/human-centered/human3.png" alt="Sin complicaciones"></div>
+                    <div class="card-body">
+                        <h3 class="card-h3">Sin complicaciones,<br>fácil adopción</h3>
+                        <p class="card-p">Conectamos nuestros agentes directamente a tu ERP, CRM y sistemas actuales.
+                            Sin fricción, sin proyectos interminables. <span>Plug & play con tu stack, listo para operar
+                                desde el primer día.</span></p>
                     </div>
                 </div>
-                <div
-                    class="bg-ingeny-card rounded-2xl overflow-hidden text-left flex flex-col group hover:border-ingeny-green/50 transition-colors">
-                    <img src="./assets/human-centered/human1.png" alt="Rentabilidad con Propósito"
-                        class="w-full h-64 object-cover">
-                    <div class="p-10 flex-grow">
-                        <h3 class="text-3xl font-bold font-title mb-6">Rentabilidad con<br>propósito</h3>
-                        <p class="text-base text-white leading-relaxed font-normal">
-                            Transformamos horas de trabajo manual en margen de ganancia. Recupera hasta un 40% del
-                            tiempo operativo de tu equipo. <span class="text-ingeny-lightgreen font-bold">Eliminamos las
-                                tareas repetitivas para que tus personas se enfoquen en lo que realmente
-                                importa.</span>
-                        </p>
+
+                <div class="card fade-up" style="transition-delay:.3s;">
+                    <div class="card-img"><img src="./assets/human-centered/human1.png" alt="Rentabilidad"></div>
+                    <div class="card-body">
+                        <h3 class="card-h3">Rentabilidad con<br>propósito</h3>
+                        <p class="card-p">Transformamos horas de trabajo manual en margen de ganancia. Recupera hasta un
+                            40% del tiempo operativo de tu equipo. <span>Eliminamos las tareas repetitivas para que tus
+                                personas se enfoquen en lo que realmente importa.</span></p>
                     </div>
                 </div>
             </div>
 
-            <a href="./demo.erp.html" target="_blank"
-                class="inline-block px-6 sm:px-10 py-4 sm:py-5 bg-ingeny-lightgreen text-black text-base sm:text-lg font-bold rounded-full hover:bg-white transition-colors w-full sm:w-auto">
-                Ver cómo funciona →
-            </a>
+            <div style="text-align:center;" class="fade-up">
+                <a href="./demo.erp.html" target="_blank" class="btn btn-primary">Ver cómo funciona →</a>
+            </div>
         </div>
     </section>
 
-    <section id="servicios" class="pt-16 pb-16 bg-ingeny-black border-t border-white/5 section">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 font-title">Nuestra
-                especialización<br>tecnológica.</h2>
-            <p class="text-white max-w-3xl mx-auto mb-20 text-xl font-normal">
-                Una solución a medida que potencia tu operación. Transformamos tus procesos en el motor autónomo de tu
-                organización.
-            </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 text-left gap-y-12">
-                <div class="flex flex-col bg-ingeny-card rounded-xl overflow-hidden">
-                    <div class="w-full h-56 bg-ingeny-gray overflow-hidden">
-                        <img src="./assets/beneficios/beneficio3.png" alt="Ecosistemas de Automatización"
-                            class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-8">
-                        <h3 class="text-3xl font-bold font-title mb-6">Ecosistemas de<br>automatización</h3>
-                        <p class="text-lg text-white leading-relaxed font-normal">Construímos flujos de trabajo
-                            inteligentes que conectan tus herramientas actuales con IA <span
-                                class="text-ingeny-lightgreen font-bold">para eliminar cuellos de botella
-                                y reducir tiempos de ejecución drásticamente.</span></p>
-                    </div>
-                </div>
-                <div class="flex flex-col bg-ingeny-card rounded-xl overflow-hidden">
-                    <div class="w-full h-56 bg-ingeny-gray overflow-hidden">
-                        <img src="./assets/beneficios/beneficio1.png" alt="Agentes y Asistentes IA"
-                            class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all">
-                    </div>
-                    <div class="p-8">
-                        <h3 class="text-3xl font-bold font-title mb-6">Agentes y<br>asistentes IA</h3>
-                        <p class="text-lg text-white leading-relaxed font-normal">Soluciones de lenguaje natural para
-                            atención al cliente, soporte técnico o gestión interna; <span
-                                class="text-ingeny-lightgreen font-bold">un cerebro digital que aprende
-                                automáticamente de tus procesos y actúa con la voz y el estilo de tu marca.</span>
-                        </p>
+    <!-- ═══════════════ SERVICIOS ═══════════════ -->
+    <section id="servicios" class="section section-sep" style="padding:120px 0;">
+        <div class="wrap">
+            <div style="text-align:center;margin-bottom:64px;" class="fade-up">
+                <h2 class="sh2">Nuestra especialización<br>tecnológica.</h2>
+                <p class="slead" style="margin:0 auto;text-align:center;">Una solución a medida que potencia tu
+                    operación. Transformamos tus procesos en el motor autónomo de tu organización.</p>
+            </div>
+
+            <div class="grid3" style="margin-bottom:24px;">
+                <div class="card fade-up" style="transition-delay:.1s;">
+                    <div class="card-img"><img src="./assets/beneficios/beneficio3.png" alt="Automatización"></div>
+                    <div class="card-body">
+                        <h3 class="card-h3">Ecosistemas de<br>automatización</h3>
+                        <p class="card-p">Construímos flujos de trabajo inteligentes que conectan tus herramientas
+                            actuales con IA <span>para eliminar cuellos de botella y reducir tiempos de ejecución
+                                drásticamente.</span></p>
                     </div>
                 </div>
-                <div class="flex flex-col bg-ingeny-card rounded-xl overflow-hidden">
-                    <div class="w-full h-56 bg-ingeny-gray overflow-hidden">
-                        <img src="./assets/beneficios/beneficio2.png" alt="Inteligencia de Datos Aplicada"
-                            class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all">
+
+                <div class="card fade-up" style="transition-delay:.2s;">
+                    <div class="card-img">
+                        <img src="./assets/beneficios/beneficio1.png" alt="Agentes IA"
+                            style="filter:grayscale(100%);transition:filter .5s;"
+                            onmouseover="this.style.filter='grayscale(0%)'"
+                            onmouseout="this.style.filter='grayscale(100%)'">
                     </div>
-                    <div class="p-8">
-                        <h3 class="text-3xl font-bold font-title mb-6">Inteligencia de<br>datos aplicada</h3>
-                        <p class="text-lg text-white leading-relaxed font-normal">Transformamos datos dispersos en
-                            tableros de control predictivos. <span
-                                class="text-ingeny-lightgreen font-bold">Identificamos oportunidades de ahorro y
-                                crecimiento en tiempo real para decisiones basadas en evidencia.</span></p>
+                    <div class="card-body">
+                        <h3 class="card-h3">Agentes y<br>asistentes IA</h3>
+                        <p class="card-p">Soluciones de lenguaje natural para atención al cliente, soporte técnico o
+                            gestión interna; <span>un cerebro digital que aprende automáticamente de tus procesos y
+                                actúa con la voz y el estilo de tu marca.</span></p>
+                    </div>
+                </div>
+
+                <div class="card fade-up" style="transition-delay:.3s;">
+                    <div class="card-img">
+                        <img src="./assets/beneficios/beneficio2.png" alt="Datos"
+                            style="filter:grayscale(100%);transition:filter .5s;"
+                            onmouseover="this.style.filter='grayscale(0%)'"
+                            onmouseout="this.style.filter='grayscale(100%)'">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-h3">Inteligencia de<br>datos aplicada</h3>
+                        <p class="card-p">Transformamos datos dispersos en tableros de control predictivos.
+                            <span>Identificamos oportunidades de ahorro y crecimiento en tiempo real para decisiones
+                                basadas en evidencia.</span></p>
                     </div>
                 </div>
             </div>
 
-            <div
-                class="bg-black rounded-3xl overflow-hidden flex flex-col md:flex-row text-left border border-white/10 group">
-                <div class="w-full md:w-[30%] overflow-hidden h-72 md:h-auto shrink-0">
+            <!-- Wide challenge card -->
+            <div class="fade-up"
+                style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--rad);overflow:hidden;display:flex;flex-wrap:wrap;">
+                <div style="width:min(300px,100%);flex-shrink:0;overflow:hidden;">
                     <img src="./assets/¿Tu desafío requiere una solución única.png" alt="Solución Única"
-                        class="w-full h-full object-cover filter grayscale">
+                        style="width:100%;height:100%;min-height:220px;object-fit:cover;filter:grayscale(80%);">
                 </div>
-                <div class="w-full md:w-[70%] p-12 md:p-16 flex flex-col justify-center">
-                    <h3 class="text-3xl font-bold font-title mb-6">¿Tu desafío requiere una solución única?</h3>
-                    <p class="text-white mb-10 max-w-xl text-lg font-normal">Diseñamos arquitecturas de IA
-                        personalizadas para problemas que las herramientas estándar no pueden resolver. Unimos visión
-                        estratégica y ejecución técnica a tu medida.</p>
-                    <a href="https://wa.me/56954679270?text=Hola%20Ingeny%20Labs.%20Estoy%20interesado%20en%20conocer%20los%20servicios"
-                        target="_blank"
-                        class="self-start text-center px-6 sm:px-10 py-4 sm:py-5 bg-transparent border-2 border-ingeny-lightgreen text-ingeny-lightgreen text-base sm:text-lg font-bold rounded-full hover:bg-ingeny-lightgreen hover:text-black transition-colors w-full sm:w-auto">
-                        Consultar viabilidad de mi proyecto
-                    </a>
+                <div
+                    style="flex:1;padding:48px;display:flex;flex-direction:column;justify-content:center;min-width:260px;">
+                    <h3 style="font-family:'Cal Sans',sans-serif;font-size:2rem;line-height:1.2;margin-bottom:16px;">¿Tu
+                        desafío requiere una solución única?</h3>
+                    <p style="font-size:.98rem;line-height:1.75;color:var(--muted);margin-bottom:32px;max-width:480px;">
+                        Diseñamos arquitecturas de IA personalizadas para problemas que las herramientas estándar no
+                        pueden resolver. Unimos visión estratégica y ejecución técnica a tu medida.</p>
+                    <div>
+                        <a href="https://wa.me/56954679270?text=Hola%20Ingeny%20Labs.%20Estoy%20interesado%20en%20conocer%20los%20servicios"
+                            target="_blank" class="btn btn-outline">Consultar viabilidad de mi proyecto</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Nueva Sección: Casos de Uso en Acción (Video Demos) -->
-    <section id="casos-uso" class="pt-16 pb-16 bg-ingeny-black border-t border-white/5 section">
-        <div class="max-w-[70rem] mx-auto px-6 text-center">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 font-title">El ecosistema<br>en acción.</h2>
-            <p class="text-white max-w-3xl mx-auto mb-16 text-lg sm:text-xl font-normal">
-                Mira cómo nuestra arquitectura cognitiva transforma operaciones en tiempo real. Selecciona un caso de
-                uso para ver la demostración interactiva.
-            </p>
 
-            <div class="flex flex-col gap-8 md:gap-10 items-center text-left w-full max-w-7xl mx-auto">
-                <!-- TABS CONTAINER -->
-                <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6" id="video-tabs">
-                    <button onclick="changeVideo(this, 0)"
-                        class="tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-ingeny-green bg-ingeny-card focus:outline-none">
-                        <h4 class="text-xl sm:text-2xl font-bold font-title mb-2 text-white">Logística "Zero-Touch"</h4>
-                        <p class="text-white/80 text-sm sm:text-base font-normal">
-                            Nuestro sistema lee correos B2B desordenados, extrae SKUs implícitos e inyecta órdenes de
-                            compra directamente en tu <strong>ERP corporativo</strong> — sin que nadie transcriba una
-                            sola línea.
-                        </p>
+    <!-- ═══════════════ CASOS DE USO ═══════════════ -->
+    <section id="casos-uso" class="section section-sep" style="padding:120px 0;">
+        <div class="wrap-md" style="font-weight: 700">
+            <div style="text-align:center;margin-bottom:56px;" class="fade-up">
+                <h2 class="sh2">El ecosistema<br>en acción.</h2>
+                <p class="slead" style="margin: 0 auto; text-align: center; font-weight: 400">Mira cómo nuestra
+                    Arquitectura Cognitiva transforma tus operaciones en tiempo real. Selecciona un caso de uso para ver
+                    la demostración interactiva.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:28px;" class="fade-up">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;"
+                    id="video-tabs">
+                    <button onclick="changeVideo(this,0)" class="tab-btn active">
+                        <h4 class="tab-h">Logística "Zero-Touch"</h4>
+                        <p class="tab-p" style="font-weight: 400">Nuestro sistema lee correos B2B desordenados, extrae
+                            SKUs implícitos e inyecta órdenes de compra directamente en tu <strong
+                                style="color:rgba(255,255,255,.7);">ERP corporativo</strong> — sin que nadie transcriba
+                            una sola línea.</p>
                     </button>
-
-                    <button onclick="changeVideo(this, 1)"
-                        class="tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-transparent hover:border-ingeny-green/50 bg-[#121212] focus:outline-none group">
-                        <h4
-                            class="text-xl sm:text-2xl font-bold font-title mb-2 text-white/50 group-hover:text-white transition-colors">
-                            Compliance financiero
-                        </h4>
-                        <p
-                            class="text-white/40 group-hover:text-white/80 transition-colors text-sm sm:text-base font-normal">
-                            Procesamos expedientes legales en PDF, cruzando datos contra listas de riesgo
-                            gubernamentales en tiempo real para aprobar el onboarding automáticamente en el
-                            <strong>Dashboard de riesgo</strong>.
-                        </p>
+                    <button onclick="changeVideo(this,1)" class="tab-btn">
+                        <h4 class="tab-h">Compliance financiero</h4>
+                        <p class="tab-p" style="font-weight: 400">Procesamos expedientes legales en PDF, cruzando datos
+                            contra listas de riesgo gubernamentales en tiempo real para aprobar el onboarding
+                            automáticamente en el <strong>dashboard de riesgo</strong>.</p>
                     </button>
-
-                    <button onclick="changeVideo(this, 2)"
-                        class="tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-transparent hover:border-ingeny-green/50 bg-[#121212] focus:outline-none group">
-                        <h4
-                            class="text-xl sm:text-2xl font-bold font-title mb-2 text-white/50 group-hover:text-white transition-colors">
-                            Soporte interno inteligente
-                        </h4>
-                        <p
-                            class="text-white/40 group-hover:text-white/80 transition-colors text-sm sm:text-base font-normal">
-                            Análisis multi-intención en Slack/Teams. Un empleado escribe un solo mensaje con dos
-                            problemas diferentes. La IA los detecta, resuelve la consulta de RRHH en el acto y
-                            <strong>escala el ticket de TI en Jira</strong> simultáneamente.
-                        </p>
+                    <button onclick="changeVideo(this,2)" class="tab-btn">
+                        <h4 class="tab-h">Soporte interno inteligente</h4>
+                        <p class="tab-p" style="font-weight: 400">Análisis multi-intención en Slack/Teams. Un empleado
+                            escribe un solo mensaje con dos problemas diferentes. La IA los detecta, resuelve la
+                            consulta de RRHH en el acto y <strong>escala el ticket de TI en Jira</strong>
+                            simultáneamente.</p>
                     </button>
                 </div>
 
-                <!-- VIDEO PLAYER -->
-                <div
-                    class="w-full bg-ingeny-card rounded-2xl overflow-hidden border border-white/10 relative shadow-[0_0_40px_rgba(36,189,88,0.15)]">
-                    <video id="demo-video-player" class="w-full h-auto transition-opacity duration-500" autoplay loop
+                <div class="video-wrap">
+                    <video id="demo-video-player" style="width:100%;display:block;transition:opacity .4s;" autoplay loop
                         muted playsinline>
                         <source src="./demo/demo3.mp4" type="video/mp4">
                         Tu navegador no soporta el elemento de video.
                     </video>
-                    <!-- Overlay loader -->
                     <div id="video-loader"
-                        class="absolute inset-0 bg-ingeny-card/90 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+                        style="position:absolute;inset:0;background:rgba(10,10,15,.88);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;">
                         <div
-                            class="w-12 h-12 border-4 border-ingeny-green border-t-transparent rounded-full animate-spin">
+                            style="width:36px;height:36px;border:3px solid var(--green);border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;">
                         </div>
                     </div>
                 </div>
@@ -416,233 +1266,428 @@
         </div>
     </section>
 
-    <section id="metodologia" class="pt-16 pb-16 bg-ingeny-black border-t border-white/5 section">
-        <div class="max-w-5xl mx-auto px-6 text-center">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 font-title">Nuestra metodología:
-                Del<br>diagnóstico a la
-                autonomía.</h2>
-            <p class="text-white mb-20 max-w-3xl mx-auto text-xl font-normal">Nos alineamos a los objetivos de tu
-                organización, priorizando siempre una experiencia de usuario intuitiva y de alto rendimiento.</p>
 
-            <div class="space-y-8 text-left">
-                <div
-                    class="bg-[#1F1F1F] p-10 md:p-12 rounded-3xl border border-white/5 flex flex-col md:flex-row gap-8 items-start md:items-center">
-                    <div class="shrink-0 bg-transparent">
-                        <img src="./assets/icons-metodologia/Roadmap.svg" class="w-16 h-16" alt="Roadmap">
-                    </div>
-                    <div class="flex-grow">
-                        <h4 class="font-bold font-title text-2xl mb-4 text-white">1. Diagnóstico y roadmap</h4>
-                        <p class="text-white leading-relaxed text-lg font-normal">No empezamos con código, sino con
-                            entendimiento. Analizamos tu arquitectura actual para identificar los puntos de mayor
-                            impacto y trazamos una hoja de ruta técnica alineada con tus objetivos de negocio.</p>
+    <!-- ═══════════════ METODOLOGÍA ═══════════════ -->
+    <section id="metodologia" class="section section-sep" style="padding:120px 0;">
+        <div class="wrap-md">
+            <div style="text-align:center;margin-bottom:64px;" class="fade-up">
+                <h2 class="sh2">Nuestra metodología: Del<br>diagnóstico a la autonomía.</h2>
+                <p class="slead" style="margin:0 auto;text-align:center;">Nos alineamos a los objetivos de tu
+                    organización, priorizando siempre una experiencia de usuario intuitiva y de alto rendimiento.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:18px;">
+                <div class="mstep fade-up" style="transition-delay:.1s;">
+                    <div class="mnum">01</div>
+                    <div style="flex:1;">
+                        <div class="mstep-icon">
+                            <img src="./assets/icons-metodologia/Roadmap.svg" alt="Roadmap">
+                            <h4>Diagnóstico y roadmap</h4>
+                        </div>
+                        <p class="mstep p">No empezamos con código, sino con entendimiento. Analizamos tu arquitectura
+                            actual para identificar los puntos de mayor impacto y trazamos una hoja de ruta técnica
+                            alineada con tus objetivos de negocio.</p>
                     </div>
                 </div>
 
-                <div
-                    class="bg-[#1F1F1F] p-10 md:p-12 rounded-3xl border border-white/5 flex flex-col md:flex-row gap-8 items-start md:items-center">
-                    <div class="shrink-0 bg-transparent">
-                        <img src="./assets/icons-metodologia/Code.svg" class="w-16 h-16" alt="Desarrollo">
-                    </div>
-                    <div class="flex-grow">
-                        <h4 class="font-bold font-title text-2xl mb-4 text-white">2. Desarrollo e integración</h4>
-                        <p class="text-white leading-relaxed text-lg font-normal">Construimos tu solución a medida
-                            utilizando los modelos más avanzados de IA. Nos aseguramos de que el sistema se integre de
-                            forma fluida y ética con tus herramientas y equipo humano.</p>
+                <div class="mstep fade-up" style="transition-delay:.2s;">
+                    <div class="mnum">02</div>
+                    <div style="flex:1;">
+                        <div class="mstep-icon">
+                            <img src="./assets/icons-metodologia/Code.svg" alt="Desarrollo">
+                            <h4>Desarrollo e integración</h4>
+                        </div>
+                        <p class="mstep p">Construimos tu solución a medida utilizando los modelos más avanzados de IA.
+                            Nos aseguramos de que el sistema se integre de forma fluida y ética con tus herramientas y
+                            equipo humano.</p>
                     </div>
                 </div>
 
-                <div
-                    class="bg-[#1F1F1F] p-10 md:p-12 rounded-3xl border border-white/5 flex flex-col md:flex-row gap-8 items-start md:items-center">
-                    <div class="shrink-0 bg-transparent">
-                        <img src="./assets/icons-metodologia/Deployment.svg" class="w-16 h-16" alt="Despliegue">
-                    </div>
-                    <div class="flex-grow">
-                        <h4 class="font-bold font-title text-2xl mb-4 text-white">3. Despliegue y optimización</h4>
-                        <p class="text-white leading-relaxed text-lg font-normal">Lanzamos la solución y monitoreamos
-                            su rendimiento en tiempo real. Ajustamos y escalamos para garantizar que tu motor de IA
-                            aprenda, evolucione y entregue resultados medibles desde el primer día.</p>
+                <div class="mstep fade-up" style="transition-delay:.3s;">
+                    <div class="mnum">03</div>
+                    <div style="flex:1;">
+                        <div class="mstep-icon">
+                            <img src="./assets/icons-metodologia/Deployment.svg" alt="Despliegue">
+                            <h4>Despliegue y optimización</h4>
+                        </div>
+                        <p class="mstep p">Lanzamos la solución y monitoreamos su rendimiento en tiempo real. Ajustamos
+                            y escalamos para garantizar que tu motor de IA aprenda, evolucione y entregue resultados
+                            medibles desde el primer día.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 relative overflow-hidden bg-ingeny-black flex items-center justify-center min-h-[60vh]">
-        <img src="./assets/vision.png" alt="Visión" class="absolute inset-0 w-full h-full object-cover"
-            style="filter: grayscale(100%) brightness(150%);">
-        <div class="absolute inset-0 bg-gradient-to-t from-ingeny-black via-transparent">
-        </div>
-        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-10 font-title">Nuestra visión: El futuro de
-                la<br>colaboración.
-            </h2>
-            <p class="text-xl text-white leading-relaxed mb-6 font-normal">
-                <span class="font-bold text-[#CCFFD3]">Visualizamos un ecosistema donde la tecnología no reemplaza el
-                    talento, sino que lo libera.</span>
-                Diseñamos un mañana empresarial donde la fricción operativa desaparece, permitiendo que agentes de IA y
-                equipos humanos colaboren fluidamente. Nuestra meta es que tu organización deje de ocuparse de lo
-                repetitivo para enfocarse puramente en la innovación y la estrategia.
-            </p>
-        </div>
-    </section>
 
-    <section id="contacto" class="py-20 bg-ingeny-black text-center border-t border-white/5 section">
-        <div class="max-w-5xl mx-auto px-6">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 font-title">¿Listo para integrar
-                verdadera<br>inteligencia en
-                tus procesos?</h2>
-            <p class="text-white mb-16 text-xl font-normal px-4">
-                Nuestro enfoque Human-Centered AI resuelve desafíos reales, garantizando una adopción fluida y
-                resultados medibles. <span class="text-[#CCFFD3] font-bold">Ya sea en el sector público o
-                    privado</span>,
-                somos el socio estratégico que tu organización necesita para liderar el cambio.
-            </p>
-
-            <a href="https://wa.me/56954679270?text=Hola%20Ingeny%20Labs.%20Estoy%20interesado%20en%20conocer%20los%20servicios"
-                target="_blank"
-                class="inline-flex justify-center items-center gap-3 px-6 sm:px-10 py-4 sm:py-5 bg-ingeny-lightgreen text-black text-base sm:text-lg font-bold rounded-full hover:bg-white transition-colors mb-10 shadow-2xl w-full sm:w-auto">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
-                </svg>
-                Agendar Consultoría Estratégica
-            </a>
-
-            <div class="mt-16 flex flex-col justify-center items-center opacity-90">
-                <img src="./assets/logos/chilecompra.png" alt="ChileCompra" class="h-16 md:h-20 object-contain mb-6">
-                <p class="text-base md:text-lg text-white font-bold">Proveedor acreditado en Mercado Público | Expertos
-                    en
-                    soluciones para instituciones y grandes empresas.</p>
+    <!-- ═══════════════ VISIÓN ═══════════════ -->
+    <section class="vision section-sep" style="padding:160px 0;min-height:60vh;display:flex;align-items:center;">
+        <img src="./assets/vision.png" alt="Visión" class="vision-img">
+        <div class="vision-overlay"></div>
+        <div class="vision-fade"></div>
+        <div class="wrap-md" style="position:relative;z-index:10;text-align:center;">
+            <div class="fade-up">
+                <h2 class="sh2" style="font-size:clamp(2.2rem,5vw,3.8rem);margin-bottom:28px;">Nuestra visión: El futuro
+                    de<br>la colaboración.</h2>
+                <p style="font-size:1.08rem;line-height:1.8;color:#fff;">
+                    <span style="color:var(--mint);font-weight:600;">Visualizamos un ecosistema donde la tecnología no
+                        reemplaza el talento, sino que lo libera.</span>
+                    Diseñamos un mañana empresarial donde la fricción operativa desaparece, permitiendo que agentes de
+                    IA y equipos humanos colaboren fluidamente. Nuestra meta es que tu organización deje de ocuparse de
+                    lo repetitivo para enfocarse puramente en la innovación y la estrategia.
+                </p>
             </div>
         </div>
     </section>
 
-    <footer
-        class="bg-ingeny-green text-ingeny-black py-8 px-8 md:px-16 flex flex-col md:flex-row justify-between items-center text-base font-bold gap-8">
 
-        <div class="flex items-center justify-center md:justify-start gap-2 w-full md:flex-1">
-            <img src="./assets/logo.svg" alt="Ingeny Labs Logo" class="h-10 md:h-12 object-contain filter brightness-0">
-        </div>
+    <!-- ═══════════════ CONTACTO ═══════════════ -->
+    <section id="contacto" class="section section-sep" style="padding:140px 0;">
+        <div class="wrap-md" style="text-align:center;">
+            <div class="fade-up">
+                <span class="stag">Comencemos</span>
+                <h2 class="sh2" style="font-size:clamp(2.4rem,5.5vw,4.2rem);margin-bottom:24px;">¿Listo para integrar
+                    verdadera<br>inteligencia en tus procesos?</h2>
+                <p
+                    style="font-size:1.05rem;line-height:1.8;color:var(--muted);margin-bottom:48px;max-width:620px;margin-left:auto;margin-right:auto;">
+                    Nuestro enfoque Human-Centered AI resuelve desafíos reales, garantizando una adopción fluida y
+                    resultados medibles.
+                    <span style="color:var(--mint);font-weight:600;">Ya sea en el sector público o privado</span>,
+                    somos el socio estratégico que tu organización necesita para liderar el cambio.
+                </p>
 
-        <div class="font-medium w-full md:flex-1 text-center">
-            &copy; 2026 Ingeny Labs. Todos los derechos reservados.
-        </div>
+                <a href="https://wa.me/56954679270?text=Hola%20Ingeny%20Labs.%20Estoy%20interesado%20en%20conocer%20los%20servicios"
+                    target="_blank" class="btn btn-primary"
+                    style="font-size:1.05rem;padding:18px 44px;display:inline-flex;margin-bottom:72px;">
+                    <svg style="width:20px;height:20px;" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
+                    </svg>
+                    Agendar Consultoría Estratégica
+                </a>
 
-        <div class="flex items-center justify-center md:justify-end gap-8 w-full md:flex-1">
-            <a href="https://www.linkedin.com/company/ingeny-labs" target="_blank"
-                class="text-ingeny-black hover:text-white transition-colors" aria-label="LinkedIn">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                </svg>
-            </a>
+                <div
+                    style="padding-top:48px;border-top:1px solid var(--sep);display:flex;flex-direction:column;align-items:center;gap:14px;opacity:.65;">
+                    <img src="./assets/logos/chilecompra.png" alt="ChileCompra"
+                        style="height:48px;object-fit:contain;filter:brightness(0) invert(1);">
+                    <p style="font-size:.875rem;color:var(--muted);">Proveedor acreditado en Mercado Público | Expertos
+                        en soluciones para instituciones y grandes empresas.</p>
+                </div>
+            </div>
         </div>
+    </section>
+
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="footer">
+        <img src="./assets/logo.svg" alt="Ingeny Labs" style="height:38px;object-fit:contain;filter:brightness(0);">
+        <span style="font-size:.82rem;font-weight:600;">&copy; 2026 Ingeny Labs. Todos los derechos reservados.</span>
+        <a href="https://www.linkedin.com/company/ingeny-labs" target="_blank"
+            style="color:var(--dk-green);transition:opacity .2s;" onmouseover="this.style.opacity='.55'"
+            onmouseout="this.style.opacity='1'" aria-label="LinkedIn">
+            <svg style="width:22px;height:22px;" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+            </svg>
+        </a>
     </footer>
 
+
+    <!-- ═══════════════ TWEAKS PANEL ═══════════════ -->
+    <div id="tweaks-panel">
+        <div class="tw-title">
+            Tweaks
+            <button class="tw-close" onclick="closeTweaks()">✕</button>
+        </div>
+
+        <span class="tw-label">Dirección de diseño</span>
+        <div class="tw-row">
+            <button class="dir-btn active" id="btn-dir-a" onclick="setDir('A')">A — Cortex</button>
+            <button class="dir-btn" id="btn-dir-b" onclick="setDir('B')">B — Monolith</button>
+        </div>
+        <p class="tw-desc" id="dir-desc">Partículas neuronales · Cards glass · Green glow</p>
+
+        <div class="tw-divider"></div>
+
+        <span class="tw-label" style="margin-top:16px;display:block;">Densidad de partículas</span>
+        <input type="range" min="20" max="120" value="60" id="node-slider" oninput="setNodeCount(this.value)">
+
+        <span class="tw-label" style="margin-top:14px;display:block;">Velocidad de animación</span>
+        <input type="range" min="10" max="100" value="35" id="speed-slider" oninput="setSpeed(this.value)">
+
+        <span class="tw-label" style="margin-top:14px;display:block;">Intensidad de brillo</span>
+        <input type="range" min="0" max="100" value="55" id="glow-slider" oninput="setGlow(this.value)">
+    </div>
+
+
     <script>
-        // Funcionalidad Menú Mobile
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
+        /* ══════════════════════════════════════════
+           NEURAL CANVAS — Direction A
+        ══════════════════════════════════════════ */
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, nodes = [], RAF;
+        let nodeCount = 60, speedMult = 1, glowAlpha = 0.55;
+        const GREEN = '#24BD58', MINT = '#CCFFD3';
+
+        function resize() {
+            W = canvas.width = canvas.offsetWidth;
+            H = canvas.height = canvas.offsetHeight;
+        }
+
+        function initNodes() {
+            nodes = Array.from({ length: nodeCount }, () => ({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                vx: (Math.random() - .5) * .4 * speedMult,
+                vy: (Math.random() - .5) * .4 * speedMult,
+                r: Math.random() * 2 + 1,
+                pulse: Math.random() * Math.PI * 2,
+                bright: Math.random() > .85
+            }));
+        }
+
+        function drawCanvas() {
+            ctx.clearRect(0, 0, W, H);
+            const t = Date.now() * .001;
+
+            // Draw connections
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const a = nodes[i], b = nodes[j];
+                    const dx = a.x - b.x, dy = a.y - b.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 160) {
+                        const alpha = (1 - dist / 160) * 0.18 * glowAlpha;
+                        ctx.beginPath();
+                        ctx.moveTo(a.x, a.y);
+                        ctx.lineTo(b.x, b.y);
+                        ctx.strokeStyle = `rgba(36,189,88,${alpha})`;
+                        ctx.lineWidth = .6;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw nodes
+            nodes.forEach(n => {
+                n.pulse += .03;
+                const pulseFactor = .5 + .5 * Math.sin(n.pulse);
+                const alpha = (.3 + pulseFactor * .5) * glowAlpha;
+                const r = n.r + pulseFactor * .8;
+
+                if (n.bright) {
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, r * 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(36,189,88,${alpha * .12})`;
+                    ctx.fill();
+                }
+
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+                ctx.fillStyle = n.bright
+                    ? `rgba(204,255,211,${alpha})`
+                    : `rgba(36,189,88,${alpha * .7})`;
+                ctx.fill();
+
+                // Move
+                n.x += n.vx * speedMult;
+                n.y += n.vy * speedMult;
+                if (n.x < -20) n.x = W + 20;
+                if (n.x > W + 20) n.x = -20;
+                if (n.y < -20) n.y = H + 20;
+                if (n.y > H + 20) n.y = -20;
+            });
+
+            RAF = requestAnimationFrame(drawCanvas);
+        }
+
+        window.addEventListener('resize', () => { resize(); initNodes(); });
+        resize();
+        initNodes();
+        drawCanvas();
+
+
+        /* ══════════════════════════════════════════
+           TWEAKS
+        ══════════════════════════════════════════ */
+        const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+            "direction": "A",
+            "nodeCount": 74,
+            "speed": 55,
+            "glow": 100
+        }/*EDITMODE-END*/;
+
+        function setDir(d) {
+            document.body.setAttribute('data-dir', d);
+            document.getElementById('btn-dir-a').classList.toggle('active', d === 'A');
+            document.getElementById('btn-dir-b').classList.toggle('active', d === 'B');
+            document.getElementById('dir-desc').textContent = d === 'A'
+                ? 'Partículas neuronales · Cards glass · Green glow'
+                : 'Grid geométrico · Cards sólidas · Swiss modernism';
+            window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { direction: d } }, '*');
+        }
+
+        function setNodeCount(v) {
+            nodeCount = parseInt(v);
+            initNodes();
+            window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { nodeCount: parseInt(v) } }, '*');
+        }
+
+        function setSpeed(v) {
+            speedMult = parseInt(v) / 35;
+            window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { speed: parseInt(v) } }, '*');
+        }
+
+        function setGlow(v) {
+            glowAlpha = parseInt(v) / 100;
+            window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { glow: parseInt(v) } }, '*');
+        }
+
+        function closeTweaks() {
+            document.getElementById('tweaks-panel').classList.remove('open');
+            window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+        }
+
+        // Tweaks protocol
+        window.addEventListener('message', e => {
+            if (e.data?.type === '__activate_edit_mode') {
+                document.getElementById('tweaks-panel').classList.add('open');
+            } else if (e.data?.type === '__deactivate_edit_mode') {
+                document.getElementById('tweaks-panel').classList.remove('open');
+            }
+        });
+        window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+        // Apply persisted tweaks
+        (function () {
+            const d = TWEAK_DEFAULTS;
+            if (d.direction) setDir(d.direction);
+            if (d.nodeCount) { nodeCount = d.nodeCount; document.getElementById('node-slider').value = d.nodeCount; initNodes(); }
+            if (d.speed) { setSpeed(d.speed); document.getElementById('speed-slider').value = d.speed; }
+            if (d.glow) { setGlow(d.glow); document.getElementById('glow-slider').value = d.glow; }
+        })();
+
+
+        /* ══════════════════════════════════════════
+           MOBILE MENU
+        ══════════════════════════════════════════ */
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileLinks = document.querySelectorAll('.mobile-link');
 
-        function toggleMenu() {
-            mobileMenu.classList.toggle('hidden');
-            mobileMenu.classList.toggle('flex');
-            document.body.classList.toggle('overflow-hidden');
-        }
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+        document.getElementById('close-menu-btn').addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = '';
+        });
+        mobileLinks.forEach(l => l.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = '';
+        }));
 
-        mobileMenuBtn.addEventListener('click', toggleMenu);
-        closeMenuBtn.addEventListener('click', toggleMenu);
-        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
-        // Intersection Observer para resaltar menu activo con Smooth Scroll al scrollear
-        const sections = document.querySelectorAll('.section');
+        /* ══════════════════════════════════════════
+           ACTIVE NAV LINKS
+        ══════════════════════════════════════════ */
+        const sections = document.querySelectorAll('.section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
 
-        const observerOptions = {
-            root: null,
-            rootMargin: '-50% 0px -50% 0px', // Gatilla cuando la seccion esta a la mitad de la pantalla
-            threshold: 0
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const currentId = entry.target.getAttribute('id');
-                    navLinks.forEach(link => {
-                        link.classList.remove('active-link');
-                        if (link.getAttribute('href') === `#${currentId}`) {
-                            link.classList.add('active-link');
-                        }
+        new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const id = e.target.id;
+                    navLinks.forEach(l => {
+                        l.classList.toggle('active', l.getAttribute('href') === '#' + id);
                     });
                 }
             });
-        }, observerOptions);
+        }, { rootMargin: '-45% 0px -45% 0px' }).observe(...sections);
+        // Fix: observe each section
+        sections.forEach(s => {
+            new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + s.id));
+                    }
+                });
+            }, { rootMargin: '-45% 0px -45% 0px' }).observe(s);
+        });
 
-        sections.forEach(sec => observer.observe(sec));
 
-        // Lógica de Tabs Multimedia Casos de Uso
-        const videos = [
-            "./demo/demo3.mp4",
-            "./demo/demo1.mp4",
-            "./demo/demo2.mp4"
-        ];
-
+        /* ══════════════════════════════════════════
+           VIDEO TABS
+        ══════════════════════════════════════════ */
+        const videos = ['./demo/demo3.mp4', './demo/demo1.mp4', './demo/demo2.mp4'];
         const videoPlayer = document.getElementById('demo-video-player');
         const videoLoader = document.getElementById('video-loader');
         const tabBtns = document.querySelectorAll('.tab-btn');
+        let currentTab = 0, tabTimer;
 
-        let currentTabIndex = 0;
-        let tabInterval;
-
-        function startTabInterval() {
-            clearInterval(tabInterval);
-            tabInterval = setInterval(() => {
-                currentTabIndex = (currentTabIndex + 1) % tabBtns.length;
-                changeVideo(tabBtns[currentTabIndex], currentTabIndex, true);
+        function startTabTimer() {
+            clearInterval(tabTimer);
+            tabTimer = setInterval(() => {
+                currentTab = (currentTab + 1) % tabBtns.length;
+                changeVideo(tabBtns[currentTab], currentTab, true);
             }, 20000);
         }
 
-        function changeVideo(element, index, isAuto = false) {
-            currentTabIndex = index;
-            if (!isAuto) {
-                startTabInterval(); // Reiniciar si fue click manual
-            }
-            // Regresar todos los tabs a estado inactivo
-            tabBtns.forEach(btn => {
-                btn.className = "tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-transparent hover:border-ingeny-green/50 bg-[#121212] focus:outline-none group";
-                btn.querySelector('h4').className = "text-xl sm:text-2xl font-bold font-title mb-2 text-white/50 group-hover:text-white transition-colors";
-                btn.querySelector('p').className = "text-white/40 group-hover:text-white/80 transition-colors text-sm sm:text-base font-normal";
-            });
+        function changeVideo(el, idx, auto = false) {
+            currentTab = idx;
+            if (!auto) startTabTimer();
+            tabBtns.forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
 
-            // Dar estilo de activo al tab clickeado
-            element.className = "tab-btn w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 border-ingeny-green bg-ingeny-card focus:outline-none";
-            element.querySelector('h4').className = "text-xl sm:text-2xl font-bold font-title mb-2 text-white";
-            element.querySelector('p').className = "text-white/80 text-sm sm:text-base font-normal";
-
-            // Cambiar el video y agregar feedback visual
-            if (videoPlayer && videoPlayer.src !== videos[index]) {
-                videoLoader.classList.remove('opacity-0');
-                videoPlayer.classList.add('opacity-0');
-
+            if (videoPlayer.src.split('/').pop() !== videos[idx].split('/').pop()) {
+                videoLoader.style.opacity = '1';
+                videoPlayer.style.opacity = '0';
                 setTimeout(() => {
-                    videoPlayer.src = videos[index];
+                    videoPlayer.src = videos[idx];
                     videoPlayer.load();
                     videoPlayer.play().then(() => {
-                        videoLoader.classList.add('opacity-0');
-                        videoPlayer.classList.remove('opacity-0');
-                    }).catch(e => {
-                        console.log("Auto-play prevenido o error", e);
-                        videoLoader.classList.add('opacity-0');
-                        videoPlayer.classList.remove('opacity-0');
+                        videoLoader.style.opacity = '0';
+                        videoPlayer.style.opacity = '1';
+                    }).catch(() => {
+                        videoLoader.style.opacity = '0';
+                        videoPlayer.style.opacity = '1';
                     });
                 }, 300);
             }
         }
 
-        // Iniciar rotación automática al cargar
-        startTabInterval();
+        startTabTimer();
+
+
+        /* ══════════════════════════════════════════
+           SCROLL FADE-UP
+        ══════════════════════════════════════════ */
+        const fadeEls = document.querySelectorAll('.fade-up');
+        const fadeObs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('vis'); fadeObs.unobserve(e.target); }
+            });
+        }, { rootMargin: '0px 0px -80px 0px', threshold: 0 });
+        fadeEls.forEach(el => fadeObs.observe(el));
+
+        // Force-show any .fade-up already in the viewport on load
+        function checkInitialVisible() {
+            fadeEls.forEach(el => {
+                const r = el.getBoundingClientRect();
+                if (r.top < window.innerHeight && r.bottom > 0) {
+                    el.classList.add('vis');
+                    fadeObs.unobserve(el);
+                }
+            });
+        }
+        if (document.readyState === 'complete') {
+            checkInitialVisible();
+        } else {
+            window.addEventListener('load', checkInitialVisible);
+        }
+        // Also fire after a short delay to catch staggered elements
+        setTimeout(checkInitialVisible, 100);
     </script>
 </body>
 

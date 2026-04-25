@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingeny Labs | Agent Forge - Mega Demo v2.0</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ingeny-green': '#10b981',
+                        'ingeny-dark': '#0f172a',
+                        'ingeny-darker': '#020617',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: white;
+            overflow: hidden;
+        }
+
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* Advanced Glassmorphism & Neon */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+        }
+
+        .glass-panel:hover {
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .glass-button {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid #10b981;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .glass-button:hover::after {
+            left: 100%;
+        }
+
+        .glass-button:hover {
+            background: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse-border {
+            animation: pulseBorder 2s infinite;
+        }
+
+        @keyframes pulseBorder {
+            0% {
+                border-color: rgba(16, 185, 129, 0.2);
+            }
+
+            50% {
+                border-color: rgba(16, 185, 129, 0.8);
+                box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            }
+
+            100% {
+                border-color: rgba(16, 185, 129, 0.2);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 2px;
+        }
+
+        .apexcharts-tooltip {
+            background: #0f172a !important;
+            border: 1px solid #10b981 !important;
+            color: white !important;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3) !important;
+        }
+
+        .apexcharts-tooltip-title {
+            background: #020617 !important;
+            border-bottom: 1px solid #1e293b !important;
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen font-sans antialiased text-gray-200 flex">
+
+    <canvas id="canvas-bg"></canvas>
+
+    <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60">
+        <div class="glass-panel p-10 rounded-2xl w-full max-w-md text-center relative">
+            <i
+                class="fa-solid fa-fingerprint text-6xl text-ingeny-green mb-6 neon-text pulse-border p-4 rounded-full border-2"></i>
+            <h1 class="text-3xl font-bold mb-2">Agent<span class="text-ingeny-green font-light">Forge</span></h1>
+            <p class="text-sm text-gray-400 mb-6">Laboratorio de Arquitectura Cognitiva</p>
+
+            <div class="space-y-4">
+                <input type="text" id="login-user" value="demo"
+                    class="w-full bg-black/50 border border-gray-700 rounded p-3 text-white focus:border-ingeny-green outline-none"
+                    placeholder="Usuario">
+                <input type="password" id="login-pass" value="demo321"
+                    class="w-full bg-black/50 border border-gray-700 rounded p-3 text-white focus:border-ingeny-green outline-none"
+                    placeholder="Contraseña">
+            </div>
+            <button id="btn-login" class="glass-button w-full mt-6 py-3 rounded font-bold" onclick="processLogin()">
+                INICIAR SECUENCIA
+            </button>
+            <p id="login-error" class="text-red-400 text-xs mt-3 hidden">Acceso Denegado.</p>
+        </div>
+    </div>
+
+    <aside id="sidebar" class="hidden glass-panel w-64 h-full flex flex-col border-r border-ingeny-green/20 z-10">
+        <div class="p-6 border-b border-gray-800 flex items-center gap-3">
+            <i class="fa-solid fa-layer-group text-2xl text-ingeny-green neon-text"></i>
+            <div>
+                <h2 class="font-bold text-lg leading-tight">Ingeny Labs</h2>
+                <p class="text-[10px] text-ingeny-green uppercase tracking-widest"><i
+                        class="fa-solid fa-circle text-[8px] animate-pulse"></i> Sistema Online</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-3 overflow-y-auto">
+            <button onclick="switchTab('tab-dashboard')"
+                class="nav-btn w-full text-left p-3 rounded flex items-center gap-3 bg-ingeny-green/10 text-ingeny-green border border-ingeny-green/50 transition">
+                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard Global
+            </button>
+            <button onclick="switchTab('tab-cerebro')"
+                class="nav-btn w-full text-left p-3 rounded flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 border border-transparent transition">
+                <i class="fa-solid fa-brain w-5"></i> Cerebro & Insights
+            </button>
+            <button onclick="switchTab('tab-logistica')"
+                class="nav-btn w-full text-left p-3 rounded flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 border border-transparent transition">
+                <i class="fa-solid fa-boxes-stacked w-5"></i> Logística (Legacy)
+            </button>
+            <button onclick="switchTab('tab-marketing')"
+                class="nav-btn w-full text-left p-3 rounded flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 border border-transparent transition">
+                <i class="fa-solid fa-bullseye w-5"></i> Ventas & MKT
+            </button>
+        </nav>
+    </aside>
+
+    <main id="main-content" class="hidden flex-1 h-full overflow-y-auto p-4 md:p-6 z-0 relative">
+
+        <div id="tab-dashboard" class="tab-content h-full flex flex-col gap-6 fade-in">
+            <header class="flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-bold">Rendimiento del Ecosistema</h2>
+                    <p class="text-gray-400">Métricas en tiempo real y proyecciones de rentabilidad.</p>
+                </div>
+                <div class="text-right text-xs bg-gray-800 px-3 py-1 rounded border border-gray-700">
+                    <span class="text-ingeny-green"><i class="fa-solid fa-shield-check"></i> Compliance Data:</span>
+                    AES-256 Activo
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-l-ingeny-green">
+                    <div class="text-gray-400 text-xs uppercase mb-1 flex justify-between">Horas Ahorradas <i
+                            class="fa-solid fa-clock text-ingeny-green"></i></div>
+                    <div class="text-3xl font-bold"><span id="kpi-hours" class="neon-text">4648</span><span
+                            class="text-lg">h</span></div>
+                    <div class="w-full bg-gray-700 h-1 mt-2 rounded">
+                        <div class="bg-ingeny-green h-1 rounded" style="width: 78%"></div>
+                    </div>
+                </div>
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-l-blue-500">
+                    <div class="text-gray-400 text-xs uppercase mb-1 flex justify-between">Incremento ROE/ROI <i
+                            class="fa-solid fa-sack-dollar text-blue-500"></i></div>
+                    <div class="text-3xl font-bold text-white">$1.8<span class="text-lg">M</span></div>
+                    <div class="text-blue-400 text-xs mt-1">+14.2% vs Trimestre anterior</div>
+                </div>
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-l-purple-500">
+                    <div class="text-gray-400 text-xs uppercase mb-1 flex justify-between">Lead Scoring MQL->SQL <i
+                            class="fa-solid fa-filter text-purple-500"></i></div>
+                    <div class="text-3xl font-bold text-white">68<span class="text-lg">%</span></div>
+                    <div class="text-purple-400 text-xs mt-1">Conversión optimizada por IA</div>
+                </div>
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-l-yellow-500">
+                    <div class="text-gray-400 text-xs uppercase mb-1 flex justify-between">People Analytics (NPS) <i
+                            class="fa-solid fa-users text-yellow-500"></i></div>
+                    <div class="text-3xl font-bold text-white">92<span class="text-lg">pts</span></div>
+                    <div class="text-yellow-400 text-xs mt-1">Riesgo de fuga: Mínimo</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+                <div class="glass-panel lg:col-span-2 rounded-xl p-4 flex flex-col">
+                    <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-2">Proyección de Rentabilidad
+                        (ROAS & Eficiencia)</h3>
+                    <div id="chart-predictive" class="flex-1 w-full"></div>
+                </div>
+                <div class="glass-panel rounded-xl p-4 flex flex-col items-center justify-center relative">
+                    <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-2 w-full text-left">Autonomía
+                        por Área</h3>
+                    <div id="chart-radial" class="w-full flex justify-center"></div>
+                    <button class="absolute bottom-4 text-xs text-ingeny-green hover:underline"
+                        onclick="switchTab('tab-cerebro')">Ver detalles en el Cerebro →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-cerebro" class="tab-content hidden h-full flex flex-col gap-6 fade-in">
+            <header>
+                <h2 class="text-3xl font-bold text-ingeny-green neon-text"><i class="fa-solid fa-network-wired"></i> El
+                    Cerebro Agent Forge</h2>
+                <p class="text-gray-400">Monitoreo de procesos paralelos y recomendaciones predictivas.</p>
+            </header>
+
+            <div class="flex-1 flex flex-col lg:flex-row gap-6">
+                <div class="glass-panel flex-1 rounded-xl flex flex-col overflow-hidden pulse-border">
+                    <div class="bg-gray-900 px-4 py-3 border-b border-gray-700 flex justify-between items-center">
+                        <span class="text-xs text-ingeny-green font-mono uppercase tracking-widest"><i
+                                class="fa-solid fa-terminal"></i> Terminal de Operaciones</span>
+                        <span class="text-[10px] bg-ingeny-green/20 text-ingeny-green px-2 py-1 rounded">RAG
+                            ENABLED</span>
+                    </div>
+                    <div id="brain-terminal"
+                        class="p-5 font-mono text-sm h-full overflow-y-auto space-y-3 bg-[#020617]/80">
+                    </div>
+                </div>
+
+                <div class="glass-panel flex-1 rounded-xl p-5 flex flex-col">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 animate-pulse"></i> Insights Estratégicos (IA)
+                    </h3>
+                    <div id="insights-container" class="space-y-4 overflow-y-auto flex-1 pr-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-logistica" class="tab-content hidden h-full flex flex-col gap-6 fade-in">
+            <header>
+                <h2 class="text-3xl font-bold">Logística & Producción</h2>
+                <p class="text-gray-400">Eliminando cuellos de botella: Integración IA con sistemas Legacy.</p>
+            </header>
+            <div class="flex-1 flex flex-col lg:flex-row gap-6 h-full">
+                <div class="glass-panel flex-1 rounded-xl p-6 flex flex-col">
+                    <h3 class="font-bold border-b border-gray-700 pb-2 mb-4"><i
+                            class="fa-solid fa-envelope text-blue-400 mr-2"></i> Input Caótico (Cliente B2B)</h3>
+                    <div class="bg-gray-100 text-gray-800 p-4 rounded text-sm mb-4">
+                        <p><strong>De:</strong> logistica@retailer.cl</p>
+                        <p><strong>Asunto:</strong> Stock urgente - campaña verano</p>
+                        <hr class="my-2 border-gray-300">
+                        <p class="leading-relaxed">Hola, necesitamos <span id="entity-1"
+                                class="transition duration-500">50 cajas</span> del <span id="entity-2"
+                                class="transition duration-500">producto X-900</span> despachadas a <span id="entity-3"
+                                class="transition duration-500">Bodega Central</span> mañana. Confirmen factibilidad.
+                        </p>
+                    </div>
+                    <button id="btn-legacy" class="glass-button w-full py-3 rounded mt-auto font-bold"
+                        onclick="runLegacyDemo()">
+                        <i class="fa-solid fa-microchip"></i> Orquestar con Agent Forge
+                    </button>
+                </div>
+                <div class="glass-panel flex-1 rounded-xl flex flex-col overflow-hidden border-2 border-blue-900">
+                    <div class="bg-blue-900 text-white text-xs p-2 font-mono flex justify-between">
+                        <span>AS400_MAINFRAME_EMULATOR</span><span>PORT:23</span>
+                    </div>
+                    <div id="legacy-screen"
+                        class="flex-1 bg-black text-green-500 font-mono p-4 text-sm overflow-y-auto">
+                        <div>LOGIN: AGENT_FORGE</div>
+                        <div>AUTH: SUCCESS</div>
+                        <div>WAITING FOR INPUT... <span id="legacy-cursor"
+                                class="animate-pulse bg-green-500 w-2 h-4 inline-block"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-marketing" class="tab-content hidden h-full flex flex-col gap-6 fade-in">
+            <header>
+                <h2 class="text-3xl font-bold">Ventas & Omnicanalidad</h2>
+                <p class="text-gray-400">Captación RAG, Neuromarketing y conversión de MQL a SQL sin humanos.</p>
+            </header>
+            <div class="flex-1 flex flex-col lg:flex-row gap-6 items-center">
+                <div
+                    class="w-[300px] h-[500px] bg-gray-900 border-4 border-gray-700 rounded-3xl flex flex-col overflow-hidden relative shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                    <div class="bg-[#075e54] text-white p-3 text-center text-sm font-bold"><i
+                            class="fa-brands fa-whatsapp"></i> Chatbot Captación (RAG)</div>
+                    <div id="mkt-chat" class="flex-1 bg-[#ece5dd] p-3 flex flex-col gap-2 overflow-y-auto pb-12"></div>
+                    <button id="btn-mkt"
+                        class="absolute bottom-0 w-full bg-ingeny-green text-white font-bold py-3 hover:bg-green-600 transition"
+                        onclick="runMktDemo()">
+                        Simular Lead Entrante
+                    </button>
+                </div>
+                <div class="glass-panel flex-1 h-full rounded-xl p-6 relative">
+                    <h3 class="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2"><i
+                            class="fa-solid fa-bullseye text-red-400"></i> Lead Scoring & Neuromarketing</h3>
+                    <div id="crm-content" class="opacity-30 transition-opacity duration-1000">
+                        <div class="bg-gray-800 rounded p-4 mb-4">
+                            <h4 class="text-xs text-gray-400 uppercase">Estado en CRM</h4>
+                            <div class="text-2xl font-bold text-ingeny-green" id="crm-status">Esperando Lead...</div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-gray-800/50 p-3 rounded border-l-4 border-yellow-500 hidden nm-item">
+                                <strong class="text-yellow-500">Neuromarketing:</strong> Lenguaje emocional detectado.
+                                Mostrar casos de éxito para generar confianza.
+                            </div>
+                            <div class="bg-gray-800/50 p-3 rounded border-l-4 border-blue-500 hidden nm-item">
+                                <strong class="text-blue-500">Lead Scoring:</strong> <span
+                                    class="text-2xl">85/100</span> (SQL - Listo para Venta).
+                            </div>
+                            <div class="bg-gray-800/50 p-3 rounded border-l-4 border-ingeny-green hidden nm-item">
+                                <strong class="text-ingeny-green">Acción IA:</strong> Reunión agendada automáticamente
+                                en Calendly del vendedor.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // 1. Particle Background
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function initCanvas() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 80; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.5 + 0.5 });
+        }
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#10b981'; ctx.strokeStyle = 'rgba(16, 185, 129, 0.1)';
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    if (Math.hypot(p.x - p2.x, p.y - p2.y) < 100) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+                }
+            });
+            requestAnimationFrame(drawCanvas);
+        }
+        window.addEventListener('resize', initCanvas);
+        initCanvas(); drawCanvas();
+
+        // 2. Login Flow
+        function processLogin() {
+            if (document.getElementById('login-user').value === 'demo' && document.getElementById('login-pass').value === 'demo321') {
+                document.getElementById('btn-login').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Inicializando...';
+                setTimeout(() => {
+                    document.getElementById('login-view').classList.add('hidden');
+                    document.getElementById('sidebar').classList.remove('hidden');
+                    document.getElementById('main-content').classList.remove('hidden');
+                    initCharts(); // Init ApexCharts
+                    startBrainLogs(); // Start loops
+                }, 1000);
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        // 3. Tab Switching
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = 'nav-btn w-full text-left p-3 rounded flex items-center gap-3 text-gray-400 hover:text-white hover:bg-gray-800 border border-transparent transition';
+            });
+            const active = event.currentTarget;
+            active.className = 'nav-btn w-full text-left p-3 rounded flex items-center gap-3 bg-ingeny-green/10 text-ingeny-green border border-ingeny-green/50 transition';
+        }
+
+        // 4. ApexCharts Initialization
+        function initCharts() {
+            // Predictive ROI Chart
+            var optionsLine = {
+                series: [{ name: 'ROI Histórico', data: [31, 40, 28, 51, 42, 109, 100] }, { name: 'Proyección Agent Forge', data: [null, null, null, null, 42, 140, 210] }],
+                chart: { type: 'area', height: 280, fontFamily: 'Inter, sans-serif', toolbar: { show: false }, background: 'transparent' },
+                colors: ['#3b82f6', '#10b981'],
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1 } },
+                dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3, dashArray: [0, 5] },
+                xaxis: { categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'], labels: { style: { colors: '#94a3b8' } }, axisBorder: { show: false } },
+                yaxis: { labels: { style: { colors: '#94a3b8' } } },
+                grid: { borderColor: 'rgba(255,255,255,0.05)', strokeDashArray: 4 },
+                theme: { mode: 'dark' },
+                legend: { position: 'top', horizontalAlign: 'right' }
+            };
+            new ApexCharts(document.querySelector("#chart-predictive"), optionsLine).render();
+
+            // Radial Bar for Automation
+            var optionsRadial = {
+                series: [92, 85, 78],
+                chart: { type: 'radialBar', height: 300, background: 'transparent' },
+                plotOptions: { radialBar: { dataLabels: { name: { fontSize: '14px', color: '#fff' }, value: { fontSize: '16px', color: '#10b981' }, total: { show: true, label: 'Global', color: '#fff', formatter: function () { return "85%" } } }, track: { background: 'rgba(255,255,255,0.05)' } } },
+                labels: ['Logística', 'Finanzas', 'Ventas'],
+                colors: ['#10b981', '#3b82f6', '#a855f7'],
+                theme: { mode: 'dark' }
+            };
+            new ApexCharts(document.querySelector("#chart-radial"), optionsRadial).render();
+        }
+
+        // 5. Brain Logs & Insights (Real-time Simulation)
+        function startBrainLogs() {
+            const terminal = document.getElementById('brain-terminal');
+            const insights = document.getElementById('insights-container');
+
+            // KPI Counter
+            setInterval(() => {
+                let el = document.getElementById('kpi-hours');
+                el.innerText = parseInt(el.innerText) + Math.floor(Math.random() * 5);
+            }, 2500);
+
+            const logMsgs = [
+                "[MKT_AGENT] Validando campaña Ads. ROAS +12%.",
+                "[HR_AGENT] Procesando licencias médicas. OCR al 99%.",
+                "[OPS_AGENT] Sincronizando inventario con SAP legacy.",
+                "[SEC_AGENT] Auditoría de accesos: 0 anomalías.",
+                "[FIN_AGENT] Conciliación bancaria completada en 1.2s."
+            ];
+
+            const insightMsgs = [
+                { i: 'fa-bullhorn', c: 'text-purple-400', title: 'Marketing Omnicanal', text: 'Presupuesto de campaña A subutilizado. Mover a campaña B aumentará leads en 18%.' },
+                { i: 'fa-truck-fast', c: 'text-blue-400', title: 'Logística B2B', text: 'Pico de demanda detectado en producto X-900. Generando orden de compra preventiva.' },
+                { i: 'fa-users', c: 'text-yellow-400', title: 'People Analytics', text: 'Rotación alta en área TI. Sugerencia: Lanzar encuesta de pulso y revisar plan de carrera.' }
+            ];
+
+            // Loop Logs
+            setInterval(() => {
+                const div = document.createElement('div');
+                div.className = "text-gray-400 fade-in";
+                div.innerHTML = `<span class="text-ingeny-green">➜</span> ${logMsgs[Math.floor(Math.random() * logMsgs.length)]}`;
+                terminal.appendChild(div);
+                if (terminal.childElementCount > 10) terminal.removeChild(terminal.firstChild);
+                terminal.scrollTop = terminal.scrollHeight;
+            }, 2000);
+
+            // Loop Insights
+            let insightIndex = 0;
+            setInterval(() => {
+                const data = insightMsgs[insightIndex % insightMsgs.length];
+                const div = document.createElement('div');
+                div.className = "bg-gray-800/60 p-4 rounded-lg border-l-4 border-gray-600 fade-in";
+                div.innerHTML = `<div class="flex items-center gap-2 font-bold mb-1 ${data.c}"><i class="fa-solid ${data.i}"></i> ${data.title}</div><p class="text-sm text-gray-300">${data.text}</p>`;
+                insights.prepend(div);
+                if (insights.childElementCount > 4) insights.removeChild(insights.lastChild);
+                insightIndex++;
+            }, 5000);
+        }
+
+        // 6. Legacy Demo
+        function runLegacyDemo() {
+            const btn = document.getElementById('btn-legacy');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Extrayendo...'; btn.disabled = true;
+
+            // Highlight text
+            setTimeout(() => {
+                ['entity-1', 'entity-2', 'entity-3'].forEach(id => document.getElementById(id).classList.add('bg-ingeny-green/40', 'text-white', 'px-1', 'rounded'));
+            }, 500);
+
+            // Terminal typing
+            setTimeout(() => {
+                const screen = document.getElementById('legacy-screen');
+                document.getElementById('legacy-cursor').remove();
+                btn.innerHTML = '<i class="fa-solid fa-terminal"></i> Inyectando a AS400';
+
+                const lines = ["> INITIATING COGNITIVE RPA", "> PARSING: QTY=50, SKU='X-900', LOC='CENTRAL'", "> CHECKING DB2 STOCK...", "> STOCK: OK. RESERVING ITEMS.", "> TRANSACTION #99102 COMMITTED."];
+                let i = 0;
+                let int = setInterval(() => {
+                    screen.innerHTML += `<div>${lines[i]}</div>`;
+                    i++;
+                    if (i >= lines.length) {
+                        clearInterval(int);
+                        screen.innerHTML += `<div>WAITING... <span class="animate-pulse bg-green-500 w-2 h-4 inline-block"></span></div>`;
+                        btn.innerHTML = '<i class="fa-solid fa-check"></i> Zero-Touch Completado';
+                        btn.classList.add('bg-ingeny-green/20');
+                    }
+                }, 600);
+            }, 1500);
+        }
+
+        // 7. Marketing Demo
+        function runMktDemo() {
+            const btn = document.getElementById('btn-mkt'); btn.style.display = 'none';
+            const chat = document.getElementById('mkt-chat');
+            const crm = document.getElementById('crm-content');
+
+            const addMsg = (txt, type) => {
+                chat.innerHTML += `<div class="p-2 rounded-lg max-w-[85%] text-xs fade-in ${type === 'in' ? 'bg-white text-black self-start rounded-tl-none' : 'bg-[#dcf8c6] text-black self-end rounded-tr-none'} shadow">${txt}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            };
+
+            setTimeout(() => addMsg("¡Hola! Me urge cotizar sus servicios de IA, perdemos mucho tiempo.", "in"), 500);
+            setTimeout(() => addMsg("Hola. Soy el Agente IA. Comprendo la urgencia. ¿Qué sistema ERP utilizan actualmente?", "out"), 2000);
+            setTimeout(() => addMsg("Usamos SAP, pero el equipo de ventas lo odia y usa Excel.", "in"), 4000);
+
+            setTimeout(() => {
+                addMsg("Entendido. Integrarnos con SAP sin migraciones es nuestra especialidad. He agendado una llamada con nuestro experto para mañana.", "out");
+                crm.classList.remove('opacity-30');
+                document.getElementById('crm-status').innerText = "Nuevo Lead (SAP / Urgente)";
+
+                let items = document.querySelectorAll('.nm-item');
+                setTimeout(() => items[0].classList.remove('hidden'), 500);
+                setTimeout(() => items[1].classList.remove('hidden'), 1500);
+                setTimeout(() => items[2].classList.remove('hidden'), 2500);
+            }, 6000);
+        }
+    </script>
+</body>
+
+</html>
