@@ -502,18 +502,19 @@
 
         /* ═══ LOGO STRIP ═══ */
         .logo-strip {
-            padding: 52px 0;
+            padding: 90px 0;
             overflow: hidden;
+            background: rgba(10, 10, 15, 0.4) !important;
         }
 
         .logo-label {
             text-align: center;
-            font-size: .68rem;
-            font-weight: 700;
-            letter-spacing: .22em;
+            font-size: .85rem;
+            font-weight: 800;
+            letter-spacing: .28em;
             text-transform: uppercase;
-            color: #fff;
-            margin-bottom: 36px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 48px;
         }
 
         [data-dir="B"] .logo-label {
@@ -522,26 +523,48 @@
 
         .marquee-track {
             overflow: hidden;
+            position: relative;
+        }
+
+        .marquee-track::before,
+        .marquee-track::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 120px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .marquee-track::before {
+            left: 0;
+            background: linear-gradient(to right, var(--bg), transparent);
+        }
+
+        .marquee-track::after {
+            right: 0;
+            background: linear-gradient(to left, var(--bg), transparent);
         }
 
         .marquee-inner {
             display: flex;
-            gap: 72px;
+            gap: 120px;
             align-items: center;
             width: max-content;
-            animation: marquee 28s linear infinite;
+            animation: marquee 40s linear infinite;
         }
 
         .marquee-inner img {
-            height: 44px;
+            height: 80px;
             object-fit: contain;
-            opacity: .85;
-            transition: opacity .3s;
+            opacity: 1;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
         }
 
         .marquee-inner img:hover {
-            opacity: 1;
+            transform: scale(1.1);
         }
 
         /* ═══ CARDS ═══ */
@@ -1147,7 +1170,7 @@
 
 
     <!-- ═══════════════ NOSOTROS ═══════════════ -->
-    <section id="nosotros" class="section" style="padding:120px 0;">
+    <section id="nosotros" class="section" style="padding:120px 0; margin-top: -6%;">
         <div class="wrap">
             <div style="text-align:center;margin-bottom:64px;" class="fade-up">
                 <h2 class="sh2">Human-Centered AI.<br>Humana, ética y eficiente.</h2>
@@ -1196,7 +1219,7 @@
 
 
     <!-- ═══════════════ SERVICIOS ═══════════════ -->
-    <section id="servicios" class="section section-sep" style="padding:120px 0;">
+    <section id="servicios" class="section section-sep" style="padding:120px 0; margin-top: -6%;">
         <div class="wrap">
             <div style="text-align:center;margin-bottom:64px;" class="fade-up">
                 <h2 class="sh2">Nuestra especialización<br>tecnológica.</h2>
@@ -1241,7 +1264,8 @@
                         <h3 class="card-h3">Inteligencia de<br>datos aplicada</h3>
                         <p class="card-p">Transformamos datos dispersos en tableros de control predictivos.
                             <span>Identificamos oportunidades de ahorro y crecimiento en tiempo real para decisiones
-                                basadas en evidencia.</span></p>
+                                basadas en evidencia.</span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1271,7 +1295,7 @@
 
 
     <!-- ═══════════════ CASOS DE USO ═══════════════ -->
-    <section id="casos-uso" class="section section-sep" style="padding:120px 0;">
+    <section id="casos-uso" class="section section-sep" style="padding:120px 0; margin-top: -6%;">
         <div class="wrap-md" style="font-weight: 700">
             <div style="text-align:center;margin-bottom:56px;" class="fade-up">
                 <h2 class="sh2">El ecosistema<br>en acción.</h2>
@@ -1324,7 +1348,7 @@
 
 
     <!-- ═══════════════ METODOLOGÍA ═══════════════ -->
-    <section id="metodologia" class="section section-sep" style="padding:120px 0;">
+    <section id="metodologia" class="section section-sep" style="padding:120px 0; margin-top: -6%;">
         <div class="wrap-md">
             <div style="text-align:center;margin-bottom:64px;" class="fade-up">
                 <h2 class="sh2">Nuestra metodología: Del<br>diagnóstico a la autonomía.</h2>
@@ -1401,7 +1425,7 @@
 
 
     <!-- ═══════════════ CONTACTO ═══════════════ -->
-    <section id="contacto" class="section section-sep" style="padding:140px 0;">
+    <section id="contacto" class="section section-sep" style="padding:140px 0; margin-top: -6%;">
         <div class="wrap-md" style="text-align:center;">
             <div class="fade-up">
                 <span class="stag">Comencemos</span>
