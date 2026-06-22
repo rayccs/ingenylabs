@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Ingeny Labs - Conocimiento e IA Agéntica</title>
+    <link rel="icon" type="image/png" href="../assets/favico.png">
+    <style>
+        @font-face {
+            font-family: 'Cal Sans';
+            font-style: normal;
+            font-weight: 100 900;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/calsans/v2/fdN99sWUv3gWqXxqqSBb.ttf) format('truetype');
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══ TOKENS (Shared from index.html) ═══ */
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #0d0d16;
+            --card: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.07);
+            --card-hover: rgba(255, 255, 255, 0.055);
+            --green: #24BD58;
+            --mint: #CCFFD3;
+            --dk-green: #002608;
+            --muted: rgba(255, 255, 255, 0.55);
+            --sep: rgba(255, 255, 255, 0.05);
+            --glow: 0 0 80px rgba(36, 189, 88, 0.12);
+            --rad: 18px;
+            --rad-sm: 10px;
+        }
+
+        /* ═══ RESET / BASE ═══ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg);
+        }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            padding-top: 100px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        /* ═══ NAV ═══ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.75);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-bottom: 1px solid var(--sep);
+        }
+
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-links {
+            display: none;
+            gap: 36px;
+        }
+
+        .nav-link {
+            font-size: .875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .6);
+            letter-spacing: .02em;
+            transition: color .2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--mint);
+        }
+
+        .nav-cta {
+            display: none;
+            align-items: center;
+            gap: 20px;
+        }
+
+        @media(min-width:900px) {
+            .nav-links {
+                display: flex;
+            }
+
+            .nav-cta {
+                display: flex;
+            }
+
+            #mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        /* ═══ BUTTONS ═══ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: all .25s ease;
+        }
+
+        .btn-primary {
+            background: var(--mint);
+            color: var(--dk-green);
+            padding: 15px 34px;
+            border-radius: 100px;
+            box-shadow: 0 0 40px rgba(204, 255, 211, .12);
+            font-size: .95rem;
+        }
+
+        .btn-primary:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(204, 255, 211, .22);
+        }
+
+        /* ═══ BLOG HEADER ═══ */
+        .blog-header {
+            text-align: center;
+            padding: 80px 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .blog-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 6px 18px;
+            border-radius: 100px;
+            border: 1px solid rgba(36, 189, 88, .28);
+            background: rgba(36, 189, 88, .07);
+            color: var(--mint);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .blog-h1 {
+            font-family: 'Cal Sans', system-ui, sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .blog-sub {
+            font-size: 1.1rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* ═══ GRID 3 & CARDS ═══ */
+        .wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 36px 120px;
+        }
+
+        .grid3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--rad);
+            overflow: hidden;
+            transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            cursor: pointer;
+        }
+
+        .card.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            background: var(--card-hover);
+            border-color: rgba(36, 189, 88, .25);
+            box-shadow: var(--glow);
+            transform: translateY(-5px);
+        }
+
+        .card-img {
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .7s ease;
+        }
+
+        .card:hover .card-img img {
+            transform: scale(1.06);
+        }
+
+        .card-body {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-meta {
+            font-size: .8rem;
+            color: var(--mint);
+            font-weight: 600;
+            letter-spacing: .05em;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-h3 {
+            font-family: 'Cal Sans', system-ui, sans-serif;
+            font-size: 1.5rem;
+            line-height: 1.25;
+            margin-bottom: 14px;
+            color: #fff;
+        }
+
+        .card-p {
+            font-size: .95rem;
+            line-height: 1.6;
+            color: var(--muted);
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: .75rem;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 4px;
+            color: rgba(255, 255, 255, .7);
+            border: 1px solid rgba(255, 255, 255, .05);
+            transition: background .3s;
+        }
+
+        .card:hover .tag {
+            background: rgba(36, 189, 88, .1);
+            color: var(--mint);
+            border-color: rgba(36, 189, 88, .2);
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            background: var(--green);
+            color: var(--dk-green);
+            padding: 28px 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="nav">
+        <div class="nav-inner">
+            <a href="../index.html"><img src="../assets/logo.svg" alt="Ingeny Labs"
+                    style="height:46px;object-fit:contain;"></a>
+            <nav class="nav-links">
+                <a href="../index.html#nosotros" class="nav-link">Nosotros</a>
+                <a href="../index.html#servicios" class="nav-link">Servicios</a>
+                <a href="../index.html#casos-uso" class="nav-link">Casos de Uso</a>
+                <a href="../index.html#metodologia" class="nav-link">Metodología</a>
+                <a href="index.html" class="nav-link active">Blog</a>
+            </nav>
+            <div class="nav-cta">
+                <a href="https://wa.me/56954679270" target="_blank" class="btn btn-primary"
+                    style="padding:11px 26px;font-size:.875rem;">Consultoría gratuita</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="blog-header">
+        <div class="blog-eyebrow">Insights & Conocimiento</div>
+        <h1 class="blog-h1">Ingeny Labs Blog</h1>
+        <p class="blog-sub">Estrategias, tecnología y análisis para líderes de operaciones B2B. Descubre cómo la IA
+            agéntica transforma la cadena de suministro.</p>
+    </div>
+
+    <div class="wrap">
+        <div class="grid3" id="blog-grid">
+            <!-- Cards will be injected here by JS -->
+        </div>
+    </div>
+
+    <footer class="footer">
+        <img src="../assets/logo.svg" alt="Ingeny Labs" style="height:38px;object-fit:contain;filter:brightness(0);">
+        <!-- <span style="font-size:.82rem;font-weight:600;">© 2026 Ingeny Labs. Operated by Nodepath Cognitive Systems SpA</span> -->
+    </footer>
+
+    <script src="blog-data.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const grid = document.getElementById("blog-grid");
+
+            blogArticles.forEach((article, index) => {
+                const card = document.createElement("a");
+                card.href = "articulo.html?id=" + article.id;
+                card.className = "card";
+                card.style.transitionDelay = (index * 0.1) + "s";
+
+                const tagsHTML = article.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="card-img">
+                        <img src="${article.image}" alt="${article.title}" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span>${article.date}</span>
+                            <span>${article.author}</span>
+                        </div>
+                        <h3 class="card-h3">${article.title}</h3>
+                        <p class="card-p">${article.description}</p>
+                        <div class="card-tags">
+                            ${tagsHTML}
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+
+                // Trigger animation shortly after load
+                setTimeout(() => {
+                    card.classList.add("fade-in");
+                }, 100);
+            });
+        });
+    </script>
+</body>
+
+</html>
